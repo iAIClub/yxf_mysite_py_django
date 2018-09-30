@@ -1,0 +1,220 @@
+*** Starting uWSGI 2.0.17.1 (64bit) on [Fri Sep 28 09:52:19 2018] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-28) on 26 September 2018 16:54:57
+os: Linux-3.10.0-862.el7.x86_64 #1 SMP Fri Apr 20 16:44:24 UTC 2018
+nodename: localhost
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /
+writing pidfile to /run/uwsgi.pid
+detected binary path: /usr/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /opt/yxf_mysite_py_django/mysite
+your processes number limit is 7153
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:9090 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 2.7.5 (default, Jul 13 2018, 13:06:57)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-28)]
+Python main interpreter initialized at 0x10f6d90
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 250032 bytes (244 KB) for 4 cores
+*** Operational MODE: preforking+threaded ***
+/usr/lib64/python2.7/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+WSGI app 0 (mountpoint='') ready in 2 seconds on interpreter 0x10f6d90 pid: 3301 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 3301)
+spawned uWSGI worker 1 (pid: 3320, cores: 2)
+spawned uWSGI worker 2 (pid: 3321, cores: 2)
+[pid: 3320|app: 0|req: 1/1] 192.168.2.1 () {40 vars in 684 bytes} [Fri Sep 28 13:52:31 2018] GET / => generated 4020 bytes in 247 msecs (HTTP/1.1 200) 3 headers in 110 bytes (1 switches on core 0)
+[pid: 3321|app: 0|req: 1/2] 192.168.2.1 () {40 vars in 684 bytes} [Fri Sep 28 13:52:39 2018] GET / => generated 4020 bytes in 167 msecs (HTTP/1.1 200) 3 headers in 110 bytes (1 switches on core 0)
+SIGINT/SIGQUIT received...killing workers...
+worker 1 buried after 4 seconds
+worker 2 buried after 4 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.17.1 (64bit) on [Fri Sep 28 12:47:53 2018] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-28) on 26 September 2018 16:54:57
+os: Linux-3.10.0-862.el7.x86_64 #1 SMP Fri Apr 20 16:44:24 UTC 2018
+nodename: localhost
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /
+writing pidfile to /run/uwsgi.pid
+detected binary path: /usr/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /opt/yxf_mysite_py_django/mysite
+your processes number limit is 7153
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:9090 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 2.7.5 (default, Jul 13 2018, 13:06:57)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-28)]
+Python main interpreter initialized at 0x16a9de0
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 250032 bytes (244 KB) for 4 cores
+*** Operational MODE: preforking+threaded ***
+/usr/lib64/python2.7/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+WSGI app 0 (mountpoint='') ready in 5 seconds on interpreter 0x16a9de0 pid: 1483 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 1483)
+spawned uWSGI worker 1 (pid: 3279, cores: 2)
+spawned uWSGI worker 2 (pid: 3282, cores: 2)
+[pid: 3279|app: 0|req: 1/1] 192.168.2.1 () {40 vars in 684 bytes} [Fri Sep 28 16:49:04 2018] GET / => generated 4020 bytes in 173 msecs (HTTP/1.1 200) 3 headers in 110 bytes (1 switches on core 0)
+SIGINT/SIGQUIT received...killing workers...
+Sat Sep 29 00:24:43 2018 - uWSGI worker 1 screams: UAAAAAAH my master disconnected: i will kill myself !!!
+*** Starting uWSGI 2.0.17.1 (64bit) on [Sat Sep 29 00:34:04 2018] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-28) on 26 September 2018 16:54:57
+os: Linux-3.10.0-862.el7.x86_64 #1 SMP Fri Apr 20 16:44:24 UTC 2018
+nodename: localhost
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /
+writing pidfile to /run/uwsgi.pid
+detected binary path: /usr/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /opt/yxf_mysite_py_django/mysite
+your processes number limit is 11185
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:9090 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 2.7.5 (default, Jul 13 2018, 13:06:57)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-28)]
+Python main interpreter initialized at 0x1542de0
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 250032 bytes (244 KB) for 4 cores
+*** Operational MODE: preforking+threaded ***
+/usr/lib64/python2.7/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+WSGI app 0 (mountpoint='') ready in 8 seconds on interpreter 0x1542de0 pid: 1458 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 1458)
+spawned uWSGI worker 1 (pid: 2077, cores: 2)
+spawned uWSGI worker 2 (pid: 2078, cores: 2)
+SIGINT/SIGQUIT received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.17.1 (64bit) on [Sun Sep 30 00:28:56 2018] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-28) on 26 September 2018 16:54:57
+os: Linux-3.10.0-862.el7.x86_64 #1 SMP Fri Apr 20 16:44:24 UTC 2018
+nodename: localhost
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /
+writing pidfile to /run/uwsgi.pid
+detected binary path: /usr/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /opt/yxf_mysite_py_django/mysite
+your processes number limit is 11185
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:9090 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 2.7.5 (default, Jul 13 2018, 13:06:57)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-28)]
+Python main interpreter initialized at 0xed75a0
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 250032 bytes (244 KB) for 4 cores
+*** Operational MODE: preforking+threaded ***
+/usr/lib64/python2.7/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+WSGI app 0 (mountpoint='') ready in 5 seconds on interpreter 0xed75a0 pid: 1437 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 1437)
+spawned uWSGI worker 1 (pid: 1982, cores: 2)
+spawned uWSGI worker 2 (pid: 1983, cores: 2)
+SIGINT/SIGQUIT received...killing workers...
+worker 1 buried after 1 seconds
+worker 2 buried after 1 seconds
+goodbye to uWSGI.
+VACUUM: pidfile removed.
+*** Starting uWSGI 2.0.17.1 (64bit) on [Sun Sep 30 08:50:04 2018] ***
+compiled with version: 4.8.5 20150623 (Red Hat 4.8.5-28) on 26 September 2018 16:54:57
+os: Linux-3.10.0-862.el7.x86_64 #1 SMP Fri Apr 20 16:44:24 UTC 2018
+nodename: localhost
+machine: x86_64
+clock source: unix
+detected number of CPU cores: 2
+current working directory: /
+writing pidfile to /run/uwsgi.pid
+detected binary path: /usr/bin/uwsgi
+!!! no internal routing support, rebuild with pcre support !!!
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+chdir() to /opt/yxf_mysite_py_django/mysite
+your processes number limit is 7153
+your memory page size is 4096 bytes
+detected max file descriptor number: 1024
+lock engine: pthread robust mutexes
+thunder lock: disabled (you can enable it with --thunder-lock)
+uwsgi socket 0 bound to TCP address 127.0.0.1:9090 fd 3
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+Python version: 2.7.5 (default, Jul 13 2018, 13:06:57)  [GCC 4.8.5 20150623 (Red Hat 4.8.5-28)]
+Python main interpreter initialized at 0x20b95a0
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+python threads support enabled
+your server socket listen backlog is limited to 100 connections
+your mercy for graceful operations on workers is 60 seconds
+mapped 250032 bytes (244 KB) for 4 cores
+*** Operational MODE: preforking+threaded ***
+/usr/lib64/python2.7/site-packages/psycopg2/__init__.py:144: UserWarning: The psycopg2 wheel package will be renamed from release 2.8; in order to keep installing from binary please use "pip install psycopg2-binary" instead. For details see: <http://initd.org/psycopg/docs/install.html#binary-install-from-pypi>.
+  """)
+WSGI app 0 (mountpoint='') ready in 4 seconds on interpreter 0x20b95a0 pid: 1431 (default app)
+uWSGI running as root, you can use --uid/--gid/--chroot options
+*** WARNING: you are running uWSGI as root !!! (use the --uid flag) *** 
+*** uWSGI is running in multiple interpreter mode ***
+spawned uWSGI master process (pid: 1431)
+spawned uWSGI worker 1 (pid: 1929, cores: 2)
+spawned uWSGI worker 2 (pid: 1930, cores: 2)
