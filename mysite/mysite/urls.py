@@ -18,6 +18,7 @@ from django.contrib import admin
 
 # [1.import your app]
 from app_index import views as app_index_views
+from app_tutorial import views as app_tutorial_views
 from app_user import views as app_user_views
 from app_blog import views as app_blog_views
 from app_webtrans import views as app_webtrans_views
@@ -29,6 +30,7 @@ from app_spider import views as app_spider_views
 urlpatterns = [
     # [2.add your url route]
     url(r'^$', app_index_views.index, name='app_index'),
+    url(r'^tutorial/', app_tutorial_views.index, name='app_tutorial'),
     url(r'^user/', app_user_views.index, name='app_user'),
     url(r'^blog/', app_blog_views.index, name='app_blog'),
     url(r'^webtrans/', app_webtrans_views.index, name='app_webtrans'),

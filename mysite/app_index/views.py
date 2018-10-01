@@ -6,5 +6,4 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    #return HttpResponse('welcome!!!!!!!!!!!!')
-    return HttpResponse(render(request, 'app_index/index.html'))
+    return HttpResponse(render(request, 'common/index.html', {'title':'菲菲的技术网站'}))

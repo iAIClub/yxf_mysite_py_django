@@ -39,8 +39,9 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # [2.install your app]
+    # [2.install your app(9)]
     'app_index',
+    'app_tutorial',
     'app_user',
     'app_blog',
     'app_webtrans',
@@ -67,6 +68,7 @@ ROOT_URLCONF = 'mysite.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
+        # [use absolute path]
         'DIRS': [os.path.join(BASE_DIR, 'templetes'),],
         #'APP_DIRS': True,
         'OPTIONS': {
