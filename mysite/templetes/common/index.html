@@ -4,8 +4,6 @@
 		<meta charset="utf-8">
 		<meta http-equiv="X-UA-Compatible" content="IE=edge">
 		<meta name="viewport" content="width=device-width, initial-scale=1">
-		<meta name="keywords" content="{{ keywords }}"/>
-		<meta name="description" content="{{ description }}"/>
 		{% block head %}
 			{% block title %}
 				<title>{{ title }}</title>
@@ -13,9 +11,10 @@
 			
 			<link rel="shortcut icon" href="/static/favicon/favicon64.ico" type="image/x-icon">
 			<link href="/static/lib/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
-			<link href="/static/css/basic.css" rel="stylesheet">
+			<link href="/static/css/index.css" rel="stylesheet">
 			<script src="/static/lib/jquery/jquery-3.3.1.min.js" ></script>
 			<script src="/static/lib/bootstrap/3.3.0/js/bootstrap.min.js" ></script>
+			<script src="/static/js/index.js" ></script>
 
 			{% block extracss %}
 			{% endblock %}
@@ -46,31 +45,32 @@
 			<div class="container-fluid" id="page">
 				<div class="row">
 					{% block left %}
-						{% include "common/left.html" %}
+						<div class="sidebar col-xs-4 col-sm-3 col-md-2">
+							{% include "common/left.html" %}
+						</div>
 					{% endblock %}
 
 					{% block main %}
-						{% include "common/main.html" %}
+						<div class="main col-xs-offset-0 col-sm-offset-3 col-md-offset-2 col-xs-12 col-sm-9 col-md-10">
+							<h1 class="page-header">{{ contenttitle }}</h1>
+							{% include "common/main.html" %}
+						
+						  	{% block footer %}
+								{% include "common/footer.html" %}
+							{% endblock %}
+						</div>
 					{% endblock %}
-
-					{% block right %}
-						{% include "common/right.html" %}
-					{% endblock %}
+					
+					{% block toolbar %}
+    					{% include "common/toolbar.html" %}
+  					{% endblock %}
 				</div>
 			</div><!-- end page div -->
 		{% endblock %}<!-- end block page -->
-
-		{% block toolbar %}
-			<div class="container-fluid">
-				{% include "common/toolbar.html" %}
-			</div>
-		{% endblock %}
 
 		{% block addition %}
 			<div class="container-fluid">
 			</div>
 		{% endblock %}
-
-		<a class="backtop" href="javascript:void"></a>	
 	</body>
 </html>

@@ -1,0 +1,36 @@
+<div id="toolbar" class="hidden-xs">
+	<a class="contact" href="#">
+		<i class="ico"></i>
+		<i class="txt">在线交流</i>
+	</a>
+	<a class="qr" href="#">
+		<i class="ico"></i>
+		<i class="txt">绑定APP</i>
+	</a>
+	<a class="feedback" href="#" target="_blank">
+		<i class="ico"></i>
+		<i class="txt">离线留言</i>
+	</a>
+	<a id="top" class="top" href="javascript:top.onclick();">
+		<i class="ico"></i>
+		<i class="txt">返回顶部</i>
+	</a>
+	<div class="qr qrcode">
+		<img src="/static/favicon/guesthead.png">
+	</div>
+	<script>
+		var timer  = null;
+		top.onclick = function(){
+		    cancelAnimationFrame(timer);
+		    timer = requestAnimationFrame(function fn(){
+		        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
+		        if(oTop > 0){
+		            document.body.scrollTop = document.documentElement.scrollTop = oTop - 30;
+		            timer = requestAnimationFrame(fn);
+		        }else{
+		            cancelAnimationFrame(timer);
+		        }    
+		    });
+		}
+	</script>
+</div>

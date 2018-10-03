@@ -1,0 +1,53 @@
+@charset "UTF-8";
+
+html{
+    font-size: 16px;/*system*/
+}
+
+body{
+	padding-top: 50px;/*bootstrap*/
+}
+
+#navbar a:hover,#navbar button:hover{
+	background-color: #eee;
+}
+
+.sidebar{
+	position: fixed;
+    top: 51px;/*bootstrap*/
+    bottom: 0;
+    left: 0;
+    z-index: 1000;
+    display: block;
+    padding: 1rem;
+    overflow-y: hidden;
+    background-color: #f5f5f5;
+}
+.sidebar:hover{overflow-y: auto;}
+.sidebar a {text-decoration:none;display: block;padding: 0.25rem; font-size: 1rem;}
+.sidebar a:hover {background-color:#eee;}
+
+
+#toolbar{
+    /*位置与大小*/position:fixed;right:0;bottom:40px;
+    /*层叠顺序*/z-index:2001;
+    /*效果*/font-size:0.75rem
+}
+#toolbar a{position:relative;display:block;width:40px;height:40px;margin-top:5px;border-radius:3px 0 0 3px;background:#aaa;overflow:hidden;text-decoration:none}
+#toolbar a:hover{background:#777}
+#toolbar a .ico{display:block;width:40px;height:40px;background:url(/static/img/aside.png) no-repeat;-webkit-transition:all .3s ease-out 0s;transition:all .3s ease-out 0s}
+#toolbar a:hover .ico{margin-top:-40px}
+#toolbar a .txt{display:block;width:30px;height:38px;line-height:38px;padding-top:2px;margin:auto;color:#fff;text-align:center;font-style:normal;font-weight:400}
+#toolbar .contact .ico{background-position:0 0}
+#toolbar .contact .txt{line-height:19px}
+#toolbar .qr .ico{background-position:0 -40px}
+#toolbar .qr .ico:hover{.qrcode{display: block;}}
+#toolbar .qr .txt{line-height:19px}
+#toolbar .feedback .ico{background-position:0 -80px}
+#toolbar .feedback .txt{line-height:19px}
+#toolbar .top .ico{background-position:0 -120px}
+#toolbar .top .txt{line-height:19px}
+#toolbar a .panel{display:none;position:absolute;left:-116px;bottom:0;width:84px;padding:10px;border:1px solid #ccc;background:#fff}
+#toolbar a:hover .panel{display:block;}
+.qrcode{position:fixed;right:51px;bottom:40px;display: none;}
+.qrcode img{width: 150px;height: 150px;}

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Django settings for mysite project.
 
@@ -25,7 +26,7 @@ SECRET_KEY = 'ugre0j(jzu16=93yklv#9-0)96q)gsp*ugygc@(b&u!vv96#gg'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-# [1.allow all ip adress]
+# [允许所有IP访问]
 ALLOWED_HOSTS = ['*']
 
 
@@ -39,8 +40,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     
-    # [2.install your app(9)]
-    'app_index',
+    # [注册项目APP]
     'app_tutorial',
     'app_user',
     'app_blog',
@@ -51,24 +51,25 @@ INSTALLED_APPS = [
     'app_spider',
 ]
 
+# [中间件必须按照请求-响应的路径顺序，不可打乱]
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'django.middleware.security.SecurityMiddleware',#安全
+    'django.contrib.sessions.middleware.SessionMiddleware',#会话
+    'django.middleware.common.CommonMiddleware',#阻挡非法UA；url补全
+    'django.middleware.csrf.CsrfViewMiddleware',#CSRF防火墙
+    'django.contrib.auth.middleware.AuthenticationMiddleware',#
+    'django.contrib.messages.middleware.MessageMiddleware',#向客户端发送消息
+    'django.middleware.clickjacking.XFrameOptionsMiddleware',#clickjacking防火墙
 ]
 
-# [3.import urls.py with your settings]
+# [加入URL路由规则]
 ROOT_URLCONF = 'mysite.urls'
 
-# [4.define templetes directory]
+# [模板配置]
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        # [use absolute path]
+        # [使用唯一的统一路径]
         'DIRS': [os.path.join(BASE_DIR, 'templetes'),],
         #'APP_DIRS': True,
         'OPTIONS': {
@@ -88,9 +89,9 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# [5.define databases. ]
-# [  separate to settings_db.py, you need to create this file by hand. ]
-# [  format like this: ]
+# [配置数据库]
+# [分离到settings_db.py实现，你需要在同一目录手动新建此文件]
+# [内容形式如下：]
 #DATABASES = {
 #    'default': {
 #        'ENGINE': 'django.db.backends.postgresql_psycopg2',
@@ -137,7 +138,7 @@ TIME_ZONE = 'Asia/Shanghai'
 
 USE_I18N = True # use internationalization
 
-USE_L10N = False # not use localization
+USE_L10N = False # don't use localization
 
 USE_TZ = False
 
