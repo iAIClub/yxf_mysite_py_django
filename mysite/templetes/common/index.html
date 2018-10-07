@@ -8,7 +8,7 @@
 			{% block title %}
 				<title>{{ title }}</title>
 			{% endblock %}
-			
+
 			<link rel="shortcut icon" href="/static/favicon/favicon64.ico" type="image/x-icon">
 			<link href="/static/lib/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
 			<link href="/static/css/index.css" rel="stylesheet">
@@ -21,56 +21,48 @@
 
 			{% block extrajs %}
 			{% endblock %}
-
-			{% block compaticity %}
-				<!--[if lt IE 7]>
-				<style>
-				#leftcolumn{margin-left:0}
-				</style>
-				<![endif]-->
-			{% endblock %}
 		{% endblock %}
 	</head>
 
 	<body>
-		{% block navbar %}
-	    	<nav class="navbar navbar-default navbar-fixed-top">
-	      		<div class="container-fluid">
-					{% include "common/navbar.html" %}
-			     </div><!-- /.container-fluid -->
-			</nav>
-		{% endblock %}
+	{% block navbar %}
+		{% include "common/navbar.html" %}
+	{% endblock %}
 
-		{% block page %}
-			<div class="container-fluid" id="page">
-				<div class="row">
-					{% block left %}
-						<div class="sidebar col-xs-4 col-sm-3 col-md-2">
-							{% include "common/left.html" %}
+	{% block page %}
+		<div class="container-fluid">
+			<div class="row" id="page">
+				{% block left %}
+					{% include "common/left.html" %}
+				{% endblock %}
+
+				{% block main %}
+				<div class="main col-xs-offset-0 col-sm-offset-3 col-md-offset-2 col-xs-12 col-sm-9 col-md-10">
+					{% block title_content_right %}
+						<div class="row" id="title-content-right">
+							<h1 class="main" id="content-title">{{ content_title }}</h1>
+							{% block content %}
+		    					{% include "common/content.html" %}
+		  					{% endblock %}
+							{% block right %}
+		    					{% include "common/right.html" %}
+		  					{% endblock %}
 						</div>
 					{% endblock %}
-
-					{% block main %}
-						<div class="main col-xs-offset-0 col-sm-offset-3 col-md-offset-2 col-xs-12 col-sm-9 col-md-10">
-							<h1 class="page-header">{{ contenttitle }}</h1>
-							{% include "common/main.html" %}
-						
-						  	{% block footer %}
-								{% include "common/footer.html" %}
-							{% endblock %}
-						</div>
+					{% block footer %}
+						{% include "common/footer.html" %}
 					{% endblock %}
-					
-					{% block toolbar %}
-    					{% include "common/toolbar.html" %}
-  					{% endblock %}
 				</div>
-			</div><!-- end page div -->
-		{% endblock %}<!-- end block page -->
+				{% endblock %}
 
-		{% block addition %}
-			<div class="container-fluid">
+				{% block toolbar %}
+					{% include "common/toolbar.html" %}
+				{% endblock %}
 			</div>
-		{% endblock %}
+		</div>
+	{% endblock %}
+
+	{% block addition %}
+	{% endblock %}
 	</body>
 </html>

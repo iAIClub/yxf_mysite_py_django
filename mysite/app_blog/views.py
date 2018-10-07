@@ -7,3 +7,14 @@ from django.http import HttpResponse
 # Create your views here.
 def index(request):
     return HttpResponse(render(request, 'app_blog/index.html'))
+
+def post(request,suburl):
+	return HttpResponse(render(request, 'app_blog/index.html'))
+
+def list(request):
+	orderby = request.GET.get('orderby',None)
+	p = request.GET.get('p',None)
+	return HttpResponse(render(request, 'app_blog/index.html'))
+
+def editmd(request):
+    pass

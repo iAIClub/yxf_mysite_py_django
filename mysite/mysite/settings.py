@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    
+
     # [注册项目APP]
     'app_tutorial',
     'app_user',
@@ -57,8 +57,8 @@ MIDDLEWARE = [
     'django.contrib.sessions.middleware.SessionMiddleware',#会话
     'django.middleware.common.CommonMiddleware',#阻挡非法UA；url补全
     'django.middleware.csrf.CsrfViewMiddleware',#CSRF防火墙
-    'django.contrib.auth.middleware.AuthenticationMiddleware',#
-    'django.contrib.messages.middleware.MessageMiddleware',#向客户端发送消息
+    'django.contrib.auth.middleware.AuthenticationMiddleware',#用户认证
+    'django.contrib.messages.middleware.MessageMiddleware',#表单处理信息反馈
     'django.middleware.clickjacking.XFrameOptionsMiddleware',#clickjacking防火墙
 ]
 
@@ -70,7 +70,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         # [使用唯一的统一路径]
-        'DIRS': [os.path.join(BASE_DIR, 'templetes'),],
+        'DIRS': [os.path.join(BASE_DIR, 'templetes')],
         #'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -90,7 +90,7 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
 # [配置数据库]
-# [分离到settings_db.py实现，你需要在同一目录手动新建此文件]
+# [分离到settings_cfg.py实现，你需要在同一目录手动新建此文件，加入数据库定义代码]
 # [内容形式如下：]
 #DATABASES = {
 #    'default': {
@@ -102,8 +102,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 #        'PORT': '5432',
 #    }
 #}
-import settings_db
-DATABASES = settings_db.DATABASES
+import settings_cfg
+DATABASES = settings_cfg.DATABASES
 
 
 # Password validation
@@ -140,7 +140,7 @@ USE_I18N = True # use internationalization
 
 USE_L10N = False # don't use localization
 
-USE_TZ = False
+USE_TZ = False # don't use system timezone
 
 
 # Static files (CSS, JavaScript, Images)
@@ -152,3 +152,23 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # upload folder
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+# [记录日志]
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'handlers': {
+        'file': {
+            'level': 'DEBUG',
+            'class': 'logging.FileHandler',
+            'filename': os.path.join(BASE_DIR, 'mysite_log')+'/django.log',
+        },
+    },
+    'loggers': {
+        'django': {
+            'handlers': ['file'],
+            'level': 'DEBUG',
+            'propagate': True,
+        },
+    },
+}

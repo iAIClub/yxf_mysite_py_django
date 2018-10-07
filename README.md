@@ -31,7 +31,7 @@ ngnix==1.12.x
 
 postgresql==10.x  
 
-./mysite/requirments.txt  
+./mysite_conf/requirments  
 
 ### 项目架构
 
@@ -55,19 +55,15 @@ postgresql==10.x
 
 公共静态资源：./mysite/static  
 
-缓存数据库：redis  
-
-框架内建后台管理：admin
+框架内建后台管理、用户认证、会话，以及其他中间件：admin&auth&session, other middlewares  
 
 MVC子应用（提供具体服务功能的子模块）：./mysite/app_*  
 
-MVC子应用的注册：./mysite/app_*/admin.py  
+MVC子应用后台管理相关：./mysite/app_*/admin.py&apps.py  
 
 MVC子应用的前端模板：./mysite/templetes/app_*  
 
 MVC子应用的视图（响应请求，提取、组合模板，后端渲染）：./mysite/app_*/views.py   
-
-MVC子应用的控制器（各式各样的控制逻辑）：./mysite/app_*/apps.py   
 
 MVC子应用的模型（数据对象模型，定义的对象与数据库表一一对应）：./mysite/app_*/models.py   
 

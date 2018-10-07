@@ -1,18 +1,24 @@
 @charset "UTF-8";
 
+/*global*/
 html{
-    font-size: 16px;/*system*/
+    font-size: 75%;
+}
+body {
+    margin: 0;
+    padding-top: 51px;
+    font-size: 1.2em;
+    background: #f6f6f6;
+    color: #333;
 }
 
-body{
-	padding-top: 50px;/*bootstrap*/
-}
-
+/*navbar*/
 #navbar a:hover,#navbar button:hover{
 	background-color: #eee;
 }
 
-.sidebar{
+/*left*/
+#left{
 	position: fixed;
     top: 51px;/*bootstrap*/
     bottom: 0;
@@ -21,33 +27,84 @@ body{
     display: block;
     padding: 1rem;
     overflow-y: hidden;
-    background-color: #f5f5f5;
+    background-color: #eee;
 }
-.sidebar:hover{overflow-y: auto;}
-.sidebar a {text-decoration:none;display: block;padding: 0.25rem; font-size: 1rem;}
-.sidebar a:hover {background-color:#eee;}
+#left:hover{overflow-y: auto;}
+#left a {text-decoration:none;display: block;padding: 0.25rem; font-size: 1.2rem;}
+#left a:hover {background-color:#eee;}
 
-
+/*toolbar*/
 #toolbar{
     /*位置与大小*/position:fixed;right:0;bottom:40px;
     /*层叠顺序*/z-index:2001;
-    /*效果*/font-size:0.75rem
+    /*效果*/font-size:0.75rem;
 }
-#toolbar a{position:relative;display:block;width:40px;height:40px;margin-top:5px;border-radius:3px 0 0 3px;background:#aaa;overflow:hidden;text-decoration:none}
-#toolbar a:hover{background:#777}
-#toolbar a .ico{display:block;width:40px;height:40px;background:url(/static/img/aside.png) no-repeat;-webkit-transition:all .3s ease-out 0s;transition:all .3s ease-out 0s}
-#toolbar a:hover .ico{margin-top:-40px}
-#toolbar a .txt{display:block;width:30px;height:38px;line-height:38px;padding-top:2px;margin:auto;color:#fff;text-align:center;font-style:normal;font-weight:400}
-#toolbar .contact .ico{background-position:0 0}
-#toolbar .contact .txt{line-height:19px}
-#toolbar .qr .ico{background-position:0 -40px}
-#toolbar .qr .ico:hover{.qrcode{display: block;}}
-#toolbar .qr .txt{line-height:19px}
-#toolbar .feedback .ico{background-position:0 -80px}
-#toolbar .feedback .txt{line-height:19px}
-#toolbar .top .ico{background-position:0 -120px}
-#toolbar .top .txt{line-height:19px}
-#toolbar a .panel{display:none;position:absolute;left:-116px;bottom:0;width:84px;padding:10px;border:1px solid #ccc;background:#fff}
-#toolbar a:hover .panel{display:block;}
-.qrcode{position:fixed;right:51px;bottom:40px;display: none;}
-.qrcode img{width: 150px;height: 150px;}
+#toolbar a{
+    position:relative;
+    display:block;
+    width:40px;
+    height:40px;
+    margin-top:5px;
+    border-radius:3px 0 0 3px;
+    background:#999;
+    overflow:hidden;
+    text-decoration:none;
+}
+#toolbar .glyphicon{
+    display:block;
+    color: #eee;
+    margin-top: 10px;
+    margin-left: 10px;
+    width:40px;
+    height:40px;
+    font-size:20px;
+    -webkit-transition:all .3s ease-out 0s;
+    transition:all 0.3s ease-out 0s;
+}
+#toolbar .txt{
+    display:block;
+    width:30px;
+    height:38px;
+    line-height:38px;
+    line-height:19px;
+    padding-top:2px;
+    margin:auto;
+    color:#fff;
+    font-style:normal;
+    font-weight:400;
+    text-align:center;
+}
+#toolbar a:hover{
+    background:#777;
+}
+#toolbar a:hover .glyphicon{
+    margin-top:-40px;
+}
+#toolbar .qrcode{
+    position:fixed;
+    background-color: #fff;
+    text-align:center;
+    right:51px;
+    bottom:40px;
+    width: 150px;
+    height: 175px;
+    display: none;
+}
+#toolbar .qrcodeimg{
+    width: 150px;
+    height: 150px;
+    background-image: url(/static/img/微信个人二维码.jpg);
+    background-position: center center;
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+
+/*main*/
+    /*main title-content-right*/
+        /*main title*/
+        #content-title{
+            padding-left: 15px;
+        }
+        /*main content*/
+        /*main right*/
+    /*main footer*/

@@ -1,36 +1,18 @@
 <div id="toolbar" class="hidden-xs">
-	<a class="contact" href="#">
-		<i class="ico"></i>
-		<i class="txt">在线交流</i>
-	</a>
-	<a class="qr" href="#">
-		<i class="ico"></i>
-		<i class="txt">绑定APP</i>
-	</a>
-	<a class="feedback" href="#" target="_blank">
-		<i class="ico"></i>
-		<i class="txt">离线留言</i>
-	</a>
-	<a id="top" class="top" href="javascript:top.onclick();">
-		<i class="ico"></i>
+	<a id="go-top" href="javascript:void(0);">
+		<i class="glyphicon glyphicon-chevron-up"></i>
 		<i class="txt">返回顶部</i>
 	</a>
-	<div class="qr qrcode">
-		<img src="/static/favicon/guesthead.png">
+	<a id="contact" href="javascript:void(0);">
+		<i class="glyphicon glyphicon-envelope"></i>
+		<i class="txt">联系站主</i>
+	</a>
+	<a id="qr" href="javascript:void(0);">
+		<i class="glyphicon glyphicon-qrcode"></i>
+		<i class="txt">扫二维码</i>
+	</a>
+	<div class="qrcode">
+		<h5>加微信</h5>
+		<div class="qrcode qrcodeimg"></div>
 	</div>
-	<script>
-		var timer  = null;
-		top.onclick = function(){
-		    cancelAnimationFrame(timer);
-		    timer = requestAnimationFrame(function fn(){
-		        var oTop = document.body.scrollTop || document.documentElement.scrollTop;
-		        if(oTop > 0){
-		            document.body.scrollTop = document.documentElement.scrollTop = oTop - 30;
-		            timer = requestAnimationFrame(fn);
-		        }else{
-		            cancelAnimationFrame(timer);
-		        }    
-		    });
-		}
-	</script>
 </div>

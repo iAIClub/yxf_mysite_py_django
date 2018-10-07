@@ -1,0 +1,37 @@
+{% extends "common/index.html" %}
+
+{% block extracss %}
+<link rel="stylesheet" type="text/css" href="/static/plugins/editor.md/lib/codemirror/codemirror.min.css" />
+<link rel="stylesheet" type="text/css" href="/static/plugins/editor.md/css/editormd.css" />
+{% endblock %}
+
+{% block extrajs %}
+<script type="text/javascript" src="/static/plugins/editor.md/editormd.min.js"></script>
+{% endblock %}
+
+{% block page %}
+    <div id="editmd">
+        <textarea style="display:none;margin: 0 auto;">## Hello Editor.md !</textarea>
+    </div>
+    <script type="text/javascript">
+$(document).ready(function(){
+
+        //
+        $(function(){
+                $("#navbar").removeClass("navbar-fixed-top");
+                $("body").css("padding-top",0);
+        });
+
+        //
+        $(function() {
+            var editor = editormd({
+                id: "editmd",
+                path: "/static/plugins/editor.md/lib/",
+                width: "90% vw",
+                height: "90% vh",
+                codeFold : true,
+            });
+        });
+});
+    </script>
+{% endblock %}

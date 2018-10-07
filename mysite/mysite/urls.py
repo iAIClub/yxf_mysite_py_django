@@ -14,48 +14,80 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
+import importlib
 from django.conf.urls import include, url
 from django.contrib import admin
-
-# [导入APP视图代码]
+from django.contrib.auth import views as auth_views
 from app_tutorial import views as app_tutorial_views
 from app_user import views as app_user_views
 from app_blog import views as app_blog_views
-from app_webtrans import views as app_webtrans_views
-from app_wechat import views as app_wechat_views
-from app_visual import views as app_visual_views
 from app_metaphysics import views as app_metaphysics_views
 from app_spider import views as app_spider_views
+from app_visual import views as app_visual_views
+from app_webtrans import views as app_webtrans_views
+from app_wechat import views as app_wechat_views
 
-urlpatterns = [
-    # url预处理：1.自动截去了http://domain/；2.若同一位置出现重复斜杠如//、///，则自动变为单个/
-    # 匹配无任何后缀的首页
-    url(r'^$', app_tutorial_views.index, name="index"),
-    url(r'^tutorial/$', include(tutorial_urlpatterns)),
-    url(r'^blog/(?!post/).{0,}', app_blog_views.index, name="app-blog"),
-    url(r'^blog/post/(?P<postname>.{0,}$', app_blog_views.index, name="app-blog-post"),
+# [反射（根据参数名自动加载应用）]
+# def reflection(request, **kwargs):
+#     appname = 'app_'+kwargs.get('appname', None)
+#     try:
+#         appViewObj = importlib.import_module(appname+'.views')
+#         return appViewObj.index(request, **kwargs)
+#     except:
+#         kwargs['appname'] = 'invalid'
+#         return app_tutorial_views.index(request, **kwargs)
 
-    url(r'^user/(?P<suburl>[^/]{0,})$', app_user_views.index, name="app-user"),
-
-    url(r'^webtrans/(?!api/).{0,}', app_webtrans_views.index, name="app-webtrans"),
-    url(r'^webtrans/api/(?P<args>.{0,}$', app_webtrans_views.index, name="app-webtrans-api"),
-
-    url(r'^wechat/', app_wechat_views.index, name="app-wechat"),
-
-    url(r'^visual/', app_visual_views.index, name="app-visual"),
-
-    url(r'^metaphysics/', app_metaphysics_views.index, name="app-metaphysics"),
-
-    url(r'^spider/(?!api/).{0,}', app_spider_views.index, name="app-spider"),
-    url(r'^spider/api/(?P<args>).{0,}$', app_spider_views.index, name="app-spider-api"),
-
-    url(r'^admin/', admin.site.urls, name="sys-admin"),
+user_urlpatterns = [
+    url(r'^login/$', app_user_views.login,name='app_user_login'),
+    url(r'^register/$', app_user_views.register,name='app_user_register'),
+    url(r'^profile/$', app_user_views.profile,name='app_user_profile'),
+    url(r'^settings/$', app_user_views.settings,name='app_user_settings'),
+    url(r'^ajax/$', app_user_views.ajax,name='app_user_ajax'),
 ]
 
-tutorial_urlpatterns = ([
-    # 匹配任意属于tutorial/但不属于tutorial/doc/的路径
-    url(r'^tutorial/(?!doc/).{0,}', app_tutorial_views.tutorial, name="app-tutorial"),
-    # 匹配任意属于tutorial/doc/的路径，获取doc/后面的子串
-    url(r'^tutorial/doc/(?P<docname>.{0,})$', app_tutorial_views.tutorial_doc, name="app-tutorial-doc"),
-],"tutorial"
-)
+tutorial_urlpatterns = [
+    url(r'^editmd/$', app_tutorial_views.editmd,name='app_tutorial_editmd'),
+    url(r'^doc/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.doc,name='app_tutorial_doc'),
+    url(r'^doc/(?P<column_slug>[^/]+)$', app_tutorial_views.column,name='app_tutorial_column'),
+    url(r'^$', app_tutorial_views.index,name='app_tutorial_index'),
+]
+
+blog_urlpatterns = [
+    url(r'^editmd/$', app_blog_views.editmd,name='app_blog_editmd'),
+    url(r'^post/(?P<post>[^/]+)$', app_blog_views.post,name='app_blog_post'),
+    url(r'^list/$', app_blog_views.list,name='app_blog_list'),
+    url(r'^$', app_blog_views.index,name='app_blog_index'),
+]
+
+spider_urlpatterns = [
+    url(r'^$', app_spider_views.index,name='app_spider_index'),
+]
+
+visual_urlpatterns = [
+    url(r'^$', app_visual_views.index,name='app_visual_index'),
+]
+
+webtrans_urlpatterns = [
+    url(r'^$', app_webtrans_views.index,name='app_webtrans_index'),
+]
+
+wechat_urlpatterns = [
+    url(r'^$', app_wechat_views.index,name='app_wechat_index'),
+]
+
+metaphysics_urlpatterns = [
+    url(r'^$', app_metaphysics_views.index,name='app_metaphysics_index'),
+]
+
+urlpatterns = [
+    url(r'^$', app_tutorial_views.index,name='index'),
+    url(r'^admin/', admin.site.urls),#所有内容仅对超级管理员开放，不可对外
+    url(r'^user/', include(user_urlpatterns)),#对外开放的用户管理体系
+    url(r'^tutorial/', include(tutorial_urlpatterns)),
+    url(r'^blog/', include(blog_urlpatterns)),
+    url(r'^spider/', include(spider_urlpatterns)),
+    url(r'^visual/', include(visual_urlpatterns)),
+    url(r'^webtrans/', include(webtrans_urlpatterns)),
+    url(r'^wechat/', include(wechat_urlpatterns)),
+    url(r'^metaphysics/', include(metaphysics_urlpatterns)),
+]
