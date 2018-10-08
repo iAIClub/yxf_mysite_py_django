@@ -12,6 +12,10 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
+sys.path.append("..")
+import json
+
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -89,21 +93,8 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 
-# [配置数据库]
-# [分离到settings_cfg.py实现，你需要在同一目录手动新建此文件，加入数据库定义代码]
-# [内容形式如下：]
-#DATABASES = {
-#    'default': {
-#        'ENGINE': 'django.db.backends.postgresql_psycopg2',
-#        'NAME': '[YourDatabase]',
-#        'USER': '[YourDatabaseUser]',
-#        'PASSWORD': '[YourPassword]',
-#        'HOST': 'localhost',
-#        'PORT': '5432',
-#    }
-#}
-import settings_cfg
-DATABASES = settings_cfg.DATABASES
+# [配置数据库以及其他内容]
+from mysite_conf.settings_cfg import *
 
 
 # Password validation

@@ -5,7 +5,7 @@ from django.utils import timezone
 from django.db import models
 import sys
 sys.path.append("..")
-from mysite.settings_cfg import DOMAIN
+from mysite_conf.settings_cfg import DOMAIN
 
 #Create your models here.
 # 栏目表

@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals,print_function
 
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,Http404
 from django.shortcuts import render
 import sys
 sys.path.append("..")
-from mysite.settings_cfg import SUPERUSER
+from mysite_conf.settings_cfg import SUPERUSER
 from .models import Column,Tutorial
 
 # Create your views here.
