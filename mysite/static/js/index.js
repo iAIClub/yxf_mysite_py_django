@@ -2,9 +2,11 @@
 $(document).ready(function(){
 
 	//活动栏目
-	$("#navbar a").click(
+	$("#navbar-collapse:first").find("a").each(
 		function(){
-			$(this).addClass("active");
+            if (this.href == document.location.href || document.location.href.search(this.href) >= 0){
+                $(this).parent().addClass('active');
+            }
 		}
 	);
 
@@ -47,9 +49,3 @@ $(document).ready(function(){
 
 	//
 });
-
-//js原生：在所有资源全部加载渲染完成后再执行（完全下载所有的图片、iframe等）
-window.onload = function (){
-	//func1();
-	//func2();
-}

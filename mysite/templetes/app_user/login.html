@@ -19,11 +19,10 @@
               margin: 0 auto;
             }
         .form-signin button{
-              background-color: #aaa;
-              border-color: #666;
+              background-color: #417690;
             }
         .form-signin button:hover{
-              background-color: #777;
+              background-color: #0F3357;
             }
     </style>
     <script src="/static/lib/jquery/jquery-3.3.1.min.js" ></script>
@@ -42,7 +41,9 @@
             <button class="btn btn-lg btn-primary btn-block" type="submit">登录</button>
             <br/>
             <a href="{% url 'app_user_register' %}">没有账号？点击注册</a>
-            {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+            <div>
+                {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+            </div>
         </form>
     </div> <!-- /container -->
 </body>

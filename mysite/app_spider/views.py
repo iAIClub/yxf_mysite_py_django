@@ -6,5 +6,5 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    #return HttpResponse('welcome!!!!!!!!!!!!')
-    return HttpResponse(render(request, 'app_spider/index.html'))
+    return HttpResponse(render(request, 'common/index.html'))
+

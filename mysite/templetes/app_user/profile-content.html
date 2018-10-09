@@ -1,0 +1,96 @@
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-10 col-sm-10 col-md-10" id="content">
+{% if arg_config == 'True' %}
+  <h3>{{ user.username }}的用户信息</h3><hr>
+  <div class="row placeholders">
+  <form role="form" method="post" action="{% url 'app_user_profile' %}">
+    {% csrf_token %}
+    <input type="text" name="purpose" value="change_config" style="display: none;">
+    <h4>用户名：</h4>
+    <input type="text" name="username" class="form-control" placeholder="用户名"  readonly="true" value="{{ user.username }}" required autofocus>
+    <h4>旧密码：</h4>
+    <input type="password" name="pd_old" class="form-control" placeholder="密码" required>
+    <h4>新密码：</h4>
+    <input type="password" name="pd_new" class="form-control" placeholder="密码" required>
+    <h4>确认新密码：</h4>
+    <input type="password" name="pd_new_c" class="form-control" placeholder="密码" required>
+    <h4>邮箱：</h4>
+    <input type="text" name="email" class="form-control" placeholder="邮箱" value="{{ user.email }}" required>
+    <br/>
+    <button class="btn btn-primary btn-block" type="submit" id="submit">提交修改</button>
+    <br/>
+    {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+  </form>
+  <style type="text/css">
+    #content button {
+      min-width: 100px;
+      max-width: 150px;
+      width: 40%;
+      margin: auto;
+    }
+  </style>
+  </div>
+{% elif arg_pan == 'True' %}
+  <h3>{{ user.username }}的网盘文件</h3><hr>
+  <div class="row placeholders">
+    <form style="display: inline;" role="form" method="post" enctype="multipart/form-data" action="{% url 'app_user_profile' %}">
+      {% csrf_token %}
+      <input type="text" name="purpose" value="upload_file" style="display: none;">
+      <p style="display: inline;">归属用户：</p>
+      <input style="max-width: 100px;" type="text" name="username" readonly="true" value="{{ user.username }}" required>
+      <p style="display: inline;">上传位置：</p>
+      <input style="max-width: 100px;" type="text" name="filepath" required autofocus>
+      <input style="display: inline;max-width:75px; " type="file" multiple name="upload-file" id="file-upload" accept="text/*,image/*,audio/*,video/*,.flv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.json,.md,.rtf,.7z,.rar,.zip,.bz2,.xz,.tar,.iso,.img,.deb,.rpm,.shtml,.xhtml" required>
+      <button class="btn btn-primary btn-inline" type="submit" id="submit">上传</button>
+    </form>
+    <button class="btn btn-warning btn-inline" id="clean">清空</button>
+    <ul id="file-list">
+    </ul>
+    <div>
+      <h5 id="message"></h5>
+      {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+    </div>
+    <style type="text/css">
+      #content button {
+        min-width: 50px;
+        max-width: 200px;
+        margin: auto;
+      }
+    </style>
+    <script type="text/javascript">
+      $(function(){
+          //clean
+          $("#clean").click(function(){
+            $("#message").empty();
+            $("#file-upload").val("");
+            $("#file-list").empty();
+          });
+          //file upload
+          $("#file-upload").change(function(){
+            var fp = $("#file-upload");
+            var lg = fp[0].files.length; // get length
+            var items = fp[0].files;
+            var fragment = "";
+            var size = 0;
+            if (lg > 0) {
+                for (var i = 0; i < lg; i++) {
+                  var fileName = items[i].name; // get file name
+                  var fileSize = items[i].size; // get file size
+                  var fileType = items[i].type; // get file type
+                  // append li to UL tag to display File info
+                  fragment += "<li title=\"(" + fileSize + " bytes) - Type: " + fileType + "\" >" + fileName +"</li>";
+                  size += fileSize;
+                  if (size > 64000000){
+                    $("#message").append("文件大小超限！最高一次性上传64M！");
+                  }
+                }
+                $("#file-list").append(fragment);
+              }
+          });
+      });
+    </script>
+  </div>
+{% elif arg_cancel == 'True' %}
+{% else %}
+
+{% endif %}
+</div>

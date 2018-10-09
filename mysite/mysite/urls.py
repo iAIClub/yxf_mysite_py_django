@@ -47,6 +47,7 @@ user_urlpatterns = [
 
 tutorial_urlpatterns = [
     url(r'^editmd/$', app_tutorial_views.editmd,name='app_tutorial_editmd'),
+    #url(r'^doc/editmd/$', app_tutorial_views.doceditmd,name='app_tutorial_doceditmd'),
     url(r'^doc/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.doc,name='app_tutorial_doc'),
     url(r'^doc/(?P<column_slug>[^/]+)$', app_tutorial_views.column,name='app_tutorial_column'),
     url(r'^$', app_tutorial_views.index,name='app_tutorial_index'),
@@ -64,6 +65,8 @@ spider_urlpatterns = [
 ]
 
 visual_urlpatterns = [
+    url(r'^map/$', app_visual_views.map,name='app_visual_map'),
+    url(r'^game/$', app_visual_views.game,name='app_visual_game'),
     url(r'^$', app_visual_views.index,name='app_visual_index'),
 ]
 

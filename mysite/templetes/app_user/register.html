@@ -19,11 +19,10 @@
               margin: 0 auto;
             }
         .form-signin button{
-              background-color: #aaa;
-              border-color: #666;
+              background-color: #417690;
             }
         .form-signin button:hover{
-              background-color: #777;
+              background-color: #0F3357;
             }
     </style>
     <script src="/static/lib/jquery/jquery-3.3.1.min.js" ></script>
@@ -37,13 +36,14 @@
         <input type="text" name="username" id="username" class="form-control" placeholder="用户名" required autofocus>
   			<input type="password" name="pd" id="pd" class="form-control" placeholder="密码" required>
         <input type="text" name="email" class="form-control" placeholder="邮箱" required>
-        <div class="checkbox">
-          <h5 id="message"></h5>
-        </div>
+        <br/>
   			<button class="btn btn-lg btn-primary btn-block" type="submit" id="submit">提交注册</button>
   			<br/>
   			<a href="{% url 'app_user_login' %}">已有账号？点击登录</a>
-        {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+        <div>
+          <h5 id="message"></h5>
+          {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+        </div>
   		</form>
       <script type="text/javascript">
         $(document).ready(function(){

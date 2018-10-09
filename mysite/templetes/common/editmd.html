@@ -11,25 +11,122 @@
 
 {% block page %}
     <div id="editmd">
-        <textarea style="display:none;margin: 0 auto;">## Hello Editor.md !</textarea>
+        <textarea style="display:none;"># Editor.md</textarea>
     </div>
     <script type="text/javascript">
 $(document).ready(function(){
 
-        //
         $(function(){
                 $("#navbar").removeClass("navbar-fixed-top");
                 $("body").css("padding-top",0);
         });
 
-        //
         $(function() {
             var editor = editormd({
-                id: "editmd",
-                path: "/static/plugins/editor.md/lib/",
-                width: "90% vw",
-                height: "90% vh",
-                codeFold : true,
+
+                //基础设置
+                id:                 "editmd",//编辑器ID
+                path:               "/static/plugins/editor.md/lib/",//后端路径
+                width:              "90vw",//宽度
+                height:             "85vh",//高度
+                toolbarAutoFixed:   false,//编辑器工具栏fixed顶部
+                htmlDecode :        "style,script,iframe|on*",//解析html代码，可在编辑器里预览效果，过滤特定标签
+                //markdown :        mdfile,//预加载文档mdfile，只在通过文件打开编辑器时使用
+                //tocContainer:     "#custom-toc-container", //自定义ToC目录容器
+
+                //编辑器设置
+                codeFold :          true,//代码折叠
+                searchReplace :     true,//搜索替换功能
+                readOnly :          false,//只读
+                styleActiveLine :   true,//动态显示焦点行
+                watch  :            true,//预览
+                lineNumbers :       true,//行数
+                theme:              "default",//容器主题
+                previewTheme:       "default",//预览区主题
+                editorTheme:        "default",//代码区主题
+
+                //扩展md语法设置
+                atLink    :         true, //@link
+                emailLink :         true, //@email
+                taskList :          true,//任务列表
+                toc :               true,//列表式目录
+                tocm :              true,//按钮式目录
+                tex :               true,//科学公式
+                flowChart :         true,//流程图
+                sequenceDiagram :   true,//序列图
+                emoji :             true,//表情
+                pageBreak :         false,//分页，主要用于打印
+
+                //输出html
+                //<textarea class="editormd-html-textarea" name="editmd-html-code">
+                saveHTMLToTextarea: true,
+
+                //图片上传
+                imageUpload :       true,//图片上传
+                imageFormats :      ["jpg", "jpeg", "gif", "png", "bmp", "webp"],//图片格式
+                imageUploadURL :    "examples/php/upload.php",//图片上传后端处理程序
+
+                //自定义工具栏
+                toolbarIcons : function() {
+                    return ["undo","redo","|","bold","del","italic","quote","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","hr","|","link","reference-link","image","code","preformatted-text","code-block","table","datetime","emoji","html-entities","pagebreak","|","goto-line","watch","preview","fullscreen","clear","search","|","help","info","|","newpage","loadmdfile","savepage","outputmdfile","outputhtmlfile"];
+                },
+                toolbarIconsClass : {//指定一个FontAawsome的图标类
+                    newpage:"fa-file-o",
+                    loadmdfile:"fa-folder-open",
+                    savepage:"fa-floppy-o",
+                    outputmdfile:"fa-files-o",
+                    outputhtmlfile:"fa-files-o",
+                },
+                lang : {// 提示文本
+                    toolbar: {
+                        newpage:"新建页面",
+                        loadmdfile:"导入文件",
+                        savepage:"保存页面",
+                        outputmdfile:"导出md文件",
+                        outputhtmlfile:"导出html文件",
+                    }
+                },
+                toolbarHandlers : {//工具按钮事件
+                    newpage: function(){
+
+                    },
+                    loadmdfile: function(){
+
+                    },
+                    savepage: function(){
+
+                    },
+                    outputmdfile: function(){
+
+                    },
+                    outputhtmlfile: function(){
+
+                    },
+                }
+
+                //事件处理
+                /*onload : function() {
+                }
+                onresize : function() {
+                }
+                onchange : function() {
+                }
+                onfullscreen : function() {
+                }
+                onfullscreenExit : function() {
+                }
+                onscroll : function(event) {
+                }
+                onpreviewscroll : function(event) {
+                }
+                onpreviewing : function() {
+                }
+                onpreviewed : function() {
+                }
+                onwatch : function() {
+                }
+                onunwatch : function() {
+                }*/
             });
         });
 });

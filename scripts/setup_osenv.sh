@@ -6,6 +6,7 @@ sudo yum makecache &&
 sudo yum -y install gcc &&
 sudo yum -y install net-tools &&
 sudo yum -y install tree &&
+sudo yum -y install pandoc &&
 #install pip
 sudo yum -y install python-pip &&
 pip install --upgrade pip &&

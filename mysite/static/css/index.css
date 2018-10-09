@@ -8,13 +8,37 @@ body {
     margin: 0;
     padding-top: 51px;
     font-size: 1.2em;
-    background: #f6f6f6;
+    background: #fff;
     color: #333;
+    word-break:break-all;
+    word-wrap: break-word;
 }
 
 /*navbar*/
-#navbar a:hover,#navbar button:hover{
-	background-color: #eee;
+#navbar{
+    background-color: #417690;
+}
+#navbar a{
+    color: #fff;
+}
+.dropdown a,.dropdown ul,.dropdown li{
+    background-color: #417690;
+}
+.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
+    background-color: #0F3357;
+}
+.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
+    background-color: #0F3357;
+}
+.dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {
+    background-color: #0F3357;
+}
+#navbar a:hover,#navbar button:hover,#navbar .btn-search:hover{
+    background-color: #0F3357;
+    color: #fff;
+}
+.navbar-default .navbar-toggle .icon-bar {
+    background-color: #fff;
 }
 
 /*left*/
@@ -23,19 +47,29 @@ body {
     top: 51px;/*bootstrap*/
     bottom: 0;
     left: 0;
+    margin: 0;
     z-index: 1000;
     display: block;
-    padding: 1rem;
+    padding: 1px;
     overflow-y: hidden;
-    background-color: #eee;
+    background-color: #F1F1F1;
+    border: 1px solid #F1F1F1;
 }
-#left:hover{overflow-y: auto;}
-#left a {text-decoration:none;display: block;padding: 0.25rem; font-size: 1.2rem;}
-#left a:hover {background-color:#eee;}
+.panel {
+    background-color: #F1F1F1;
+    border-radius: 0;
+}
+.img-responsive{
+    border-radius: 25px;
+}
+#left{font-size: 1.3rem;}
+#left:hover{overflow-y: auto;border:1px solid #ff5e52; }
+#left a {text-decoration:none;display: block;padding: 0.25rem; }
+#left a:hover {background-color:#eaeaea;color: #ff5e52}
 
 /*toolbar*/
 #toolbar{
-    /*位置与大小*/position:fixed;right:0;bottom:40px;
+    /*位置与大小*/position:fixed;right:0;bottom:10px;
     /*层叠顺序*/z-index:2001;
     /*效果*/font-size:0.75rem;
 }
@@ -46,13 +80,13 @@ body {
     height:40px;
     margin-top:5px;
     border-radius:3px 0 0 3px;
-    background:#999;
+    background:rgba(220,229,239,0.9);
     overflow:hidden;
     text-decoration:none;
 }
 #toolbar .glyphicon{
     display:block;
-    color: #eee;
+    color: #444;
     margin-top: 10px;
     margin-left: 10px;
     width:40px;
@@ -75,24 +109,25 @@ body {
     text-align:center;
 }
 #toolbar a:hover{
-    background:#777;
+    background:#aaa;
 }
 #toolbar a:hover .glyphicon{
     margin-top:-40px;
 }
 #toolbar .qrcode{
     position:fixed;
-    background-color: #fff;
+    background-color: rgba(255,255,255,0.5);
     text-align:center;
     right:51px;
     bottom:40px;
     width: 150px;
-    height: 175px;
+    height: 150px;
     display: none;
 }
 #toolbar .qrcodeimg{
     width: 150px;
     height: 150px;
+    opacity: 0.9;
     background-image: url(/static/img/微信个人二维码.jpg);
     background-position: center center;
     background-repeat: no-repeat;
@@ -102,9 +137,26 @@ body {
 /*main*/
     /*main title-content-right*/
         /*main title*/
-        #content-title{
-            padding-left: 15px;
-        }
         /*main content*/
+        #content{
+            border: 1px solid #fff;
+            margin: 0;
+        }
+        #content:hover{
+            border: 1px solid #169fe6;
+        }
         /*main right*/
+        #right{
+            border: 1px solid #fff;
+            margin: 0;
+        }
+        #right:hover{
+            border: 1px solid #169fe6;
+        }
     /*main footer*/
+    #footer{
+        border: 1px solid #fff;
+    }
+    #footer:hover{
+        border: 1px solid #169fe6;
+    }

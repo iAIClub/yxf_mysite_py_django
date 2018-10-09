@@ -5,4 +5,5 @@ from django.apps import AppConfig
 
 
 class AppTutorialConfig(AppConfig):
-    name = '内容管理应用'
+    name = get_current_app_name(__file__)
+    verbose_name = '文档内容系统'

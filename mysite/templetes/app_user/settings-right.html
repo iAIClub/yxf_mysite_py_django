@@ -1,0 +1,72 @@
+<div class="main col-xs-offset-10 col-sm-offset-10 col-md-offset-10 col-xs-2 col-sm-2 col-md-2" id="right">
+  <form style="text-align:center;">
+    <input type="button" value="开始计时！" onclick=""/>
+    <p>
+      <span>时钟</span>
+      <span>分钟</span>
+      <span>秒钟</span>
+    </p>
+    <p>
+      <span id="hour">0</span>
+      <span id="minute">0</span>
+      <span id="secend">0</span>
+    </p>
+    <input type="button" value="停止计时！" onclick="stopCount()"/>
+  </form>
+  <div id="adDiv">然后编写jQuery代码来定时弹出广告和隐藏广告：</div>
+  <script>
+    var time;
+    $(function() {
+        // 设置定时让其5秒钟之后去执行一个显示广告的方法
+        time = setInterval("showAd()", 5000);
+    });
+
+    function showAd() {
+        // 获得代表广告DIV的元素
+        // $("#adDiv").show(2000);
+        // $("#adDiv").slideDown(2000);
+        $("#adDiv").fadeIn(3000);
+        clearInterval(time);
+        // 再设置一个定时，5秒钟之后隐藏
+        time = setInterval("hideAd()", 5000);
+    }
+
+    function hideAd() {
+        // $("#adDiv").hide(2000);
+        // $("#adDiv").slideUp(2000);
+        $("#adDiv").fadeOut(3000);
+        clearInterval(time);
+    }
+</script>
+
+
+<script type="text/javascript">
+var c=parseInt($("#secend").html());
+var m=parseInt($("#minute").html());
+var h=parseInt($("#hour").html());
+function timedCount(){//// 秒针
+    c++;
+    console.log(c);
+    c<10?c="0"+c:c;
+    if(c===60){
+      c=0;}// 写回到页面中
+    $("#secend").html(c);  //// 分针、时针
+    if(c%60===0){
+      m++;
+      m<10?m="0"+m:m;
+      if(m===60){
+        m=0;
+        h++;
+        h<10?h="0"+h:h;
+        if(h===24){
+          h=0;}}}// 写回到页面中
+    $("#minute").html(m);
+    $("#hour").html(h);
+    }
+var start=setInterval("timedCount()",1000);  //////////定义停止计时函数
+function stopCount(){
+    clearTimeout(start);}
+</script>
+
+
+</div>

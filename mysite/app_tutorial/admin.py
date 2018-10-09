@@ -18,5 +18,12 @@ class TutorialAdmin(admin.ModelAdmin):
     search_fields = ('title', 'slug', 'content',)
     list_filter = ('column', 'author',)
 
+    #对父类方法的重写，在管理界面点击保存时的动作
     def save_model(self, request, obj, form, change):
-        obj.save()
+        #your code
+        super(TutorialAdmin, self).save_model(request, obj, form, change)
+
+    #对父类方法的重写，在管理界面点击删除时的动作
+    def delete_model(request, obj):
+        #your code
+        super(TutorialAdmin, self).delete_model(request, obj)
