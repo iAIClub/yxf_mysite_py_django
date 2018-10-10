@@ -13,11 +13,11 @@ from mysite_conf.settings_cfg import DOMAIN
 #Create your models here.
 #上传文件之前动态生成路径
 def get_tutorialFilePath(instance, filename):
-    return 'app_tutorial_doc/'+str(instance.column)+'/'+str(instance.slug)+'/'+str(filename)
+    return 'app_tutorial_doc/'+str(instance.column.slug)+'/'+str(instance.slug)+'/'+str(filename)
 
 # 栏目表
 class Column(models.Model):
-    slug = models.CharField('栏目域', max_length=256, db_index=True,default='')#自然主键
+    slug = models.CharField('栏目域', max_length=256, db_index=True)#自然主键
     name = models.CharField('栏目名称', max_length=256)
     info = models.TextField('栏目简介', default='')
 
@@ -33,7 +33,7 @@ class Tutorial(models.Model):
     column = models.ForeignKey(Column,null=True,blank=True,verbose_name='归属栏目')
     author = models.ForeignKey('auth.User',blank=True,null=True,editable=False,verbose_name='作者')
 
-    slug = models.CharField('文档域',max_length=256, db_index=True,default='')#自然主键
+    slug = models.CharField('文档域',max_length=256, db_index=True)#自然主键
     title = models.CharField('标题',max_length=256)
     keywords = models.CharField('关键词',max_length=256, null=True,blank=True, default='',help_text='不写默认为标题')
     description = models.TextField('描述',null=True,blank=True, help_text='不写默认为内容前160字')
@@ -78,4 +78,4 @@ class Tutorial(models.Model):
 @receiver(pre_delete, sender=Tutorial)
 def file_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.
-    instance.file.delete(False)
+    instance.content.delete(False)

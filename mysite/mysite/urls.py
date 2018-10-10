@@ -38,6 +38,8 @@ from app_wechat import views as app_wechat_views
 #         return app_tutorial_views.index(request, **kwargs)
 
 user_urlpatterns = [
+    url(r'^download/(?P<suburl>.+)', app_user_views.download,name='app_user_download_url'),
+    url(r'^download/$', app_user_views.download,{'suburl':None},name='app_user_download'),
     url(r'^login/$', app_user_views.login,name='app_user_login'),
     url(r'^register/$', app_user_views.register,name='app_user_register'),
     url(r'^profile/$', app_user_views.profile,name='app_user_profile'),
@@ -47,16 +49,15 @@ user_urlpatterns = [
 
 tutorial_urlpatterns = [
     url(r'^editmd/$', app_tutorial_views.editmd,name='app_tutorial_editmd'),
-    #url(r'^doc/editmd/$', app_tutorial_views.doceditmd,name='app_tutorial_doceditmd'),
     url(r'^doc/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.doc,name='app_tutorial_doc'),
     url(r'^doc/(?P<column_slug>[^/]+)$', app_tutorial_views.column,name='app_tutorial_column'),
-    url(r'^$', app_tutorial_views.index,name='app_tutorial_index'),
+    url(r'^$', app_tutorial_views.tutorial,name='app_tutorial_index'),
 ]
 
 blog_urlpatterns = [
     url(r'^editmd/$', app_blog_views.editmd,name='app_blog_editmd'),
-    url(r'^post/(?P<post>[^/]+)$', app_blog_views.post,name='app_blog_post'),
-    url(r'^list/$', app_blog_views.list,name='app_blog_list'),
+    url(r'^post/(?P<user>[^/]+)/(?P<post>[^/]+)$', app_blog_views.post,name='app_blog_post'),
+    url(r'^post/(?P<user>[^/]+)$', app_blog_views.user,name='app_blog_user'),
     url(r'^$', app_blog_views.index,name='app_blog_index'),
 ]
 

@@ -10,21 +10,34 @@ from .models import Column,Tutorial
 
 # Create your views here.
 def index(request):
+    #这个是整个网站的主页，不可更改
+    columns = Column.objects.all()
     return HttpResponse(render(request, 'common/index.html', {\
         'title':'菲菲的技术网站',\
+        'list':columns,\
+        }))
+
+def tutorial(request):
+    columns = Column.objects.all()
+    docs = Tutorial.objects.all().order_by("-publish_time")
+    return HttpResponse(render(request, 'app_tutorial/index.html', {\
+        'title':'菲菲的技术网站 - 文档',\
+        'left_list':columns,\
+        'content_list':docs,\
+        'view':'tutorial',\
         }))
 
 def column(request,column_slug):
-    list_all = Column.objects.all()
-    content = Tutorial.objects.filter(column__slug=column_slug).order_by("-publish_time")[0]
-    content_title = content.title
-    #content_file = 
+    column = Column.objects.get(slug=column_slug)
+    docs = Tutorial.objects.filter(column__slug=column_slug).order_by("-publish_time")
+    content_doc = docs[0]
+    content = content_doc.content
     return HttpResponse(render(request, 'app_tutorial/index.html',{\
-        'title':content_title,\
-        'content_title':content_title,\
-        'left':list_all,\
+        'title':column.name,\
+        'column':column,\
+        'left_list':docs,\
         'content':content,\
-        'right':'',\
+        'view':'column',\
         }))
 
 def doc(request, column_slug, doc_slug):

@@ -11,7 +11,7 @@ def index(request):
 def post(request,suburl):
 	return HttpResponse(render(request, 'app_blog/index.html'))
 
-def list(request):
+def user(request):
 	orderby = request.GET.get('orderby',None)
 	p = request.GET.get('p',None)
 	return HttpResponse(render(request, 'app_blog/index.html'))

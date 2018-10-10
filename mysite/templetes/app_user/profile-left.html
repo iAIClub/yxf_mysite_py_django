@@ -4,11 +4,11 @@
             <span class="glyphicon glyphicon-user newicon"></span>
             用户区
         </div>
-        <div class="panel-body">
-            <a href="{% url 'app_user_profile'  %}">用户文档列表</a>
-            <a href="{% url 'app_user_profile' %}?{{ config_res }}">用户配置信息</a>
-            <a href="{% url 'app_user_profile' %}?{{ pan_res }}">用户网盘内容</a>
-            <a href="{% url 'app_user_profile' %}?{{ cancel_res }}">用户注销</a>
+        <div class="list-group">
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ list_res }}">用户文档列表</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ pan_res }}">用户网盘内容</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ config_res }}">用户配置信息</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ cancel_res }}">用户注销</a>
         </div>
     </div>
 </div><!-- end col left -->

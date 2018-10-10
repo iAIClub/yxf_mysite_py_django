@@ -1,11 +1,21 @@
 //jquery：在DOM完全就绪时自动执行(这并不意味着这些元素关联的文件都已经下载完毕)
 $(document).ready(function(){
 
-	//活动栏目
+	//导航栏活动项目
 	$("#navbar-collapse:first").find("a").each(
 		function(){
             if (this.href == document.location.href || document.location.href.search(this.href) >= 0){
                 $(this).parent().addClass('active');
+            }
+		}
+	);
+
+	//侧边栏活动项目
+	$("#left").find("a").each(
+		function(){
+			console.log(document.location.href);
+            if (this.href == document.location.href || document.location.href.search(this.href) >= 0){
+                $(this).addClass('active');
             }
 		}
 	);

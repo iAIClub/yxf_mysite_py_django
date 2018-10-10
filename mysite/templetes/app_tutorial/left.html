@@ -1,8 +1,30 @@
 <div class="col-xs-4 col-sm-3 col-md-2 hidden-xs" id="left">
-    <a href="/aboutus/index.html" rel="nofollow">关于我们</a>
-    <h2>所有栏目</h2>
-    {% for item in left %}
-        <a href="{{ item.slug }}">{{ item.name }}</a>
-    {% endfor %}
-</div><!-- end col left -->
-
+    <div class="panel">
+    {% if view == 'tutorial' %}
+    <div class="panel-heading">
+        <span class="glyphicon glyphicon-book"></span>
+        文档栏目
+    </div>
+    <div class="list-group">
+        {% for item in left_list %}
+        <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+        {% endfor %}
+    </div>
+    {% elif view == 'column' %}
+    <div class="panel-heading">
+        <a href="{% url 'app_tutorial_index' %}">
+        <span class="glyphicon glyphicon-chevron-right"></span>
+        {{ title }}
+        </a>
+    </div>
+    <div class="list-group">
+        {% for item in left_list %}
+        <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial_index' %}doc/{{ column.slug }}/{{ item.slug }}" title="{{ item.description }}">{{ item.title }}</a>
+        {% endfor %}
+    </div>
+    {% elif view == 'doc' %}
+    {% elif view == 'editmd' %}
+    {% else %}
+    {% endif %}
+    </div>
+</div>

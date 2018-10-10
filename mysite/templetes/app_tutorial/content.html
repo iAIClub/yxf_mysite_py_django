@@ -1,8 +1,22 @@
 <div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-10 col-sm-10 col-md-10" id="content">
+<h3 class="main" id="content-title">所有文档 - 按照更新时间排序</h3><hr>
   <div class="row placeholders">
-    <p>{{ content.slug }}</p>
-    <p>{{ content.keywords }}</p>
-    <p>{{ content.description }}</p>
-    <iframe src="">{{ content.content }}</iframe>
+    {% if view == 'tutorial' %}
+    <div class="list-group">
+        {% for item in content_list %}
+          <a href="{% url 'app_tutorial_index' %}" class="list-group-item">
+            <h4 class="list-group-item-heading">{{ item.title }}</h4>
+            <p class="list-group-item-text">{{ item.description }}</p>
+          </a>
+        {% endfor %}
+    </div>
+    {% elif view == 'column' %}
+    <div>
+        {{ content }}
+    </div>
+    {% elif view == 'doc' %}
+    {% elif view == 'editmd' %}
+    {% else %}
+    {% endif %}
   </div>
 </div>

@@ -1,3 +1,30 @@
 <div class="main col-xs-offset-10 col-sm-offset-10 col-md-offset-10 col-xs-2 col-sm-2 col-md-2" id="right">
-    <a>最近更新</a>
+    <br/>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-book"></span>
+            文档栏目
+        </div>
+        <div class="list-group">
+            {% for item in list %}
+            <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-fire"></span>
+            最近内容
+        </div>
+        <div class="list-group">
+            {% for item in list %}
+            <a class="list-group-item glyphicon glyphicon-hand-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+            {% endfor %}
+        </div>
+    </div>
+    <div class="panel">
+        <div>
+            <img class="img-responsive" title="扫码加微信" src="/static/img/微信个人二维码.jpg">
+        </div>
+    </div>
 </div>

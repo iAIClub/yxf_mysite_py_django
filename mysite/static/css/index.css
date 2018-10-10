@@ -62,10 +62,10 @@ body {
 .img-responsive{
     border-radius: 25px;
 }
-#left{font-size: 1.3rem;}
 #left:hover{overflow-y: auto;border:1px solid #ff5e52; }
-#left a {text-decoration:none;display: block;padding: 0.25rem; }
-#left a:hover {background-color:#eaeaea;color: #ff5e52}
+/*#left a{background-color:#F1F1F1;color:#428bca;}
+#left a:hover {background-color:#eaeaea;color: #ff5e52;}
+#left a:active{background-color: #428bca;color:#fff;}*/
 
 /*toolbar*/
 #toolbar{
