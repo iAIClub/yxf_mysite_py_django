@@ -14,7 +14,11 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 from .models import PanFile
 
-# Create your views here.
+#对应站内搜索模板，主站站内搜索
+def search(request):
+    return HttpResponse(render(request, 'common/index.html'))
+
+#对应登录模板，登录逻辑
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username',None)
@@ -32,6 +36,7 @@ def login(request):
     else:
         return HttpResponse(render(request, 'app_user/login.html'))
 
+#对应注册模板，注册逻辑
 def register(request):
     if request.method == 'POST':
         username = request.POST.get('username',None)
@@ -47,6 +52,7 @@ def register(request):
     else:
         return HttpResponse(render(request, 'app_user/register.html'))
 
+#无需登录的普通ajax逻辑
 def ajax(request):
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
@@ -62,10 +68,12 @@ def ajax(request):
     else:
         return JsonResponse({"status":0})
 
+#用户区，通用一组模板。左侧列出用户的所有操作项，中间输出操作内容（所属博客文档，所属网盘文件，用户信息更改和注销），右侧按需显示相关信息
 @login_required(login_url='/user/login')
 def profile(request):
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
+        #表单提交处理：用户信息更改
         if purpose == 'change_config':
             username = request.POST.get('username',None)
             password_old = request.POST.get('pd_old',None)
@@ -84,6 +92,7 @@ def profile(request):
             else:
                 messages.error(request,'密码验证失败！')
             return HttpResponseRedirect(request.path+'?config=True')
+        #表单提交处理：上传文件
         elif purpose == 'upload_file':
             username = request.user
             userpath = request.POST.get('filepath',None)
@@ -107,6 +116,7 @@ def profile(request):
             except:
                 messages.error(request,'上传失败！')
             return HttpResponseRedirect(request.path+'?pan=True')
+        #表单提交处理：删除文件
         elif purpose == 'delete_file':
             username = request.user
             userpath = request.POST.get('userpath',None)
@@ -118,6 +128,7 @@ def profile(request):
                 return JsonResponse({"status":"ok"})
             except:
                 return JsonResponse({"status":0})
+        #表单提交处理：注销用户
         elif purpose == 'cancel_user':
             username = request.POST.get('username',None)
             password = request.POST.get('pd',None)
@@ -141,6 +152,7 @@ def profile(request):
                 return HttpResponseRedirect(request.path+'?cancel=True')
         else:
             return JsonResponse({"status":0})
+    #页面请求处理：根据GET参数解析模板，返回对应的页面内容
     elif request.method == 'GET':
         arg_list = request.GET.get('list',None)
         arg_config = request.GET.get('config',None)
@@ -173,6 +185,7 @@ def profile(request):
     else:
         return JsonResponse({"status":0})
 
+#对应文件下载链接，无模板，直接返回文件。链接是翻译后的虚拟文件路径，并非实际路径
 @login_required(login_url='/user/login')
 def download(request, suburl):
     filename = suburl.split('/')[-1]
@@ -182,6 +195,7 @@ def download(request, suburl):
     response['Content-Disposition'] = 'attachment;filename=' + filename #强制浏览器下载而不是查看流
     return response
 
+#网站设置区，仅限管理员操作，使用另一套模板
 @login_required(login_url='/user/login')
 def settings(request):
     return HttpResponse(render(request, 'app_user/settings.html'))

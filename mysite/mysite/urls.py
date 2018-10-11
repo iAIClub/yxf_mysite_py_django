@@ -84,7 +84,8 @@ metaphysics_urlpatterns = [
 ]
 
 urlpatterns = [
-    url(r'^$', app_tutorial_views.index,name='index'),
+    url(r'^$', app_tutorial_views.index,name='index'),#首页交给tutorial应用处理
+    url(r'^search/$', app_user_views.search,name='search'),#站内搜索页交给user应用处理
     url(r'^admin/', admin.site.urls),#所有内容仅对超级管理员开放，不可对外
     url(r'^user/', include(user_urlpatterns)),#对外开放的用户管理体系
     url(r'^tutorial/', include(tutorial_urlpatterns)),

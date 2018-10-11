@@ -4,8 +4,10 @@ $(document).ready(function(){
 	//导航栏活动项目
 	$("#navbar-collapse:first").find("a").each(
 		function(){
-            if (this.href == document.location.href || document.location.href.search(this.href) >= 0){
+            if (this.href == document.location.href){
                 $(this).parent().addClass('active');
+            }else if(document.location.href.search(this.href) >= 0){
+            	$(this).parent().addClass('active');
             }
 		}
 	);
@@ -14,8 +16,10 @@ $(document).ready(function(){
 	$("#left").find("a").each(
 		function(){
 			console.log(document.location.href);
-            if (this.href == document.location.href || document.location.href.search(this.href) >= 0){
+            if (this.href == document.location.href){
                 $(this).addClass('active');
+            }else if(document.location.href.search(this.href) >= 0){
+            	if($("#left .active").length>0){}else{$(this).addClass('active');}
             }
 		}
 	);

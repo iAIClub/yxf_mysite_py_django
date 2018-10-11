@@ -1,19 +1,9 @@
-{% extends "common/index.html" %}
-
-{% block extracss %}
-<link rel="stylesheet" type="text/css" href="/static/plugins/editor.md/lib/codemirror/codemirror.min.css" />
-<link rel="stylesheet" type="text/css" href="/static/plugins/editor.md/css/editormd.css" />
-{% endblock %}
-
-{% block extrajs %}
-<script type="text/javascript" src="/static/plugins/editor.md/editormd.min.js"></script>
-{% endblock %}
-
-{% block page %}
-    <div id="editmd">
-        <textarea style="display:none;"># Editor.md</textarea>
-    </div>
-    <script type="text/javascript">
+<div id="editmd">
+<!-- <textarea class="editormd-markdown-textarea" name="editmd-markdown-doc" style="display: none;">.md code</textarea> --><!-- 可接收后台数据 -->
+<!-- <textarea class="editormd-html-textarea" name="editmd-html-code" style="display: none;">.html code</textarea> --><!-- 编辑器自动生成 -->
+<textarea style="display:none;"># Editor.md</textarea>
+</div>
+<script type="text/javascript">
 $(document).ready(function(){
 
         $(function(){
@@ -57,44 +47,56 @@ $(document).ready(function(){
                 emoji :             true,//表情
                 pageBreak :         false,//分页，主要用于打印
 
-                //输出html
+                //输出html代码区
                 //<textarea class="editormd-html-textarea" name="editmd-html-code">
                 saveHTMLToTextarea: true,
 
                 //图片上传
                 imageUpload :       true,//图片上传
                 imageFormats :      ["jpg", "jpeg", "gif", "png", "bmp", "webp"],//图片格式
-                imageUploadURL :    "examples/php/upload.php",//图片上传后端处理程序
+                imageUploadURL :    "{% url 'app_tutorial_editmd' %}",//图片上传后端处理程序
 
                 //自定义工具栏
                 toolbarIcons : function() {
-                    return ["undo","redo","|","bold","del","italic","quote","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","hr","|","link","reference-link","image","code","preformatted-text","code-block","table","datetime","emoji","html-entities","pagebreak","|","goto-line","watch","preview","fullscreen","clear","search","|","help","info","|","newpage","loadmdfile","savepage","outputmdfile","outputhtmlfile"];
+                    return ["undo","redo","|","bold","del","italic","quote","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","hr","|","link","reference-link","image","code","preformatted-text","code-block","table","datetime","emoji","html-entities","pagebreak","|","goto-line","watch","preview","fullscreen","clear","search","|","help","info","|","loadmdfile","savepage","outputmdfile","outputhtmlfile","|","returnto"];
                 },
                 toolbarIconsClass : {//指定一个FontAawsome的图标类
-                    newpage:"fa-file-o",
                     loadmdfile:"fa-folder-open",
                     savepage:"fa-floppy-o",
                     outputmdfile:"fa-files-o",
                     outputhtmlfile:"fa-files-o",
+                    returnto:"fa-times",
                 },
                 lang : {// 提示文本
                     toolbar: {
-                        newpage:"新建页面",
                         loadmdfile:"导入文件",
                         savepage:"保存页面",
                         outputmdfile:"导出md文件",
                         outputhtmlfile:"导出html文件",
-                    }
+                        returnto:"关闭编辑器并返回",
+                    },
                 },
                 toolbarHandlers : {//工具按钮事件
-                    newpage: function(){
-
-                    },
                     loadmdfile: function(){
 
                     },
                     savepage: function(){
-
+                          $.ajax({
+                            url: "{% url 'app_tutorial_editmd' %}",
+                            type:"POST",
+                            timeouut:10000,
+                            data:{
+                              "purpose":"save_file",
+                              "username":"{{ request.user.username }}",
+                              "userpath":$(this).prev().prev().prev().text(),
+                              "filename":$(this).prev().prev().text(),
+                              "csrfmiddlewaretoken":"{{ csrf_token }}"
+                            },
+                            success:function (data) {
+                              var parsedJson = eval(data);
+                              if(parsedJson.status=="ok"){window.location.reload();}
+                            }
+                          });
                     },
                     outputmdfile: function(){
 
@@ -102,7 +104,10 @@ $(document).ready(function(){
                     outputhtmlfile: function(){
 
                     },
-                }
+                    returnto: function(){
+
+                    },
+                },
 
                 //事件处理
                 /*onload : function() {
@@ -130,5 +135,4 @@ $(document).ready(function(){
             });
         });
 });
-    </script>
-{% endblock %}
+</script>

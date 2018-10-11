@@ -1,7 +1,7 @@
 <div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-10 col-sm-10 col-md-10" id="content">
 <style type="text/css">#content .row { padding-left:15px;padding-right: 15px;}</style>
 {% if arg_list == 'True' %}
-  <h3>{{ user.username }}的文档列表【建设中】</h3>
+  <h3>{{ user.username }} - 文章列表【建设中】</h3>
   <hr/>
   <div class="row placeholders">
     <form style="display: inline;" role="form" method="post" enctype="multipart/form-data" action="{% url 'app_user_profile' %}">
@@ -52,74 +52,11 @@
             $("#file-list").empty();
             $("#submit").removeAttr("disabled");
           });
-          //file upload
-          // $("#file-upload").change(function(){
-          //   $("#submit").removeAttr("disabled");
-          //   var fp = $("#file-upload");
-          //   var lg = fp[0].files.length; // get length
-          //   var items = fp[0].files;
-          //   var fragment = "";
-          //   var size = 0;
-          //   if (lg > 0) {
-          //       for (var i = 0; i < lg; i++) {
-          //         var fileName = items[i].name; // get file name
-          //         var fileSize = items[i].size; // get file size
-          //         var fileType = items[i].type; // get file type
-          //         // append li to UL tag to display File info
-          //         fragment += "<li title=\"(" + fileSize + " bytes) - Type: " + fileType + "\" >" + fileName +"</li>";
-          //         size += fileSize;
-          //         if (size > 64000000){
-          //           $("#page-message").append("文件大小超限！最高一次性上传64M！");
-          //           $("#submit").attr("disabled", true);
-          //         }
-          //       }
-          //       $("#file-list").append(fragment);
-          //     }
-          // });
-          //file download
-          /*$(".download").click(function(){
-              $.ajax({
-                url: "{% url 'app_user_profile' %}",
-                type:"POST",
-                timeouut:10000,
-                data:{
-                  "purpose":"download_file",
-                  "username":"{{ request.user.username }}",
-                  "userpath":$(this).next().text(),
-                  "filename":$(this).next().next().text(),
-                  "csrfmiddlewaretoken":"{{ csrf_token }}"
-                },
-                success:function (data) {
-                  if (data.status){
-                    window.location.href = data.filePath;//jquery ajax不支持读取文件流
-                  }
-                }
-              });
-          });*/
-          //file delete
-          // $(".delete").click(function(){
-          //     $.ajax({
-          //       url: "{% url 'app_user_profile' %}",
-          //       type:"POST",
-          //       timeouut:10000,
-          //       data:{
-          //         "purpose":"delete_file",
-          //         "username":"{{ request.user.username }}",
-          //         "userpath":$(this).prev().prev().prev().text(),
-          //         "filename":$(this).prev().prev().text(),
-          //         "csrfmiddlewaretoken":"{{ csrf_token }}"
-          //       },
-          //       success:function (data) {
-          //         var parsedJson = eval(data);
-          //         if(parsedJson.status=="ok"){window.location.reload();}
-          //       }
-          //     });
-          // });
       });
     </script>
   </div>
 {% elif arg_pan == 'True' %}
-  <h3>{{ user.username }}的网盘文件</h3>
+  <h3>{{ user.username }} - 网盘文件</h3>
   <hr/>
   <div class="row placeholders">
     <form style="display: inline;" role="form" method="post" enctype="multipart/form-data" action="{% url 'app_user_profile' %}">
@@ -130,7 +67,7 @@
       <p style="display: inline;">上传到：</p>
       <input style="max-width: 100px;" type="text" name="filepath" required autofocus>
       <input style="display: inline;max-width:75px; " type="file" multiple name="upload-file" id="file-upload" accept="text/*,image/*,audio/*,video/*,.flv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.json,.md,.rtf,.7z,.rar,.zip,.bz2,.xz,.tar,.iso,.img,.deb,.rpm,.shtml,.xhtml" required>
-      <button class="btn btn-primary btn-inline" type="submit" id="submit" disabled="true">上传</button>
+      <button class="btn btn-success btn-inline" type="submit" id="submit" disabled="true">上传</button>
     </form>
     <button class="btn btn-warning btn-inline" id="clean">清空</button>
     <ul id="file-list">
@@ -237,7 +174,7 @@
     </script>
   </div>
 {% elif arg_config == 'True' %}
-  <h3>{{ user.username }}的用户信息</h3><hr>
+  <h3>{{ user.username }} - 用户信息</h3><hr>
   <div class="row placeholders">
   <form role="form" method="post" action="{% url 'app_user_profile' %}">
     {% csrf_token %}
@@ -267,9 +204,9 @@
   </style>
   </div>
 {% elif arg_cancel == 'True' %}
-  <h3>用户注销：{{ user.username }}</h3><hr>
+  <h3>用户注销 - {{ user.username }}</h3><hr>
   <div class="row placeholders">
-  <h4 style="color:red">注意：此操作将在系统中永久删除此用户，请三思！</h4>
+  <h4 style="color:red">注意：此操作将在系统中永久删除此用户，请谨慎操作！</h4>
   <form role="form" method="post" action="{% url 'app_user_profile' %}">
     {% csrf_token %}
     <input type="text" name="purpose" value="cancel_user" style="display: none;">

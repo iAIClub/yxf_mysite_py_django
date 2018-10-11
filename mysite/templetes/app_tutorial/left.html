@@ -3,27 +3,27 @@
     {% if view == 'tutorial' %}
     <div class="panel-heading">
         <span class="glyphicon glyphicon-book"></span>
-        文档栏目
+        栏目
     </div>
     <div class="list-group">
         {% for item in left_list %}
-        <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+        <a class="list-group-item glyphicon glyphicon-chevron-right {% if active == item.slug %}{{ 'active' }}{% endif %}" href="{% url 'app_tutorial_index' %}?active={{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
         {% endfor %}
     </div>
-    {% elif view == 'column' %}
+    {% elif view == 'column' or view == 'doc' %}
     <div class="panel-heading">
-        <a href="{% url 'app_tutorial_index' %}">
+        <a href="{% url 'app_tutorial_index' %}" style="text-decoration: none;color: darkcyan;" title="返回上级">
         <span class="glyphicon glyphicon-chevron-right"></span>
         {{ title }}
         </a>
     </div>
     <div class="list-group">
         {% for item in left_list %}
-        <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial_index' %}doc/{{ column.slug }}/{{ item.slug }}" title="{{ item.description }}">{{ item.title }}</a>
+        {% if item.slug != 'index' %}
+        <a class="list-group-item" href="{% url 'app_tutorial_index' %}doc/{{ column.slug }}/{{ item.slug }}" title="{{ item.description }}">{{ item.title }}</a>
+        {% endif %}
         {% endfor %}
     </div>
-    {% elif view == 'doc' %}
-    {% elif view == 'editmd' %}
     {% else %}
     {% endif %}
     </div>

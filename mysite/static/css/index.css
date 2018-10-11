@@ -13,6 +13,14 @@ body {
     word-break:break-all;
     word-wrap: break-word;
 }
+iframe{
+    margin: 0;
+    padding: 0;
+    padding-right: 1px;
+    width: 100%;
+    border: 0;
+    overflow-y: hidden;
+}
 
 /*navbar*/
 #navbar{
@@ -33,7 +41,7 @@ body {
 .dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {
     background-color: #0F3357;
 }
-#navbar a:hover,#navbar button:hover,#navbar .btn-search:hover{
+#navbar a:hover,#navbar button:hover{
     background-color: #0F3357;
     color: #fff;
 }
@@ -55,6 +63,9 @@ body {
     background-color: #F1F1F1;
     border: 1px solid #F1F1F1;
 }
+#left .panel-heading{
+    color: darkgreen;
+}
 .panel {
     background-color: #F1F1F1;
     border-radius: 0;
@@ -63,13 +74,12 @@ body {
     border-radius: 25px;
 }
 #left:hover{overflow-y: auto;border:1px solid #ff5e52; }
-/*#left a{background-color:#F1F1F1;color:#428bca;}
-#left a:hover {background-color:#eaeaea;color: #ff5e52;}
-#left a:active{background-color: #428bca;color:#fff;}*/
+#left a{color: darkcyan;}
+#left .active, #left .active:focus, #left .active:hover{color: #fff;}
 
 /*toolbar*/
 #toolbar{
-    /*位置与大小*/position:fixed;right:0;bottom:10px;
+    /*位置与大小*/position:fixed;right:1px;bottom:10px;
     /*层叠顺序*/z-index:2001;
     /*效果*/font-size:0.75rem;
 }
@@ -86,7 +96,7 @@ body {
 }
 #toolbar .glyphicon{
     display:block;
-    color: #444;
+    color: darkcyan;
     margin-top: 10px;
     margin-left: 10px;
     width:40px;
@@ -150,8 +160,14 @@ body {
             border: 1px solid #fff;
             margin: 0;
         }
+        #right .panel-heading{
+            color: darkgreen;
+        }
         #right:hover{
             border: 1px solid #169fe6;
+        }
+        #right a{
+            color: darkcyan;
         }
     /*main footer*/
     #footer{

@@ -11,13 +11,13 @@ import sys
 sys.path.append("..")
 from mysite_conf.settings_cfg import DOMAIN
 
+# contrib.auth自动维护用户表
 
-# Create your models here.
 #上传之前动态生成路径 两个固定参数：instance调取当前对象，filename获取上传文件名
 def get_filePathAndName(instance, filename):
     return 'app_user_pan/'+str(instance.username)+'/'+str(instance.userpath)+'/'+str(filename)
 
-# 用户上传文件表
+# 用户上传文件表。文件域由三部分组成，映射到唯一url：[sysmediaroot]/username/userpath/filename
 class PanFile(models.Model):
     username = models.ForeignKey('auth.User',blank=True,null=True,editable=False,verbose_name='所属用户')
     userpath = models.CharField('用户自定义路径',max_length=256, default='')
