@@ -17,7 +17,7 @@
             栏目操作
         </div>
         <div class="list-group">
-            <a class="list-group-item glyphicon glyphicon-plus">请管理员到后台操作</a>
+            <a class="list-group-item glyphicon glyphicon-plus">请到后台管理</a>
         </div>
     </div>
     {% endif %}
@@ -29,8 +29,8 @@
             文档信息
         </div>
         <div class="list-group">
-            <a class="list-group-item glyphicon glyphicon-tag" title="关键词">&nbsp;</a>
-            <a class="list-group-item glyphicon glyphicon-tags" title="描述">&nbsp;{{ content_doc.description }}</a>
+            <a class="list-group-item glyphicon glyphicon-tag" title="关键词">&nbsp;{% for keyword in content_doc.keywords %}{{ keyword }}{% endfor %}</a>
+            <a class="list-group-item glyphicon glyphicon-tags right-description" title="描述">&nbsp;{{ content_doc.description }}</a>
         </div>
     </div>
     {% if request.user.is_superuser %}
@@ -51,7 +51,7 @@
     <div class="modal fade" id="myModal-new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-new" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="modelformnew">
+                <form id="modelformnew" method="POST">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title" id="myModalLabel-new">文档信息</h4>
@@ -90,7 +90,7 @@
     <div class="modal fade" id="myModal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-edit" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="modelformedit">
+                <form id="modelformedit" method="POST">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title" id="myModalLabel-edit">文档信息</h4>
@@ -129,7 +129,7 @@
     <div class="modal fade" id="myModal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-delete" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="modelformdelete">
+                <form id="modelformdelete" method="POST">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title" id="myModalLabel-delete">文档信息</h4>

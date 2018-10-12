@@ -29,10 +29,10 @@ def tutorial(request):
     active_column = Column.objects.get(slug=active)
     docs = Tutorial.objects.filter(column__slug=active).order_by("publish_time")#选定栏目内的所有文档
     for doc in docs:
-        doc.append('keywords_list':[])
+        tmp_keywords = []
         for keyword in doc.keywords.split(';'):
-            tmp_keywords.extend(keyword)
-            doc.keywords_list.extend(keyword)
+            tmp_keywords.append(keyword)
+        doc.keywords=tmp_keywords
     return HttpResponse(render(request, 'app_tutorial/index.html', {\
         'title':'菲菲的技术网站 - 文档',\
         'active':active,\
@@ -47,12 +47,17 @@ def tutorial(request):
 def column(request,column_slug):
     column = Column.objects.get(slug=column_slug)
     docs = Tutorial.objects.filter(column__slug=column_slug).order_by("publish_time")#用于在左侧显示文档列表
+    content_doc = []
     try:
         content_doc = Tutorial.objects.get(column__slug=column_slug, slug='index')#默认显示的index文档，没有则自动新建一个
     except:
         index = Tutorial.objects.create(column=column,author=request.user,slug='index',title='index_autocreated')
         index.save()
         content_doc = Tutorial.objects.get(column__slug=column_slug, slug='index')
+    tmp_keywords = []
+    for keyword in content_doc.keywords.split(';'):
+        tmp_keywords.append(keyword)
+    content_doc.keywords=tmp_keywords
     return HttpResponse(render(request, 'app_tutorial/index.html',{\
         'title':column.name,\
         'column':column,\
@@ -64,39 +69,40 @@ def column(request,column_slug):
 #栏目文档页，与文档首页通用一组模板，与栏目页内容相同。唯一的区别是中间不是栏目的默认index文档，url形式不同
 #/tutorial/doc/colname/docname
 def doc(request, column_slug, doc_slug):
-    purpose = request.GET.get('purpose',None)
-    if purpose is not None and request.user.is_authenticated:
-        try:
-            #GET表单提交处理：新建文档，对文件主体的操作转到编辑器页面进行
-            if purpose == 'new':
-                column = Column.objects.get(slug=column_slug)
-                new_slug = request.GET.get('slug',None)
-                new_title = request.GET.get('title',None)
-                new_keywords = request.GET.get('keywords',None)
-                new_description = request.GET.get('description',None)
-                new_doc = Tutorial.objects.create(column=column,author=request.user,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description)
-                new_doc.save()
-                return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?purpose='+purpose+'&column='+column.slug+'&slug='+new_slug+'&title='+new_title)
-            #GET表单提交处理：修改当前文档，对文件主体的操作转到编辑器页面进行
-            elif purpose == 'edit':
-                column = Column.objects.get(slug=column_slug)
-                new_title = request.GET.get('title',None)
-                new_keywords = request.GET.get('keywords',None)
-                new_description = request.GET.get('description',None)
-                doc = Tutorial.objects.filter(column__slug=column_slug,slug=doc_slug)[0]
-                doc.title=new_title #更新数据直接赋值即可
-                doc.keywords=new_keywords
-                doc.description=new_description
-                doc.save()
-                return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?purpose='+purpose+'&column='+column_slug+'&slug='+doc_slug+'&title='+new_title)
-            #GET表单提交处理：删除当前文档，成功后返回到栏目页
-            elif purpose == 'delete':
-                content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
-                content_doc.delete()
-                return HttpResponseRedirect(reverse('app_tutorial_index')+'doc/'+column_slug)
-        except:
-            messages.error(request,'操作失败！')
-            return HttpResponseRedirect(request.path)
+    if request.method == 'POST':
+        purpose = request.POST.get('purpose',None)
+        if purpose is not None and request.user.is_authenticated:
+            try:
+                #表单提交处理：新建文档，对文件主体的操作转到编辑器页面进行
+                if purpose == 'new':
+                    column = Column.objects.get(slug=column_slug)
+                    new_slug = request.POST.get('slug',None)
+                    new_title = request.POST.get('title',None)
+                    new_keywords = request.POST.get('keywords',None)
+                    new_description = request.POST.get('description',None)
+                    new_doc = Tutorial.objects.create(column=column,author=request.user,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description)
+                    new_doc.save()
+                    return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?purpose='+purpose+'&column='+column.slug+'&slug='+new_slug+'&title='+new_title)
+                #表单提交处理：修改当前文档，对文件主体的操作转到编辑器页面进行
+                elif purpose == 'edit':
+                    column = Column.objects.get(slug=column_slug)
+                    new_title = request.POST.get('title',None)
+                    new_keywords = request.POST.get('keywords',None)
+                    new_description = request.POST.get('description',None)
+                    doc = Tutorial.objects.filter(column__slug=column_slug,slug=doc_slug)[0]
+                    doc.title=new_title #更新数据直接赋值即可
+                    doc.keywords=new_keywords
+                    doc.description=new_description
+                    doc.save()
+                    return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?purpose='+purpose+'&column='+column_slug+'&slug='+doc_slug+'&title='+new_title)
+                #表单提交处理：删除当前文档，成功后返回到栏目页
+                elif purpose == 'delete':
+                    content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
+                    content_doc.delete()
+                    return HttpResponseRedirect(reverse('app_tutorial_index')+'doc/'+column_slug)
+            except:
+                messages.error(request,'操作失败！')
+        return HttpResponseRedirect(request.path)
     #GET直接请求网页
     else:
         column = Column.objects.get(slug=column_slug)

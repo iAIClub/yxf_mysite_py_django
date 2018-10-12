@@ -2,13 +2,22 @@
 {% if view == 'tutorial' %}
 <h3 class="main" id="content-title"><a href="{% url 'app_tutorial_index' %}doc/{{ active }}" title="进入栏目">{{ active_column.name }}</a> 栏目的所有文档</h3><hr>
 <div class="row placeholders">
+  <style type="text/css">
+      #content .content-description{
+      overflow: hidden;
+      -webkit-line-clamp: 3;
+      text-overflow: ellipsis;
+      -webkit-box-orient:vertical;
+      display:-webkit-box;
+    }
+  </style>
   <div class="list-group">
       {% for item in content_list %}
       {% if item.slug != 'index' %}
         <a href="{% url 'app_tutorial_index' %}doc/{{ active_column.slug }}/{{ item.slug }}" class="list-group-item">
-          <h4 style="display: inline;" class="list-group-item-heading">{{ item.title }}</h4><span class="list-group-item-text pull-right" style="display: inline;">{{ item.column.name }}</span>
-          <p class="list-group-item-text">{% for keyword in item.keywords.split(';') %}<span class="label label-default">{{ keyword }}</span>{% endfor %}</p>
-          <p class="list-group-item-text">{{ item.description }}</p>
+          <h4 style="display: inline;color:darkorange;" class="list-group-item-heading">{{ item.title }}</h4><span class="list-group-item-text pull-right label label-info">{{ item.column.name }}</span>
+          <p class="list-group-item-text pull-right">{% for keyword in item.keywords %}<span class="label label-default" style="margin: 5px;">{{ keyword }}</span>{% endfor %}</p>
+          <p class="list-group-item-text content-description">{{ item.description }}</p>
         </a>
       {% endif %}
       {% endfor %}

@@ -37,11 +37,11 @@ postgresql==10.x
 
 数据库服务器（提供数据持久化服务）：postgresql  
 
-应用容器（MVC模式的容器，服务主体）：django（manage.py+mysite/*）  
+应用容器（MVC模式的容器，服务主体）：django（配置项：manage.py+mysite/*）  
 
-通用网关服务器（中间件，只提供通信转交服务）：uwsgi（mysite_conf/uwsgi.ini）  
+通用网关服务器（中间件，只提供通信转交服务）：uwsgi（配置项：mysite_conf/uwsgi.ini）  
 
-网络服务器（HTTP及反向代理，只提供通信转交服务）：ngnix（/etc/nginx.conf+mysite_conf/nginx.conf）  
+网络服务器（HTTP及反向代理，只提供通信转交服务）：ngnix（配置项：/etc/nginx.conf+mysite_conf/nginx.conf）  
 
 #### Django内部架构
 
@@ -92,6 +92,18 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 	数据导入导出：
 	python manage.py dumpdata appname > appname.json
 	python manage.py loaddata appname.json
+
+4.目录结构：  
+
+	manage.py
+	/mysite
+	/mysite_conf
+	/mysite_script
+	/mysite_log
+	/app_*
+	/templetes
+	/static
+	/media
 
 ------------
 
