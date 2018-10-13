@@ -1,20 +1,4 @@
 Django==1.11.15 
-
-DjangoUeditor==1.8.143 
-django_compressor==1.6 
-django-grappelli==2.7.2 
-django-redis==3.8.3 
-django-appconf 
-
 psycopg2==2.7.5
 psycopg2-binary==2.7.5 
-lxml 
-requests 
-html5lib 
-pyquery 
-beautifulsoup4 
-Pygments 
-python-memcached 
 
-baidubce 
-wechat-sdk 

@@ -56,5 +56,4 @@ SELINUX=enforcing 改为 SELINUX=disabled
 全部通过脚本完成  
 
 ### django:
-./mysite/mysite/settings.py中，DATABASES变量的内容属于私密信息，被拆分到同级目录下的settings_db.py中，git上传时被屏蔽，其他人使用时需要手动创建。  
-其余全部通过脚本完成  
+属于项目本身内容  

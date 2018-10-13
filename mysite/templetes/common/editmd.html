@@ -4,15 +4,15 @@
 <textarea style="display:none;"># Editor.md</textarea>
 </div>
 <script type="text/javascript">
-$(document).ready(function(){
+$(function(){
 
         $(function(){
                 $("#navbar").removeClass("navbar-fixed-top");
                 $("body").css("padding-top",0);
         });
 
-        $(function() {
-            var editor = editormd({
+        $.get('{{ arg_fileurl }}', function(md){/*load .md file*/
+            var editor = editormd("editmd",{ /*editor id*/
 
                 //基础设置
                 id:                 "editmd",//编辑器ID
@@ -58,10 +58,9 @@ $(document).ready(function(){
 
                 //自定义工具栏
                 toolbarIcons : function() {
-                    return ["undo","redo","|","bold","del","italic","quote","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","hr","|","link","reference-link","image","code","preformatted-text","code-block","table","datetime","emoji","html-entities","pagebreak","|","goto-line","watch","preview","fullscreen","clear","search","|","help","info","|","loadmdfile","savepage","outputmdfile","outputhtmlfile","|","returnto"];
+                    return ["undo","redo","|","bold","del","italic","quote","ucwords","uppercase","lowercase","|","h1","h2","h3","h4","h5","h6","|","list-ul","list-ol","hr","|","link","reference-link","image","code","preformatted-text","code-block","table","datetime","emoji","html-entities","pagebreak","|","goto-line","watch","preview","fullscreen","clear","search","|","help","info","|","savepage","outputmdfile","outputhtmlfile","|","returnto"];
                 },
                 toolbarIconsClass : {//指定一个FontAawsome的图标类
-                    loadmdfile:"fa-folder-open",
                     savepage:"fa-floppy-o",
                     outputmdfile:"fa-files-o",
                     outputhtmlfile:"fa-files-o",
@@ -69,7 +68,6 @@ $(document).ready(function(){
                 },
                 lang : {// 提示文本
                     toolbar: {
-                        loadmdfile:"导入文件",
                         savepage:"保存页面",
                         outputmdfile:"导出md文件",
                         outputhtmlfile:"导出html文件",
@@ -77,9 +75,6 @@ $(document).ready(function(){
                     },
                 },
                 toolbarHandlers : {//工具按钮事件
-                    loadmdfile: function(){
-
-                    },
                     savepage: function(){
                           $.ajax({
                             url: "{% url 'app_tutorial_editmd' %}",
@@ -87,9 +82,9 @@ $(document).ready(function(){
                             timeouut:10000,
                             data:{
                               "purpose":"save_file",
-                              "username":"{{ request.user.username }}",
-                              "userpath":$(this).prev().prev().prev().text(),
-                              "filename":$(this).prev().prev().text(),
+                              "username":"{{ request.user }}",
+                              "userpath":'',
+                              "filename":'',
                               "csrfmiddlewaretoken":"{{ csrf_token }}"
                             },
                             success:function (data) {
@@ -108,30 +103,6 @@ $(document).ready(function(){
 
                     },
                 },
-
-                //事件处理
-                /*onload : function() {
-                }
-                onresize : function() {
-                }
-                onchange : function() {
-                }
-                onfullscreen : function() {
-                }
-                onfullscreenExit : function() {
-                }
-                onscroll : function(event) {
-                }
-                onpreviewscroll : function(event) {
-                }
-                onpreviewing : function() {
-                }
-                onpreviewed : function() {
-                }
-                onwatch : function() {
-                }
-                onunwatch : function() {
-                }*/
             });
         });
 });

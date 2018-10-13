@@ -25,7 +25,6 @@ from app_metaphysics import views as app_metaphysics_views
 from app_spider import views as app_spider_views
 from app_visual import views as app_visual_views
 from app_webtrans import views as app_webtrans_views
-from app_wechat import views as app_wechat_views
 
 # [反射（根据参数名自动加载应用）]
 # def reflection(request, **kwargs):
@@ -48,7 +47,8 @@ user_urlpatterns = [
 ]
 
 tutorial_urlpatterns = [
-    url(r'^editmd/$', app_tutorial_views.editmd,name='app_tutorial_editmd'),
+    url(r'^editmd/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)/(?P<doc_name>[^/]+)', app_tutorial_views.editmd,name='app_tutorial_editmd_doc'),
+    url(r'^editmd/$', app_tutorial_views.editmd,{'column_slug':None,'doc_slug':None,'doc_name':None},name='app_tutorial_editmd'),
     url(r'^doc/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.doc,name='app_tutorial_doc'),
     url(r'^doc/(?P<column_slug>[^/]+)$', app_tutorial_views.column,name='app_tutorial_column'),
     url(r'^$', app_tutorial_views.tutorial,name='app_tutorial_index'),
@@ -75,10 +75,6 @@ webtrans_urlpatterns = [
     url(r'^$', app_webtrans_views.index,name='app_webtrans_index'),
 ]
 
-wechat_urlpatterns = [
-    url(r'^$', app_wechat_views.index,name='app_wechat_index'),
-]
-
 metaphysics_urlpatterns = [
     url(r'^$', app_metaphysics_views.index,name='app_metaphysics_index'),
 ]
@@ -93,6 +89,5 @@ urlpatterns = [
     url(r'^spider/', include(spider_urlpatterns)),
     url(r'^visual/', include(visual_urlpatterns)),
     url(r'^webtrans/', include(webtrans_urlpatterns)),
-    url(r'^wechat/', include(wechat_urlpatterns)),
     url(r'^metaphysics/', include(metaphysics_urlpatterns)),
 ]

@@ -51,7 +51,7 @@
     <div class="modal fade" id="myModal-new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-new" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="modelformnew" method="POST">
+                <form id="modelformnew" method="post" enctype="multipart/form-data" >
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title" id="myModalLabel-new">文档信息</h4>
@@ -76,6 +76,12 @@
                         <span class="input-group-addon" id="basic-addon4"></span>
                         <input type="text" class="form-control" aria-describedby="basic-addon4" name="description" >
                     </div>
+                    <label for="basic-url">实体文件（content）</label>
+                    <p>（注：若不选择，则默认生成一个空白文件；上传后自动重命名；仅限.md格式）</p>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon5"></span>
+                        <input type="file" class="form-control" aria-describedby="basic-addon5" name="file" accept=".md" >
+                    </div>
                     <input type="text" name="purpose" value="new" style="display: none;">
                     <input type="text" name="column" value="{{ column.slug }}" style="display: none;">
                     <div class="modal-footer">
@@ -90,7 +96,7 @@
     <div class="modal fade" id="myModal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-edit" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="modelformedit" method="POST">
+                <form id="modelformedit" method="post" enctype="multipart/form-data" >
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title" id="myModalLabel-edit">文档信息</h4>
@@ -98,7 +104,7 @@
                     <label for="basic-url">文档域（slug）</label>
                     <div class="input-group">
                         <span class="input-group-addon" id="basic-addon1">{% url 'app_tutorial_index' %}doc/{{ column.slug }}/</span>
-                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon1" value="{{ content_doc.slug }}" {% if content_doc.slug == 'index' %}readonly="true"{% endif %} name="slug" >
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon1" value="{{ content_doc.slug }}" readonly="true" name="slug" >
                     </div>
                     <label for="basic-url">文档标题（title）</label>
                     <div class="input-group">
@@ -115,6 +121,11 @@
                         <span class="input-group-addon" id="basic-addon4"></span>
                         <input type="text" class="form-control" aria-describedby="basic-addon4" value="{{ content_doc.description }}" name="description" >
                     </div>
+                    <label for="basic-url">实体文件（content）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon5"></span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon5" name="file" accept=".md" readonly="true" value="{{ content_doc.content }}">
+                    </div>
                     <input type="text" name="purpose" value="edit" style="display: none;">
                     <input type="text" name="column" value="{{ column.slug }}" style="display: none;">
                     <div class="modal-footer">
@@ -129,7 +140,7 @@
     <div class="modal fade" id="myModal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-delete" aria-hidden="true">
         <div class="modal-dialog">
             <div class="modal-content">
-                <form id="modelformdelete" method="POST">
+                <form id="modelformdelete" method="post">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                         <h4 class="modal-title" id="myModalLabel-delete">文档信息</h4>

@@ -93,7 +93,14 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 	python manage.py dumpdata appname > appname.json
 	python manage.py loaddata appname.json
 
-4.目录结构：  
+4.创建管理员用户  
+
+	python manage.py createsuperuser
+	(input username)
+	(input email)
+	(input password)
+
+5.目录结构：  
 
 	manage.py
 	/mysite

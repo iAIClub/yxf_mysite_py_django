@@ -97,8 +97,7 @@ def profile(request):
             username = request.user
             userpath = request.POST.get('filepath',None)
             try:
-                for file in request.FILES.getlist('upload-file'):#<input type="file" name="upload-file">
-                    upload_file = file
+                for upload_file in request.FILES.getlist('upload-file'):#<input type="file" name="upload-file">
                     filename = upload_file.name
                     # upload_file.size #文件大小    做文件上传大小限制
                     # upload_file.content_type #文件类型  做文件上传类型限制

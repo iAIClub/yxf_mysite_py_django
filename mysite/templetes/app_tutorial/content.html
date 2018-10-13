@@ -23,13 +23,11 @@
       {% endfor %}
   </div>
 </div>
-{% elif view == 'column' or view == 'doc' %}
+{% elif view == 'doc' %}
 <h3 class="main" id="content-title">{{ content_doc.title }}</h3><hr>
 <div class="row placeholders">
-  <div>
-      {{ content_doc.content }}
-  </div>
-  <iframe id="mainiframe" scrolling="auto" src="/"></iframe>
+      {{ content_doc_file }}
+<!--   <iframe id="mainiframe" scrolling="auto" src="/"></iframe>
   <script type="text/javascript">
      function changeFrameHeight(){
         var ifm= document.getElementById("mainiframe");
@@ -37,7 +35,7 @@
       }
       window.onresize=function(){ changeFrameHeight();}
       $(function(){changeFrameHeight();});
-  </script>
+  </script> -->
 </div>
 {% else %}
 {% endif %}

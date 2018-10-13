@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals #使用python3的数据定义语法，完美支持Unicode
+from __future__ import unicode_literals #使用python3的数据定义语法
 from django.utils.encoding import python_2_unicode_compatible #向后兼容
 from django.utils import timezone
 from django.db import models
@@ -19,21 +19,17 @@ def get_filePathAndName(instance, filename):
 
 # 用户上传文件表。文件域由三部分组成，映射到唯一url：[sysmediaroot]/username/userpath/filename
 class PanFile(models.Model):
-    username = models.ForeignKey('auth.User',blank=True,null=True,editable=False,verbose_name='所属用户')
-    userpath = models.CharField('用户自定义路径',max_length=256, default='')
-    filename = models.CharField('文件名称',max_length=256, default='')
+    username = models.ForeignKey('auth.User',editable=False,blank=True,null=True,verbose_name='所属用户')
+    userpath = models.CharField('用户自定义路径',max_length=256,)
+    filename = models.CharField('文件名称',max_length=256,)
     #路径需要把Unicode字符转化为纯字符串
     file = models.FileField('文件实体',\
-        upload_to=get_filePathAndName,\
-        null=True,blank=True)
+        upload_to=get_filePathAndName,)
 
     upload_time = models.DateTimeField('上传时间', auto_now_add=True, editable=True)
 
-    def get_absolute_url(self):
-        return reverse('app_user_profile', args=(self.username,self.userpath,self.filename))
-
     class Meta:
-        verbose_name = '文件服务'
+        verbose_name = '文件'
         get_latest_by = 'upload_time'
         ordering = ['-upload_time']
 

@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals #使用python3的数据定义语法，完美支持Unicode
+from __future__ import unicode_literals #使用python3的数据定义语法 必须放到首行
 from django.utils.encoding import python_2_unicode_compatible #向后兼容
 from django.utils import timezone
 from django.db import models
 from django.core.files import File
 from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
+import os
 import sys
 sys.path.append("..")
 from mysite_conf.settings_cfg import DOMAIN
@@ -14,9 +15,9 @@ from mysite_conf.settings_cfg import DOMAIN
 def get_tutorialFilePath(instance, filename):
     return 'app_tutorial_doc/'+str(instance.column.slug)+'/'+str(instance.slug)+'/'+str(filename)
 
-# 栏目表。注意：slug域直接映射到url，不能重名
+# 栏目表。注意：slug域直接映射到url，不能重名。解决方法其实很简单：slug设置唯一约束
 class Column(models.Model):
-    slug = models.CharField('栏目域', max_length=256, db_index=True)#自然主键
+    slug = models.CharField('栏目域', max_length=256, db_index=True,unique=True)
     name = models.CharField('栏目名称', max_length=256)
     info = models.TextField('栏目简介', default='')
 
@@ -27,41 +28,23 @@ class Column(models.Model):
     def __unicode__(self):
         return self.name
 
-# 文档表。注意：slug域直接映射到url，不能重名
+# 文档表。注意：slug域直接映射到url，不能重名。解决方法其实很简单：column+slug组成联合主键
 class Tutorial(models.Model):
-    column = models.ForeignKey(Column,null=True,blank=True,verbose_name='归属栏目')
+    column = models.ForeignKey(Column,null=False,blank=True,verbose_name='归属栏目')
     author = models.ForeignKey('auth.User',blank=True,null=True,editable=False,verbose_name='作者')
 
-    slug = models.CharField('文档域',max_length=256, db_index=True)#自然主键
+    slug = models.CharField('文档域',max_length=256, db_index=True)
     title = models.CharField('标题',max_length=256)
-    keywords = models.CharField('关键词',max_length=256, null=True,blank=True, default='',help_text='不写默认为标题')
+    keywords = models.CharField('关键词',max_length=256, null=True,blank=True, help_text='不写默认为标题')
     description = models.TextField('描述',null=True,blank=True, help_text='不写默认为内容前160字')
     content = models.FileField('内容',\
-        upload_to=get_tutorialFilePath,null=True,blank=True, help_text='文档对应的实体文件')
+        upload_to=get_tutorialFilePath,null=True,blank=True,default='', help_text='文档对应的实体文件')
 
-    publish_time = models.DateTimeField('发表时间', auto_now_add=True, editable=True)
+    publish_time = models.DateTimeField('发表时间', auto_now_add=True)
     update_time = models.DateTimeField('更新时间',auto_now=True, null=True)
 
-    def get_title(self):
-        return title
-
-    def get_keywords(self):
-        if self.keywords and self.keywords.strip():#移除头尾的空白字符
-            return self.keywords
-        return self.title
-
-    def get_description(self):
-        if self.description and self.description.strip():
-            return self.description
-        if len(self.content) >= 160:
-            return self.content[:160]
-        else:
-            return self.content
-
-    def get_absolute_url(self):
-        return reverse('artical', args=(self.slug,))
-
     class Meta:
+        unique_together=("column","slug")#如果不知道字段名可连接到数据库查看
         verbose_name = '文档'
         get_latest_by = 'update_time'
         ordering = ['-update_time'] #-表示反转排序顺序

@@ -47,7 +47,6 @@ INSTALLED_APPS = [
     'app_user',
     'app_blog',
     'app_webtrans',
-    'app_wechat',
     'app_visual',
     'app_metaphysics',
     'app_spider',
@@ -142,13 +141,13 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 
-# [记录日志]
+# 记录日志
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'class': 'logging.FileHandler',
             'filename': os.path.join(BASE_DIR, 'mysite_log')+'/django.log',
         },
@@ -156,7 +155,7 @@ LOGGING = {
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+            'level': 'ERROR',
             'propagate': True,
         },
     },
