@@ -5,7 +5,7 @@ VPS : 云主机
 
 ## 主机
 
-### Vultr-VPS1
+### VPS1
 
 硬件：512M+,500G+/month  
 
@@ -17,7 +17,7 @@ OS：CentOS 7 x64,root
 
 用途：正向代理服务器+网站mysite服务器  
 
-### Vultr-VPS2
+### VPS2
 
 硬件：512M+,500G+/month  
 

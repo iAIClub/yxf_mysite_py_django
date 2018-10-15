@@ -9,7 +9,6 @@ from django.dispatch.dispatcher import receiver
 import os
 import sys
 sys.path.append("..")
-from mysite_conf.settings_cfg import DOMAIN
 
 # contrib.auth自动维护用户表
 

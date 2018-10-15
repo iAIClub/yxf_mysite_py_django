@@ -25,7 +25,7 @@ def index(request):
 #站内搜索页，对应站内搜索模板
 #/search
 def search(request):
-    return HttpResponse(render(request, 'common/index.html'))
+    return HttpResponse(render(request, 'common/base.html'))
 
 #文档首页
 #左侧列出所有栏目（可切换选定项），中间列出选定栏目的所有文档（需注意关键词列表），右侧显示选定栏目的信息
@@ -160,6 +160,7 @@ def doc(request, column_slug, doc_slug):
             }))
 
 #编辑器页，文档仅限管理员操作。可直接访问，也可通过iframe嵌入。新建文档、编辑文档的实际执行者
+#/tutorial/editmd
 @csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
 def editmd(request):
     if request.method == 'GET':
@@ -189,7 +190,7 @@ def editmd(request):
             return response
     #通过editmd模板提交的操作
     elif request.method == 'POST':
-        if request.user.is_authenticated:
+        if request.user.is_superuser:
             purpose = request.POST.get('purpose')
             #保存处理
             if purpose == 'savepage':
@@ -224,6 +225,7 @@ def editmd(request):
                 return HttpResponse(str(arg_slug)+".md：保存成功！")
 
 #图片操作，无对应模板
+#tutorial/image/...
 @csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
 def image(request,column_slug,doc_slug,image_name):
     if column_slug is not None and doc_slug is not None:
@@ -257,6 +259,7 @@ def image(request,column_slug,doc_slug,image_name):
                 return HttpResponse('')
 
 #在editmd页面里的导出文件操作，无对应模板
+#/tutorial/download/...
 def download(request,column_slug,doc_slug,doc_name):
     if column_slug is not None and doc_slug is not None and doc_name is not None:
         #返回文档实体文件.html内容。此处的GET参数由前端生成，需要编解码

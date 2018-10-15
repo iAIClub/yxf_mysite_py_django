@@ -4,56 +4,6 @@
   <h3>{{ user.username }} - 文章列表【建设中】</h3>
   <hr/>
   <div class="row placeholders">
-    <form style="display: inline;" role="form" method="post" enctype="multipart/form-data" action="{% url 'app_user_profile' %}">
-      {% csrf_token %}
-      <input type="text" name="purpose" value="upload_file" style="display: none;">
-      <p style="display: inline;">归属用户：</p>
-      <input style="max-width: 100px;" type="text" name="username" readonly="true" value="{{ user.username }}" required>
-      <p style="display: inline;">上传到：</p>
-      <input style="max-width: 100px;" type="text" name="filepath" required autofocus>
-      <input style="display: inline;max-width:75px; " type="file" multiple name="upload-file" id="file-upload" accept="text/*,image/*,audio/*,video/*,.flv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.json,.md,.rtf,.7z,.rar,.zip,.bz2,.xz,.tar,.iso,.img,.deb,.rpm,.shtml,.xhtml" required>
-      <button class="btn btn-primary btn-inline" type="submit" id="submit" disabled="true">上传</button>
-    </form>
-    <button class="btn btn-warning btn-inline" id="clean">清空</button>
-    <ul id="file-list">
-    </ul>
-    <div>
-      <h5 id="page-message"></h5>
-      {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
-    </div>
-    <hr/>
-    <div class="row placeholders">
-      <ul class="list-group">
-        <button class="delete" style="display: none;"></button><!--隐藏的程序控件-->
-        {% for item in pan_list %}
-        <li class="list-group-item">
-          <a href="{% url 'app_blog_editmd' %}/{{ item.filename }}"><button class="btn btn-info btn-sm btn-inline edit">编辑</button></a>
-          <p style="display: none;">{{ item.userpath }}</p>
-          <p style="display: none;">{{ item.filename }}</p>
-          <b title="于 {{ item.upload_time }} 上传">{{ item.userpath }}/{{ item.filename }}</b>
-          <button class="btn btn-danger btn-sm btn-inline delete">删除</button>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    <style type="text/css">
-      #content button {
-        min-width: 50px;
-        max-width: 200px;
-        margin: auto;
-      }
-    </style>
-    <script type="text/javascript">
-      $(function(){
-          //clean
-          $("#clean").click(function(){
-            $("#page-message").empty();
-            $("#file-upload").val("");
-            $("#file-list").empty();
-            $("#submit").removeAttr("disabled");
-          });
-      });
-    </script>
   </div>
 {% elif arg_pan == 'True' %}
   <h3>{{ user.username }} - 网盘文件</h3>

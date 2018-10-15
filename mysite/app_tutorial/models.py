@@ -9,7 +9,6 @@ from django.core.files.storage import FileSystemStorage
 import os
 import sys
 sys.path.append("..")
-from mysite_conf.settings_cfg import DOMAIN
 
 #上传文件之前动态生成路径
 def get_tutorialFilePath(instance, filename):

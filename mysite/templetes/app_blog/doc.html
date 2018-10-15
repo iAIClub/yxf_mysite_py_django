@@ -1,0 +1,215 @@
+{% extends "common/base.html" %}
+
+{% block left %}
+<div class="col-xs-4 col-sm-3 col-md-2 hidden-xs" id="left">
+    <div class="panel">
+        <div class="panel-heading">
+            <a href="{% url 'app_tutorial_index' %}" style="text-decoration: none;color: darkcyan;" title="返回上级">
+            <span class="glyphicon glyphicon-chevron-right"></span>
+            {{ column.name }}
+            </a>
+        </div>
+        <div class="list-group">
+            {% for item in left_list %}
+            {% if item.slug != 'index' %}
+            <a class="list-group-item" href="{% url 'app_tutorial_index' %}doc/{{ column.slug }}/{{ item.slug }}" title="{{ item.description }}">{{ item.title }}</a>
+            {% endif %}
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
+<link rel="stylesheet" href="/static/plugins/editor.md/css/editormd.preview.css"/>
+    <div class="row placeholders">
+        <div id="editmdview">
+        <textarea style="display:none;">{{ content_doc_file }}</textarea>
+        </div>
+    </div>
+<script src="/static/plugins/editor.md/lib/marked.min.js"></script>
+<script src="/static/plugins/editor.md/lib/prettify.min.js"></script>
+<script src="/static/plugins/editor.md/lib/raphael.min.js"></script>
+<script src="/static/plugins/editor.md/lib/underscore.min.js"></script>
+<script src="/static/plugins/editor.md/lib/sequence-diagram.min.js"></script>
+<script src="/static/plugins/editor.md/lib/flowchart.min.js"></script>
+<script src="/static/plugins/editor.md/lib/jquery.flowchart.min.js"></script>
+<script src="/static/plugins/editor.md/editormd.js"></script>
+<script type="text/javascript">
+    $(function() {
+        var testEditormdView = editormd.markdownToHTML("editmdview", {
+            htmlDecode      : "style,script,iframe",  // you can filter tags decode
+            toc             : true,
+            tocm            : true,    // Using [TOCM]
+            tocContainer    : "#toc-container", // 自定义 ToC 容器层
+            gfm             : false,
+            //tocDropdown     : true,
+            // markdownSourceCode : true, // 是否保留 Markdown 源码，即是否删除保存源码的 Textarea 标签
+            emoji           : true,
+            taskList        : true,
+            tex             : true,  // 默认不解析
+            flowChart       : true,  // 默认不解析
+            sequenceDiagram : true,  // 默认不解析
+        });
+    });
+</script>
+</div>
+{% endblock %}
+
+{% block right %}
+<div class="main col-xs-offset-9 col-sm-offset-9 col-md-offset-9 col-xs-3 col-sm-3 col-md-3" id="right">
+    <br/>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-list-alt"></span>
+            文档结构
+        </div>
+        <div class="markdown-body editormd-preview-container" id="toc-container">#toc-container</div>
+    </div>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-flag"></span>
+            文档信息
+        </div>
+        <div class="list-group">
+            <a class="list-group-item glyphicon glyphicon-tag" title="关键词">&nbsp;{% for keyword in content_doc.keywords %}{{ keyword }}{% endfor %}</a>
+            <a class="list-group-item glyphicon glyphicon-tags right-description" title="描述">&nbsp;{{ content_doc.description }}</a>
+        </div>
+    </div>
+    {% if request.user.is_superuser %}
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-edit"></span>
+            文档操作
+        </div>
+        <div class="list-group">
+            <a class="list-group-item glyphicon glyphicon-plus" href="#myModal-new" data-toggle="modal" data-target="#myModal-new" style="color: green;">新建</a>
+            <a class="list-group-item glyphicon glyphicon-pencil" href="#myModal-edit" data-toggle="modal" data-target="#myModal-edit" style="color: blue;">编辑</a>
+            <a class="list-group-item glyphicon glyphicon-trash" href="#myModal-delete" data-toggle="modal" data-target="#myModal-delete" style="color: red;">删除</a>
+            <div>
+            {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="myModal-new" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-new" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="modelformnew" method="post" enctype="multipart/form-data" >
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel-new">文档信息</h4>
+                    </div>
+                    <label for="basic-url">文档域（slug）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">{% url 'app_tutorial_index' %}doc/{{ column.slug }}/</span>
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon1" name="slug" required maxlength="256">
+                    </div>
+                    <label for="basic-url">文档标题（title）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2"></span>
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon2" name="title" required maxlength="256">
+                    </div>
+                    <label for="basic-url">关键词（keywords）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon3"></span>
+                        <input type="text" class="form-control" placeholder="以半角分号区分多个关键字" aria-describedby="basic-addon3" name="keywords"  maxlength="256">
+                    </div>
+                    <label for="basic-url">描述（description）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon4"></span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon4" name="description" >
+                    </div>
+                    <label for="basic-url">实体文件（content）</label>
+                    <p>（注：若不选择，则默认生成一个空白文件；上传后自动重命名；仅限.md格式）</p>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon5"></span>
+                        <input type="file" class="form-control" aria-describedby="basic-addon5" name="file" accept=".md" >
+                    </div>
+                    <input type="text" name="purpose" value="new" style="display: none;">
+                    <input type="text" name="column" value="{{ column.slug }}" style="display: none;">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-success" id="model-form-new-btn">新建</button>
+                    </div>
+                    {% csrf_token %}
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="modal fade" id="myModal-edit" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-edit" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="modelformedit" method="post" enctype="multipart/form-data" >
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel-edit">文档信息</h4>
+                    </div>
+                    <label for="basic-url">文档域（slug）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">{% url 'app_tutorial_index' %}doc/{{ column.slug }}/</span>
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon1" value="{{ content_doc.slug }}" readonly="true" name="slug"  maxlength="256">
+                    </div>
+                    <label for="basic-url">文档标题（title）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2"></span>
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon2" value="{{ content_doc.title }}" name="title" required maxlength="256">
+                    </div>
+                    <label for="basic-url">关键词（keywords）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon3"></span>
+                        <input type="text" class="form-control" placeholder="以半角分号区分多个关键字" aria-describedby="basic-addon3" value="{{ content_doc.keywords }}" name="keywords"  maxlength="256">
+                    </div>
+                    <label for="basic-url">描述（description）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon4"></span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon4" value="{{ content_doc.description }}" name="description" >
+                    </div>
+                    <label for="basic-url">实体文件（content）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon5"></span>
+                        <input type="text" class="form-control" aria-describedby="basic-addon5" name="file" accept=".md" readonly="true" value="{{ content_doc.content }}">
+                    </div>
+                    <input type="text" name="purpose" value="edit" style="display: none;">
+                    <input type="text" name="column" value="{{ column.slug }}" style="display: none;">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-primary" id="model-form-edit-btn">编辑</button>
+                    </div>
+                    {% csrf_token %}
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    <div class="modal fade" id="myModal-delete" tabindex="-1" role="dialog" aria-labelledby="myModalLabel-delete" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <form id="modelformdelete" method="post">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                        <h4 class="modal-title" id="myModalLabel-delete">文档信息</h4>
+                    </div>
+                    <label for="basic-url">文档域（slug）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon1">{% url 'app_tutorial_index' %}doc/{{ column.slug }}/</span>
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon1" value="{{ content_doc.slug }}" readonly="true" name="slug"  maxlength="256">
+                    </div>
+                    <label for="basic-url">文档标题（title）</label>
+                    <div class="input-group">
+                        <span class="input-group-addon" id="basic-addon2"></span>
+                        <input type="text" class="form-control" placeholder="必填项" aria-describedby="basic-addon2" value="{{ content_doc.title }}" name="title" readonly="true" required maxlength="256">
+                    </div>
+                    <input type="text" name="purpose" value="delete" style="display: none;">
+                    <input type="text" name="column" value="{{ column.slug }}" style="display: none;">
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                        <button type="submit" class="btn btn-danger" {% if content_doc.slug == 'index' %}disabled="true" {% endif %} id="model-form-delete-btn">删除</button>
+                    </div>
+                    {% csrf_token %}
+                </form>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+    {% endif %}
+</div>
+{% endblock %}

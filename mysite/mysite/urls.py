@@ -26,16 +26,6 @@ from app_spider import views as app_spider_views
 from app_visual import views as app_visual_views
 from app_webtrans import views as app_webtrans_views
 
-# [反射（根据参数名自动加载应用）]
-# def reflection(request, **kwargs):
-#     appname = 'app_'+kwargs.get('appname', None)
-#     try:
-#         appViewObj = importlib.import_module(appname+'.views')
-#         return appViewObj.index(request, **kwargs)
-#     except:
-#         kwargs['appname'] = 'invalid'
-#         return app_tutorial_views.index(request, **kwargs)
-
 tutorial_urlpatterns = [
     url(r'^download/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)/(?P<doc_name>[^/]+)$', app_tutorial_views.download,name='app_tutorial_download_url'),
     url(r'^download/$', app_tutorial_views.download,{'column_slug':None,'doc_slug':None,'doc_name':None},name='app_tutorial_download'),
@@ -59,10 +49,15 @@ user_urlpatterns = [
 ]
 
 blog_urlpatterns = [
+    url(r'^download/(?P<user>[^/]+)/(?P<post>[^/]+)/(?P<post_name>[^/]+)$', app_blog_views.download,name='app_blog_download_url'),
+    url(r'^download/$', app_blog_views.download,{'user':None,'post':None,'post_name':None},name='app_blog_download'),
+    url(r'^image/(?P<user>[^/]+)/(?P<post>[^/]+)/(?P<image_name>[^/]+)$', app_blog_views.image,name='app_blog_image_url'),
+    url(r'^image/(?P<user>[^/]+)/(?P<post>[^/]+)$', app_blog_views.image,{'image_name':None},name='app_blog_image_upload'),
+    url(r'^image/$', app_blog_views.image,{'user':None,'post':None,'image_name':None},name='app_blog_image'),
     url(r'^editmd/$', app_blog_views.editmd,name='app_blog_editmd'),
     url(r'^post/(?P<user>[^/]+)/(?P<post>[^/]+)$', app_blog_views.post,name='app_blog_post'),
     url(r'^post/(?P<user>[^/]+)$', app_blog_views.user,name='app_blog_user'),
-    url(r'^$', app_blog_views.index,name='app_blog_index'),
+    url(r'^$', app_blog_views.blog,name='app_blog_index'),
 ]
 
 spider_urlpatterns = [
