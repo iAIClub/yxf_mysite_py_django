@@ -14,7 +14,7 @@ class ColumnAdmin(admin.ModelAdmin):
 class TutorialAdmin(admin.ModelAdmin):
     list_per_page = 20
     raw_id_fields = ('column', )
-    list_display = ('id', 'slug', 'title', 'column','author','content','publish_time', 'update_time', )
+    list_display = ('id', 'slug', 'title', 'column','author','content','content_html','publish_time', 'update_time', )
     search_fields = ('title', 'slug', 'content',)
     list_filter = ('column', 'author',)
 

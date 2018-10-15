@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals #使用python3的数据定义语法
-from django.utils.encoding import python_2_unicode_compatible #向后兼容
+from __future__ import unicode_literals  #让py2使用py3的数据定义语法
+from django.utils.encoding import python_2_unicode_compatible
 from django.utils import timezone
 from django.db import models
 from django.core.files import File
@@ -18,6 +18,7 @@ def get_filePathAndName(instance, filename):
     return 'app_user_pan/'+str(instance.username)+'/'+str(instance.userpath)+'/'+str(filename)
 
 # 用户上传文件表。文件域由三部分组成，映射到唯一url：[sysmediaroot]/username/userpath/filename
+@python_2_unicode_compatible
 class PanFile(models.Model):
     username = models.ForeignKey('auth.User',editable=False,blank=True,null=True,verbose_name='所属用户')
     userpath = models.CharField('用户自定义路径',max_length=256,)
@@ -33,7 +34,7 @@ class PanFile(models.Model):
         get_latest_by = 'upload_time'
         ordering = ['-upload_time']
 
-    def __unicode__(self):
+    def __str__(self):
         return self.filename
 
 #对模型进行删除时，文件系统同步删除，不然会越积越多（文件夹仍保留）

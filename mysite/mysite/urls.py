@@ -36,6 +36,18 @@ from app_webtrans import views as app_webtrans_views
 #         kwargs['appname'] = 'invalid'
 #         return app_tutorial_views.index(request, **kwargs)
 
+tutorial_urlpatterns = [
+    url(r'^download/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)/(?P<doc_name>[^/]+)$', app_tutorial_views.download,name='app_tutorial_download_url'),
+    url(r'^download/$', app_tutorial_views.download,{'column_slug':None,'doc_slug':None,'doc_name':None},name='app_tutorial_download'),
+    url(r'^image/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)/(?P<image_name>[^/]+)$', app_tutorial_views.image,name='app_tutorial_image_url'),
+    url(r'^image/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.image,{'image_name':None},name='app_tutorial_image_upload'),
+    url(r'^image/$', app_tutorial_views.image,{'column_slug':None,'doc_slug':None,'image_name':None},name='app_tutorial_image'),
+    url(r'^editmd/$', app_tutorial_views.editmd,name='app_tutorial_editmd'),
+    url(r'^doc/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.doc,name='app_tutorial_doc'),
+    url(r'^doc/(?P<column_slug>[^/]+)$', app_tutorial_views.column,name='app_tutorial_column'),
+    url(r'^$', app_tutorial_views.tutorial,name='app_tutorial_index'),
+]
+
 user_urlpatterns = [
     url(r'^download/(?P<suburl>.+)', app_user_views.download,name='app_user_download_url'),
     url(r'^download/$', app_user_views.download,{'suburl':None},name='app_user_download'),
@@ -44,14 +56,6 @@ user_urlpatterns = [
     url(r'^profile/$', app_user_views.profile,name='app_user_profile'),
     url(r'^settings/$', app_user_views.settings,name='app_user_settings'),
     url(r'^ajax/$', app_user_views.ajax,name='app_user_ajax'),
-]
-
-tutorial_urlpatterns = [
-    url(r'^editmd/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)/(?P<doc_name>[^/]+)', app_tutorial_views.editmd,name='app_tutorial_editmd_doc'),
-    url(r'^editmd/$', app_tutorial_views.editmd,{'column_slug':None,'doc_slug':None,'doc_name':None},name='app_tutorial_editmd'),
-    url(r'^doc/(?P<column_slug>[^/]+)/(?P<doc_slug>[^/]+)$', app_tutorial_views.doc,name='app_tutorial_doc'),
-    url(r'^doc/(?P<column_slug>[^/]+)$', app_tutorial_views.column,name='app_tutorial_column'),
-    url(r'^$', app_tutorial_views.tutorial,name='app_tutorial_index'),
 ]
 
 blog_urlpatterns = [
@@ -81,10 +85,10 @@ metaphysics_urlpatterns = [
 
 urlpatterns = [
     url(r'^$', app_tutorial_views.index,name='index'),#首页交给tutorial应用处理
-    url(r'^search/$', app_user_views.search,name='search'),#站内搜索页交给user应用处理
+    url(r'^search/$', app_tutorial_views.search,name='search'),#站内搜索页交给tutorial应用处理
     url(r'^admin/', admin.site.urls),#所有内容仅对超级管理员开放，不可对外
-    url(r'^user/', include(user_urlpatterns)),#对外开放的用户管理体系
-    url(r'^tutorial/', include(tutorial_urlpatterns)),
+    url(r'^tutorial/', include(tutorial_urlpatterns)),#最重要的应用，构造网站主体
+    url(r'^user/', include(user_urlpatterns)),#对外开放的用户管理体系，其中settings页面只对管理员开放
     url(r'^blog/', include(blog_urlpatterns)),
     url(r'^spider/', include(spider_urlpatterns)),
     url(r'^visual/', include(visual_urlpatterns)),

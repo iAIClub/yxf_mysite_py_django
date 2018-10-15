@@ -103,14 +103,17 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 5.目录结构：  
 
 	manage.py
-	/mysite
-	/mysite_conf
-	/mysite_script
-	/mysite_log
-	/app_*
-	/templetes
-	/static
-	/media
+	/mysite——网站设置、url路由、网站管理程序  
+	/mysite_conf——配置文件  
+	/mysite_script——脚本工具  
+	/mysite_log——日志记录、临时文件  
+	/app_*——各具体应用代码  
+		/admins——注册到管理后台，可视化管理模型数据库
+		/models——模型定义代码
+		/views——视图代码，request url->url route->views logic(get model & render templete)->response(data & html & redirect url)
+	/templetes——前端模板代码，模板与后端的交互：模板语言、url路由、render输入的变量  
+	/static——前端静态资源  
+	/media——网站文件数据  
 
 ------------
 
@@ -118,5 +121,5 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 
 服务器主机：Vultr-VPS（ip，ssh（22），sftp（22），root管理员），提供HTTP网站服务，正向代理服务  
 
-服务端口：80-nginx，9090-uwsgi(local)，50003-ss，5432-postgresql  
+服务端口：80-nginx，9090-uwsgi(local)，5432-postgresql  
 

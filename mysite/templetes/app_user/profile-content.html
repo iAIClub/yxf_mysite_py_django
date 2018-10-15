@@ -1,4 +1,4 @@
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-10 col-sm-10 col-md-10" id="content">
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
 <style type="text/css">#content .row { padding-left:15px;padding-right: 15px;}</style>
 {% if arg_list == 'True' %}
   <h3>{{ user.username }} - 文章列表【建设中】</h3>
@@ -131,26 +131,6 @@
                 $("#file-list").append(fragment);
               }
           });
-          //file download
-          /*$(".download").click(function(){
-              $.ajax({
-                url: "{% url 'app_user_profile' %}",
-                type:"POST",
-                timeouut:10000,
-                data:{
-                  "purpose":"download_file",
-                  "username":"{{ request.user.username }}",
-                  "userpath":$(this).next().text(),
-                  "filename":$(this).next().next().text(),
-                  "csrfmiddlewaretoken":"{{ csrf_token }}"
-                },
-                success:function (data) {
-                  if (data.status){
-                    window.location.href = data.filePath;//jquery ajax不支持读取文件流
-                  }
-                }
-              });
-          });*/
           //file delete
           $(".delete").click(function(){
               $.ajax({

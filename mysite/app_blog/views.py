@@ -6,7 +6,7 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    return HttpResponse(render(request, 'common/index.html'))
+    return HttpResponse(render(request, 'app_tutorial/index.html'))
 
 def post(request,suburl):
 	return HttpResponse(render(request, 'app_blog/index.html'))

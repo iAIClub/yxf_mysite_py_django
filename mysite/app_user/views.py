@@ -14,10 +14,6 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 from .models import PanFile
 
-#对应站内搜索模板，主站站内搜索
-def search(request):
-    return HttpResponse(render(request, 'common/index.html'))
-
 #对应登录模板，登录逻辑
 def login(request):
     if request.method == 'POST':
@@ -52,7 +48,7 @@ def register(request):
     else:
         return HttpResponse(render(request, 'app_user/register.html'))
 
-#无需登录的普通ajax逻辑
+#无需登录的普通ajax逻辑，无模板
 def ajax(request):
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
@@ -68,7 +64,7 @@ def ajax(request):
     else:
         return JsonResponse({"status":0})
 
-#用户区，通用一组模板。左侧列出用户的所有操作项，中间输出操作内容（所属博客文档，所属网盘文件，用户信息更改和注销），右侧按需显示相关信息
+#用户区。左侧列出用户的所有操作项，中间输出操作内容（所属博客文档，所属网盘文件，用户信息更改和注销），右侧按需显示相关信息
 @login_required(login_url='/user/login')
 def profile(request):
     if request.method == 'POST':
@@ -158,12 +154,11 @@ def profile(request):
         arg_pan = request.GET.get('pan',None)
         arg_cancel = request.GET.get('cancel',None)
         user = User.objects.get(username=request.user)
-        model_doc = None
         model_file = PanFile.objects.filter(username=request.user).all()
         pan_list = []
         for item in model_file:
             pan_list.append({'username':user.username,'userpath':item.userpath,'filename':item.filename,'upload_time':item.upload_time})
-        doc_list = None
+        doc_list = []
         if arg_config is None and arg_pan is None and arg_cancel is None and arg_list is None:
             return HttpResponseRedirect(reverse('app_user_profile')+'?list=True')
         else:
@@ -197,4 +192,20 @@ def download(request, suburl):
 #网站设置区，仅限管理员操作，使用另一套模板
 @login_required(login_url='/user/login')
 def settings(request):
-    return HttpResponse(render(request, 'app_user/settings.html'))
+    if request.user.is_superuser:
+        arg_status = request.GET.get('status',None)
+        arg_history = request.GET.get('history',None)
+        arg_data = request.GET.get('data',None)
+        arg_set = request.GET.get('set',None)
+        if arg_status is None and arg_history is None and arg_data is None and arg_set is None:
+            return HttpResponseRedirect(reverse('app_user_settings')+'?status=1')
+        else:
+            return HttpResponse(render(request, 'app_user/settings.html',{\
+                'title':'菲菲的技术网站',\
+                'arg_status':arg_status,\
+                'arg_history':arg_history,\
+                'arg_data':arg_data,\
+                'arg_set':arg_set,\
+                }))
+    else:
+        return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')

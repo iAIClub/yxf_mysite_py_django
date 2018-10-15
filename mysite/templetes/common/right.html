@@ -1,4 +1,4 @@
-<div class="main col-xs-offset-10 col-sm-offset-10 col-md-offset-10 col-xs-2 col-sm-2 col-md-2" id="right">
+<div class="main col-xs-offset-9 col-sm-offset-9 col-md-offset-9 col-xs-3 col-sm-3 col-md-3" id="right">
     <br/>
     <div class="panel">
         <div class="panel-heading">
@@ -20,11 +20,6 @@
             {% for item in list %}
             <a class="list-group-item glyphicon glyphicon-hand-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
             {% endfor %}
-        </div>
-    </div>
-    <div class="panel">
-        <div>
-            <img class="img-responsive" title="扫码加微信" src="/static/img/微信个人二维码.jpg">
         </div>
     </div>
 </div>
