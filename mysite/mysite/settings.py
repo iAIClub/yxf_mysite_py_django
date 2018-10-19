@@ -13,13 +13,56 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 
 import os
 import sys
-sys.path.append("..")
-import json
-
+import ConfigParser
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
+# [Django默认根路径为manage.py所在的路径]
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
+# [解析外部纯文本配置文件，放置敏感信息和多变的信息]
+cf = ConfigParser.ConfigParser()
+cf.read("settings.cfg")
+
+# [Debug]
+DEBUG = cf.getboolean("meta", "debug")
+
+# Database
+# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
+# [配置数据库]
+from mysite_conf.settings_cfg import *
+DATABASES = {
+    'default': {
+        'ENGINE': cf.get("db", "engine"),
+        'NAME': cf.get("db", "name"),
+        'USER': cf.get("db", "user"),
+        'PASSWORD': cf.get("db", "password"),
+        'HOST': cf.get("db", "host"),
+        'PORT': cf.get("db", "port"),
+    }
+}
+
+# 记录日志
+if cf.getboolean("meta","logger") is True:
+    LOGGING = {
+        'version': 1,
+        'disable_existing_loggers': False,
+        'handlers': {
+            'file': {
+                'level': 'ERROR',
+                'class': 'logging.FileHandler',
+                'filename': os.path.join(BASE_DIR, 'log')+'/django.log',
+            },
+        },
+        'loggers': {
+            'django': {
+                'handlers': ['file'],
+                'level': 'ERROR',
+                'propagate': True,
+            },
+        },
+    }
+else:
+    pass
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
@@ -87,13 +130,6 @@ TEMPLATES = [
 WSGI_APPLICATION = 'mysite.wsgi.application'
 
 
-# Database
-# https://docs.djangoproject.com/en/1.11/ref/settings/#databases
-
-# [配置数据库以及其他内容]
-from mysite_conf.settings_cfg import *
-
-
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
 
@@ -140,23 +176,3 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 # upload folder
 MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
-
-# 记录日志
-LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'handlers': {
-        'file': {
-            'level': 'ERROR',
-            'class': 'logging.FileHandler',
-            'filename': os.path.join(BASE_DIR, 'log')+'/django.log',
-        },
-    },
-    'loggers': {
-        'django': {
-            'handlers': ['file'],
-            'level': 'ERROR',
-            'propagate': True,
-        },
-    },
-}
