@@ -31,7 +31,7 @@ ngnix==1.12.x
 
 postgresql==10.x  
 
-./mysite_conf/requirments  
+yxf_mysite_py_django/requirments  
 
 ### 项目架构
 
@@ -68,6 +68,12 @@ MVC子应用的视图（响应请求，提取、组合模板，后端渲染）�
 MVC子应用的模型（数据对象模型，定义的对象与数据库表一一对应）：./mysite/app_*/models.py   
 
 #### Django项目开发   
+
+0.项目维护:
+	使用git版本控制，开发环境为linux虚拟机（centos7，与服务器环境相似，安装中文输入法用于更新文档），所有开发以及git的更新完全在此系统进行，git项目根目录/opt/yxf_mysite_py_django，网站根目录/opt/yxf_mysite_py_django/mysite。  
+	VPS服务商提供的centos系统默认关闭selinux，如此才能实现通过ssh远程登录，以及sftp远程文件。（要注意服务器的22端口是否被墙）  
+	上传到同一位置/opt。  
+	第一次上传后使用yxf_utils项目中的脚本安装环境，后续上传只更新网站内容。  
 
 1.初始化工程:  
 
@@ -119,7 +125,7 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 
 ## 部署
 
-服务器主机：Vultr-VPS（ip，ssh（22），sftp（22），root管理员），提供HTTP网站服务，正向代理服务  
+服务器主机：VPS（ip，ssh（22），sftp（22），root管理员），提供HTTP网站服务  
 
 服务端口：80-nginx，9090-uwsgi(local)，5432-postgresql  
 
