@@ -1,152 +1,73 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>Page Not Found :(</title>
-        <style>
-            ::-moz-selection {
-                background: #b3d4fc;
-                text-shadow: none;
-            }
+{% extends "common/base.html" %}
 
-            ::selection {
-                background: #b3d4fc;
-                text-shadow: none;
-            }
-
-            html {
-                padding: 30px 10px;
-                font-size: 20px;
-                line-height: 1.4;
-                color: #737373;
-                background: #f0f0f0;
-                -webkit-text-size-adjust: 100%;
-                -ms-text-size-adjust: 100%;
-            }
-
-            html,
-            input {
-                font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            }
-
-            body {
-                max-width: 500px;
-                _width: 500px;
-                padding: 30px 20px 50px;
-                border: 1px solid #b3b3b3;
-                border-radius: 4px;
-                margin: 0 auto;
-                box-shadow: 0 1px 10px #a7a7a7, inset 0 1px 0 #fff;
-                background: #fcfcfc;
-            }
-
-            h1 {
-                margin: 0 10px;
-                font-size: 50px;
-                text-align: center;
-            }
-
-            h1 span {
-                color: #bbb;
-            }
-
-            h3 {
-                margin: 1.5em 0 0.5em;
-            }
-
-            p {
-                margin: 1em 0;
-            }
-
-            ul {
-                padding: 0 0 0 40px;
-                margin: 1em 0;
-            }
-
-            .container {
-                max-width: 380px;
-                _width: 380px;
-                margin: 0 auto;
-            }
-
-            /* google search */
-
-            #goog-fixurl ul {
-                list-style: none;
-                padding: 0;
-                margin: 0;
-            }
-
-            #goog-fixurl form {
-                margin: 0;
-            }
-
-            #goog-wm-qt,
-            #goog-wm-sb {
-                border: 1px solid #bbb;
-                font-size: 16px;
-                line-height: normal;
-                vertical-align: top;
-                color: #444;
-                border-radius: 2px;
-            }
-
-            #goog-wm-qt {
-                width: 220px;
-                height: 20px;
-                padding: 5px;
-                margin: 5px 10px 0 0;
-                box-shadow: inset 0 1px 1px #ccc;
-            }
-
-            #goog-wm-sb {
-                display: inline-block;
-                height: 32px;
-                padding: 0 10px;
-                margin: 5px 0 0;
-                white-space: nowrap;
-                cursor: pointer;
-                background-color: #f5f5f5;
-                background-image: -webkit-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-                background-image: -moz-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-                background-image: -ms-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-                background-image: -o-linear-gradient(rgba(255,255,255,0), #f1f1f1);
-                -webkit-appearance: none;
-                -moz-appearance: none;
-                appearance: none;
-                *overflow: visible;
-                *display: inline;
-                *zoom: 1;
-            }
-
-            #goog-wm-sb:hover,
-            #goog-wm-sb:focus {
-                border-color: #aaa;
-                box-shadow: 0 1px 1px rgba(0, 0, 0, 0.1);
-                background-color: #f8f8f8;
-            }
-
-            #goog-wm-qt:hover,
-            #goog-wm-qt:focus {
-                border-color: #105cb6;
-                outline: 0;
-                color: #222;
-            }
-
-            input::-moz-focus-inner {
-                padding: 0;
-                border: 0;
-            }
-        </style>
-    </head>
-    <body>
-        <div class="container">
-            <h1>Not found at app_webtrans <span>:(</span></h1>
-            </ul>
-		<p>goto <a href="http://192.168.2.130">index</a></p>
+{% block left %}
+<div class="col-xs-4 col-sm-3 col-md-2 hidden-xs" id="left">
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-book"></span>
+            栏目
         </div>
+        <div class="list-group">
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ list_res }}">TCP通信</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ pan_res }}">网络转换</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ cancel_res }}">微信</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ config_res }}">地图</a>
+            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ cancel_res }}">API</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
 
+{% block content %}
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
+    <h3 class="main" id="content-title"><a href="{% url 'app_tutorial' %}doc/{{ active }}" title="进入栏目">{{ active_column.name }}</a> 栏目的所有文档</h3><hr>
+    <div class="row placeholders">
+      <style type="text/css">
+          #content .content-description{
+          overflow: hidden;
+          -webkit-line-clamp: 3;
+          text-overflow: ellipsis;
+          -webkit-box-orient:vertical;
+          display:-webkit-box;
+        }
+      </style>
+      <div class="list-group">
+          {% for item in content_list %}
+          {% if item.slug != 'index' %}
+            <a href="{% url 'app_tutorial' %}doc/{{ active_column.slug }}/{{ item.slug }}" class="list-group-item">
+              <h4 style="display: inline;color:darkorange;" class="list-group-item-heading">{{ item.title }}</h4><span class="list-group-item-text pull-right label label-info">{{ item.column.name }}</span>
+              <p class="list-group-item-text pull-right">{% for keyword in item.keywords %}<span class="label label-default" style="margin: 5px;">{{ keyword }}</span>{% endfor %}</p>
+              <p class="list-group-item-text content-description">{{ item.description }}</p>
+            </a>
+          {% endif %}
+          {% endfor %}
+      </div>
+    </div>
+</div>
+{% endblock %}
 
-</body>
-</html>
-
+{% block right %}
+<div class="main col-xs-offset-9 col-sm-offset-9 col-md-offset-9 col-xs-3 col-sm-3 col-md-3" id="right">
+    <br/>
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-flag"></span>
+            栏目信息
+        </div>
+        <div class="list-group">
+            <a class="list-group-item glyphicon glyphicon-tags" title="关键词">&nbsp;{{ active_column.info }}</a>
+        </div>
+    </div>
+    {% if request.user.is_superuser %}
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-edit"></span>
+            栏目操作
+        </div>
+        <div class="list-group">
+            <a class="list-group-item glyphicon glyphicon-plus">请到后台管理</a>
+        </div>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

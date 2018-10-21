@@ -29,7 +29,6 @@ DEBUG = cf.getboolean("meta", "debug")
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 # [配置数据库]
-from mysite_conf.settings_cfg import *
 DATABASES = {
     'default': {
         'ENGINE': cf.get("db", "engine"),
@@ -41,7 +40,7 @@ DATABASES = {
     }
 }
 
-# 记录日志
+# [记录日志]
 if cf.getboolean("meta","logger") is True:
     LOGGING = {
         'version': 1,
@@ -50,7 +49,7 @@ if cf.getboolean("meta","logger") is True:
             'file': {
                 'level': 'ERROR',
                 'class': 'logging.FileHandler',
-                'filename': os.path.join(BASE_DIR, 'log')+'/django.log',
+                'filename': os.path.join(os.path.join(BASE_DIR, 'log'),'django.log'),
             },
         },
         'loggers': {

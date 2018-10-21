@@ -7,12 +7,13 @@ from django.db.models.signals import pre_delete,pre_save
 from django.dispatch.dispatcher import receiver
 from django.core.files.storage import FileSystemStorage
 import os
-import sys
-sys.path.append("..")
+
+APP_FILE_ROOT = 'app_tutorial_doc/'
+APP_TEMPLETE_ROOT = 'app_tutorial/'
 
 #上传文件之前动态生成路径
 def get_tutorialFilePath(instance, filename):
-    return 'app_tutorial_doc/'+str(instance.column.slug)+'/'+str(instance.slug)+'/'+str(filename)
+    return APP_FILE_ROOT+str(instance.column.slug)+'/'+str(instance.slug)+'/'+str(filename)
 
 # 栏目表。注意：slug域直接映射到url，不能重名。解决方法其实很简单：slug设置唯一约束
 @python_2_unicode_compatible
@@ -32,16 +33,13 @@ class Column(models.Model):
 @python_2_unicode_compatible
 class Tutorial(models.Model):
     column = models.ForeignKey(Column,null=False,blank=True,verbose_name='归属栏目')
-    author = models.ForeignKey('auth.User',blank=True,null=True,editable=False,verbose_name='作者')
 
     slug = models.CharField('文档域',max_length=256, db_index=True)
     title = models.CharField('标题',max_length=256)
     keywords = models.CharField('关键词',max_length=256,null=True,blank=True)
     description = models.TextField('描述',null=True,blank=True)
-    content = models.FileField('内容',\
-        upload_to=get_tutorialFilePath,null=True,blank=True, help_text='文档对应的实体文件')
-    content_html = models.FileField('内容转码',\
-        upload_to=get_tutorialFilePath,null=True,blank=True, help_text='文档对应的html文件')
+    content = models.FileField('内容',upload_to=get_tutorialFilePath,null=True,blank=True, help_text='文档对应的实体文件')
+    content_html = models.FileField('内容转码',upload_to=get_tutorialFilePath,null=True,blank=True, help_text='文档对应的html文件')
 
     publish_time = models.DateTimeField('发表时间', auto_now_add=True)
     update_time = models.DateTimeField('更新时间',auto_now=True, null=True)

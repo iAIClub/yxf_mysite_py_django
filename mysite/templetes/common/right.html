@@ -7,7 +7,7 @@
         </div>
         <div class="list-group">
             {% for item in list %}
-            <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+            <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
             {% endfor %}
         </div>
     </div>
@@ -18,7 +18,7 @@
         </div>
         <div class="list-group">
             {% for item in list %}
-            <a class="list-group-item glyphicon glyphicon-hand-right" href="{% url 'app_tutorial_index' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+            <a class="list-group-item glyphicon glyphicon-hand-right" href="{% url 'app_tutorial' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
             {% endfor %}
         </div>
     </div>

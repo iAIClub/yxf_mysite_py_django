@@ -7,32 +7,43 @@ from django.db.models.signals import pre_delete,pre_save
 from django.dispatch.dispatcher import receiver
 from django.core.files.storage import FileSystemStorage
 import os
-import sys
-sys.path.append("..")
+
+APP_FILE_ROOT = 'app_blog_post/'
+APP_TEMPLETE_ROOT = 'app_blog/'
 
 #上传文件之前动态生成路径
 def get_postFilePath(instance, filename):
-    return 'app_blog_post/'+str(instance.user.slug)+'/'+str(instance.slug)+'/'+str(filename)
+    return APP_FILE_ROOT+str(instance.user.username)+'/'+str(filename)
 
-# 文档表。注意：slug域直接映射到url，不能重名。解决方法其实很简单：column+slug组成联合主键
+# 分类表
+@python_2_unicode_compatible
+class PostClass(models.Model):
+    name = models.CharField('分类名称', max_length=256)
+    info = models.TextField('分类简介', default='')
+
+    class Meta:
+        verbose_name = '分类'
+        ordering = ['name']
+
+    def __str__(self):
+        return self.name
+
+# 文章表
 @python_2_unicode_compatible
 class Post(models.Model):
-    user = models.ForeignKey('auth.User',blank=False,null=False,editable=False,verbose_name='作者')
+    user = models.ForeignKey('auth.User',blank=False,null=False,editable=False,verbose_name='所属用户')
+    post_class = models.ForeignKey(PostClass,null=True,blank=True,verbose_name='所属分类')
 
-    slug = models.CharField('文章域',max_length=256, db_index=True)
     title = models.CharField('标题',max_length=256)
     keywords = models.CharField('关键词',max_length=256,null=True,blank=True)
     description = models.TextField('描述',null=True,blank=True)
-    content = models.FileField('内容',\
-        upload_to=get_postFilePath,null=True,blank=True, help_text='文章对应的实体文件')
-    content_html = models.FileField('内容转码',\
-        upload_to=get_postFilePath,null=True,blank=True, help_text='文章对应的html文件')
+    content = models.FileField('内容',upload_to=get_postFilePath,null=True,blank=True, help_text='文章对应的实体文件')
+    content_html = models.FileField('内容转码',upload_to=get_postFilePath,null=True,blank=True, help_text='文章对应的html文件')
 
     publish_time = models.DateTimeField('发表时间', auto_now_add=True)
     update_time = models.DateTimeField('更新时间',auto_now=True, null=True)
 
     class Meta:
-        unique_together=("user","slug")#如果不知道字段名可连接到数据库查看
         verbose_name = '文章'
         get_latest_by = 'update_time'
         ordering = ['-update_time'] #-表示反转排序顺序

@@ -1,11 +1,11 @@
 <div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
 <style type="text/css">#content .row { padding-left:15px;padding-right: 15px;}</style>
-{% if arg_list == 'True' %}
+{% if arg_list %}
   <h3>{{ user.username }} - 文章列表【建设中】</h3>
   <hr/>
   <div class="row placeholders">
   </div>
-{% elif arg_pan == 'True' %}
+{% elif arg_pan %}
   <h3>{{ user.username }} - 网盘文件</h3>
   <hr/>
   <div class="row placeholders">
@@ -32,7 +32,7 @@
         <button class="delete" style="display: none;"></button><!--隐藏的程序控件-->
         {% for item in pan_list %}
         <li class="list-group-item">
-          <a href="{% url 'app_user_download' %}{{ item.username }}/{{ item.userpath }}/{{ item.filename }}"><button class="btn btn-info btn-sm btn-inline download">下载</button></a>
+          <a href="{% url 'app_user' %}download/{{ item.username }}/{{ item.userpath }}/{{ item.filename }}"><button class="btn btn-info btn-sm btn-inline download">下载</button></a>
           <p style="display: none;">{{ item.userpath }}</p>
           <p style="display: none;">{{ item.filename }}</p>
           <b title="于 {{ item.upload_time }} 上传">{{ item.userpath }}/{{ item.filename }}</b>
@@ -103,7 +103,7 @@
       });
     </script>
   </div>
-{% elif arg_config == 'True' %}
+{% elif arg_config %}
   <h3>{{ user.username }} - 用户信息</h3><hr>
   <div class="row placeholders">
   <form role="form" method="post" action="{% url 'app_user_profile' %}">
@@ -133,7 +133,7 @@
     }
   </style>
   </div>
-{% elif arg_cancel == 'True' %}
+{% elif arg_cancel %}
   <h3>用户注销 - {{ user.username }}</h3><hr>
   <div class="row placeholders">
   <h4 style="color:red">注意：此操作将在系统中永久删除此用户，请谨慎操作！</h4>

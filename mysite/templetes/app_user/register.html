@@ -36,6 +36,7 @@
         <input type="text" name="username" id="username" class="form-control" placeholder="用户名" required autofocus>
   			<input type="password" name="pd" id="pd" class="form-control" placeholder="密码" required>
         <input type="text" name="email" class="form-control" placeholder="邮箱" required>
+        <input type="text" name="purpose" style="display: none;" value="register">
         <br/>
   			<button class="btn btn-lg btn-primary btn-block" type="submit" id="submit">提交注册</button>
   			<br/>
@@ -50,7 +51,7 @@
           $("#username").blur(function(){
             if($("#username").val() != null && $("#username").val() != ""){
               $.ajax({
-                  url: "{% url 'app_user_ajax' %}",
+                  url: "{% url 'app_user_register' %}",
                   type:"POST",
                   timeouut:10000,
                   data:{
@@ -62,8 +63,11 @@
                     var parsedJson = eval(data);
                     if (parsedJson.count==1){
                       $("#message").html("用户名已存在，请重新输入！")
+                      $("#submit").attr("disabled", true);
                     }else{
-                      $("#message").html("")}
+                      $("#message").html("");
+                      $("#submit").removeAttr("disabled");
+                    }
                     }});}});});
       </script>
     </div> <!-- /container -->

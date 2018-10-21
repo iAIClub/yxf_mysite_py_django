@@ -8,10 +8,8 @@ from django.contrib.auth.decorators import login_required
 from django.core.files import File
 from django.views.decorators.csrf import csrf_exempt
 import os
-import sys
 import shutil
-sys.path.append("..")
-from .models import Column,Tutorial
+from app_tutorial.models import Column,Tutorial,APP_FILE_ROOT,APP_TEMPLETE_ROOT
 
 #网站首页
 #/
@@ -25,7 +23,10 @@ def index(request):
 #站内搜索页，对应站内搜索模板
 #/search
 def search(request):
-    return HttpResponse(render(request, 'common/base.html'))
+    return HttpResponse(render(request, 'common/base.html',{\
+        'title':'菲菲的技术网站',\
+        'list':columns,\
+        }))
 
 #文档首页
 #左侧列出所有栏目（可切换选定项），中间列出选定栏目的所有文档（需注意关键词列表），右侧显示选定栏目的信息
@@ -35,7 +36,7 @@ def tutorial(request):
     active = request.GET.get('active',None)#进入文档首页必须指定活动栏目
     if active is None:
         active = columns[0].slug
-        return HttpResponseRedirect(reverse('app_tutorial_index')+'?active='+active)
+        return HttpResponseRedirect(reverse('app_tutorial')+'?active='+active)
     active_column = Column.objects.get(slug=active)
     docs = Tutorial.objects.filter(column__slug=active).order_by("publish_time")#选定栏目内的所有文档
     for doc in docs:
@@ -46,7 +47,7 @@ def tutorial(request):
             doc.keywords=tmp_keywords
         except:
             doc.keywords=[]
-    return HttpResponse(render(request, 'app_tutorial/index.html', {\
+    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html', {\
         'title':'菲菲的技术网站 - 文档',\
         'active':active,\
         'active_column':active_column,\
@@ -54,19 +55,39 @@ def tutorial(request):
         'content_list':docs,\
         }))
 
+#编辑器页，文档仅限管理员操作。可直接访问，也可通过iframe嵌入。新建文档、编辑文档的实际执行者
+#/tutorial/editmd
+def editmd(request):
+    if request.method == 'GET':
+        #返回编辑器页面
+        arg_path = request.GET.get('path',None)
+        arg_name = request.GET.get('name',None)
+        arg_title = request.GET.get('title',None)
+        html_name = arg_name.split('.')[0]+'.html'
+        try:
+            return HttpResponse(render(request,'common/editmd.html',{\
+                'path':arg_path,\
+                'name':arg_name,\
+                'html_name':html_name,\
+                'title':arg_title,\
+                }))
+        except:
+            messages.error(request,'无效文档信息！')
+            return HttpResponseRedirect(reverse('app_tutorial')+'doc/'+str(arg_path))
+
 #栏目页，与栏目文档页内容完全一致，通用一个模板，只不过显示的是默认index文档且url是栏目名
-#/tutorial/doc/colname
+#/tutorial/doc/colslug
 def column(request,column_slug):
     return doc(request=request,column_slug=column_slug,doc_slug='index')#交由doc()处理
 
 #栏目文档页
 ##左侧列出本栏目所有文档（可切换文档），中间显示文档（需注意请求的是实体文件），右侧显示中间的文档对应的信息（需注意关键词列表）
-#/tutorial/doc/colname/docname
+#/tutorial/doc/colslug/docslug
 def doc(request, column_slug, doc_slug):
     #POST操作文档域
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
-        if purpose is not None and request.user.is_authenticated:
+        if purpose is not None and request.user.is_superuser:
             try:
                 #表单提交处理：新建文档，对文件主体的操作转到编辑器页面进行，为防止重复创建同名记录，需在模型设置column+slug组成联合主键
                 if purpose == 'new':
@@ -78,19 +99,19 @@ def doc(request, column_slug, doc_slug):
                     upload_file = request.FILES.get('file',None)
                     new_docfile = upload_file
                     if upload_file is None:
-                        f = file('media/app_tutorial_doc/'+str(new_slug)+'.md','w+')
+                        f = file('media/'+APP_FILE_ROOT+str(new_slug)+'.md','w+')
                         new_docfile = File(f)
                         new_docfile.write('')
                         new_docfile.name = new_slug+'.md'
-                        new_doc = Tutorial.objects.create(column=column,author=request.user,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description,content=new_docfile)
+                        new_doc = Tutorial.objects.create(column=column,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description,content=new_docfile)
                         new_doc.save()
                         f.close()
-                        os.remove('media/app_tutorial_doc/'+str(new_slug)+'.md')
+                        os.remove('media/'+APP_FILE_ROOT+str(new_slug)+'.md')
                     else:
                         new_docfile.name = new_slug+'.md'
-                        new_doc = Tutorial.objects.create(column=column,author=request.user,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description,content=new_docfile)
+                        new_doc = Tutorial.objects.create(column=column,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description,content=new_docfile)
                         new_doc.save()
-                    return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?column='+column_slug+'&slug='+new_slug+'&title='+new_title)
+                    return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?path=tutorial/doc/'+column_slug+'/'+new_slug+'&name='+new_slug+'.md'+'&title='+new_title)
                 #表单提交处理：修改当前文档，对文件主体的操作转到编辑器页面进行
                 elif purpose == 'edit':
                     new_title = request.POST.get('title',None)
@@ -101,15 +122,46 @@ def doc(request, column_slug, doc_slug):
                     doc.keywords=new_keywords
                     doc.description=new_description
                     doc.save()
-                    return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?column='+column_slug+'&slug='+doc_slug+'&title='+new_title)
+                    return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?path=tutorial/doc/'+column_slug+'/'+doc_slug+'&name='+doc_slug+'.md'+'&title='+new_title)
                 #表单提交处理：删除当前文档及其文件目录，成功后返回到栏目页
                 elif purpose == 'delete':
                     content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
                     content_doc.delete()
-                    shutil.rmtree('media/app_tutorial_doc/'+str(column_slug)+'/'+str(doc_slug))
-                    return HttpResponseRedirect(reverse('app_tutorial_index')+'doc/'+column_slug)
-            except Exception as e:
-                raise e
+                    shutil.rmtree('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug))
+                    return HttpResponseRedirect(reverse('app_tutorial')+'doc/'+column_slug)
+                #表单提交处理：由editmd提交，保存修改，保存完成后仍然留在editmd页面
+                elif purpose == 'save':
+                    arg_path = request.POST.get('path',None)
+                    arg_column = arg_path.split('/')[-2]
+                    arg_slug = arg_path.split('/')[-1]
+                    text_md = request.POST.get('editormd-markdown-textarea',None)
+                    text_html = request.POST.get('editormd-html-textarea',None)
+                    doc = Tutorial.objects.get(column__slug=arg_column, slug=arg_slug)
+
+                    # md file
+                    f1 = file('media/'+APP_FILE_ROOT+str(arg_slug)+'.md','w+')#在文件系统中打开临时文件暂存
+                    new_docfile = File(f1)
+                    new_docfile.write(text_md)
+                    new_docfile.name = str(arg_slug)+'.md'
+                    doc.content.delete()#必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
+                    doc.content=new_docfile
+
+                    # html file
+                    f2 = file('media/'+APP_FILE_ROOT+str(arg_slug)+'.html','w+')#在文件系统中打开临时文件暂存
+                    new_docfile_html = File(f2)
+                    new_docfile_html.write(text_html)
+                    new_docfile_html.name = str(arg_slug)+'.html'
+                    if doc.content_html is not None:
+                        doc.content_html.delete()#必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
+                    doc.content_html=new_docfile_html
+
+                    doc.save()
+                    f1.close()
+                    f2.close()
+                    os.remove('media/'+APP_FILE_ROOT+str(arg_slug)+'.md')
+                    os.remove('media/'+APP_FILE_ROOT+str(arg_slug)+'.html')
+                    return HttpResponse(str(arg_slug)+".md：保存成功！")
+            except:
                 messages.error(request,'操作失败！')
         return HttpResponseRedirect(request.path)
     #GET直接请求网页
@@ -122,14 +174,14 @@ def doc(request, column_slug, doc_slug):
             try:
                 content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
             except:
-                f = file('media/app_tutorial_doc/index.md','w+')
+                f = file('media/'+APP_FILE_ROOT+'index.md','w+')
                 new_docfile = File(f)
                 new_docfile.write('')
                 new_docfile.name = doc_slug+'.md'
-                index = Tutorial.objects.create(column=column,author=request.user,slug=doc_slug,title=doc_slug,content=new_docfile)
+                index = Tutorial.objects.create(column=column,slug=doc_slug,title=doc_slug,content=new_docfile)
                 index.save()
                 f.close()
-                os.remove('media/app_tutorial_doc/'+str(doc_slug)+'.md')
+                os.remove('media/'+APP_FILE_ROOT+str(doc_slug)+'.md')
                 content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
         else:
             try:
@@ -150,7 +202,7 @@ def doc(request, column_slug, doc_slug):
             content_doc_file = content_doc.content.read()
         except:
             pass
-        return HttpResponse(render(request, 'app_tutorial/doc.html',{\
+        return HttpResponse(render(request, APP_TEMPLETE_ROOT+'doc.html',{\
             'title':content_doc.title,\
             'column':column,\
             'left_list':docs,\
@@ -159,81 +211,40 @@ def doc(request, column_slug, doc_slug):
             'content_doc_file':content_doc_file,\
             }))
 
-#编辑器页，文档仅限管理员操作。可直接访问，也可通过iframe嵌入。新建文档、编辑文档的实际执行者
-#/tutorial/editmd
-@csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
-def editmd(request):
-    if request.method == 'GET':
-        arg_getfile = request.GET.get('getfile',None)
-        #返回编辑器页面
-        if arg_getfile is None:
-            arg_column = request.GET.get('column',None)
-            arg_slug = request.GET.get('slug',None)
-            arg_title = request.GET.get('title',None)
-            try:
-                return HttpResponse(render(request,'app_tutorial/editmd.html',{\
-                    'column':arg_column,\
-                    'slug':arg_slug,\
-                    'title':arg_title,\
-                    }))
-            except:
-                messages.error(request,'无效文档信息！')
-                return HttpResponseRedirect(reverse('app_tutorial_index')+'doc/'+str(arg_column)+'/'+str(arg_slug))
-        #返回文档实体文件.md内容。此处的GET参数由前端生成，需要编解码
-        elif arg_getfile == 'md':
-            arg_column = request.GET.get('column'.encode('utf-8'),None)
-            arg_slug = request.GET.get('slug'.encode('utf-8'),None)
-            doc = Tutorial.objects.get(column__slug=arg_column, slug=arg_slug)
+#导出文件操作，无对应模板
+#/tutorial/doc/colslug/docslug/docname
+def filed(request,column_slug,doc_slug,doc_name):
+    if column_slug is not None and doc_slug is not None and doc_name is not None:
+        #返回文档实体文件.html内容
+        if doc_name.split('.')[1] == 'md':
+            doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
             response = HttpResponse(doc.content)
             response['Content-Type'] = 'application/octet-stream' #设置为二进制流
-            response['Content-Disposition'] = 'attachment;filename=' + arg_slug+'.md' #强制浏览器下载而不是查看流
+            response['Content-Disposition'] = 'attachment;filename=' + doc_name #强制浏览器下载而不是查看流
             return response
-    #通过editmd模板提交的操作
-    elif request.method == 'POST':
-        if request.user.is_superuser:
-            purpose = request.POST.get('purpose')
-            #保存处理
-            if purpose == 'savepage':
-                arg_column = request.POST.get('column',None)
-                arg_slug = request.POST.get('slug',None)
-                text_md = request.POST.get('editormd-markdown-textarea',None)
-                text_html = request.POST.get('editormd-html-textarea',None)
-                doc = Tutorial.objects.get(column__slug=arg_column, slug=arg_slug)
-
-                # md file
-                f1 = file('media/app_tutorial_doc/'+str(arg_slug)+'.md','w+')#在文件系统中打开临时文件暂存
-                new_docfile = File(f1)
-                new_docfile.write(text_md)
-                new_docfile.name = str(arg_slug)+'.md'
-                doc.content.delete()#必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
-                doc.content=new_docfile
-
-                # html file
-                f2 = file('media/app_tutorial_doc/'+str(arg_slug)+'.html','w+')#在文件系统中打开临时文件暂存
-                new_docfile_html = File(f2)
-                new_docfile_html.write(text_html)
-                new_docfile_html.name = str(arg_slug)+'.html'
-                if doc.content_html is not None:
-                    doc.content_html.delete()#必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
-                doc.content_html=new_docfile_html
-
-                doc.save()
-                f1.close()
-                f2.close()
-                os.remove('media/app_tutorial_doc/'+str(arg_slug)+'.md')
-                os.remove('media/app_tutorial_doc/'+str(arg_slug)+'.html')
-                return HttpResponse(str(arg_slug)+".md：保存成功！")
+        #返回文档实体文件.md内容
+        elif doc_name.split('.')[1] == 'html':
+            doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
+            response = HttpResponse(doc.content_html)
+            response['Content-Type'] = 'application/octet-stream' #设置为二进制流
+            response['Content-Disposition'] = 'attachment;filename=' + doc_name #强制浏览器下载而不是查看流
+            return response
+    else:
+        return HttpResponse('None')
 
 #图片操作，无对应模板
-#tutorial/image/...
+#tutorial/doc/colslug/docslug/image
+#tutorial/doc/colslug/docslug/image/imagename
 @csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
 def image(request,column_slug,doc_slug,image_name):
     if column_slug is not None and doc_slug is not None:
         #在editmd页面里的图片上传处理
-        if request.method == 'POST':
+        if request.method == 'POST' and request.user.is_superuser:
             try:
                 upload_image = request.FILES.get('editormd-image-file',None)
-                with open('media/app_tutorial_doc/'+str(column_slug)+'/'+str(doc_slug)+'/'+str(upload_image.name),'wb+') as f:
+                if not os.path.exists('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'):
+                    os.mkdir('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/')
+                with open('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(upload_image.name),'wb+') as f:
                     f.write(upload_image.read())
                 return JsonResponse({\
                     "success":1,\
@@ -249,32 +260,10 @@ def image(request,column_slug,doc_slug,image_name):
         #图片链接
         elif request.method == 'GET':
             if image_name is not None:
-                with open('media/app_tutorial_doc/'+str(column_slug)+'/'+str(doc_slug)+'/'+str(image_name) , 'rb') as f:
+                with open('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(image_name) , 'rb') as f:
                     image = f.read()
                     response = HttpResponse(image)
-                    response['Content-Type'] = 'image/*'
-                    response['Content-Disposition'] = 'inline;filename=' + image_name #
+                    response['Content-Type'] = 'image/'+image_name.split('.')[-1] #要设置具体格式才能在浏览器自动打开
                     return response
             else:
                 return HttpResponse('')
-
-#在editmd页面里的导出文件操作，无对应模板
-#/tutorial/download/...
-def download(request,column_slug,doc_slug,doc_name):
-    if column_slug is not None and doc_slug is not None and doc_name is not None:
-        #返回文档实体文件.html内容。此处的GET参数由前端生成，需要编解码
-        if doc_name.split('.')[1] == 'md':
-            doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
-            response = HttpResponse(doc.content)
-            response['Content-Type'] = 'application/octet-stream' #设置为二进制流
-            response['Content-Disposition'] = 'attachment;filename=' + doc_name #强制浏览器下载而不是查看流
-            return response
-        #返回文档实体文件.md内容。此处的GET参数由前端生成，需要编解码
-        elif doc_name.split('.')[1] == 'html':
-            doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
-            response = HttpResponse(doc.content_html)
-            response['Content-Type'] = 'application/octet-stream' #设置为二进制流
-            response['Content-Disposition'] = 'attachment;filename=' + doc_name #强制浏览器下载而不是查看流
-            return response
-    else:
-        return HttpResponse('None')

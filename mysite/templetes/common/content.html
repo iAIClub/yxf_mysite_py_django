@@ -5,13 +5,6 @@
       padding:10px;
       padding-bottom: 0;
     }
-/*    #content .text-muted{
-      overflow: hidden;
-      -webkit-line-clamp: 2;
-      text-overflow: ellipsis;
-      -webkit-box-orient:vertical;
-      display:-webkit-box;
-    }*/
     #content img{
       border: 1px solid green;
     }
@@ -21,32 +14,32 @@
   </style>
   <div class="row placeholders">
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_tutorial_index' %}"><img src="/static/img/方形具象/b3.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'app_tutorial' %}"><img src="/static/img/方形具象/b3.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>文档</h4>
       <span class="text-muted">预定义文档内容系统</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_blog_index' %}"><img src="/static/img/方形具象/b9.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'app_blog' %}"><img src="/static/img/方形具象/b9.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>博客</h4>
       <span class="text-muted">用户更新的博客文章</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_webtrans_index' %}"><img src="/static/img/方形具象/b12.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'app_webtrans' %}"><img src="/static/img/方形具象/b12.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>网络</h4>
       <span class="text-muted">一些网络通信功能的试验</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_visual_index' %}"><img src="/static/img/方形彩线/o14.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'app_visual' %}"><img src="/static/img/方形彩线/o14.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>视觉</h4>
       <span class="text-muted">视觉、图像处理与多媒体</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_metaphysics_index' %}"><img src="/static/img/方形彩线/o4.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
-      <h4>玄学</h4>
-      <span class="text-muted">玄学演算程序</span>
+      <div class="div-small"><a href="{% url 'app_metaphysics' %}"><img src="/static/img/方形彩线/o4.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <h4>数术</h4>
+      <span class="text-muted">易学数术演算程序</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_spider_index' %}"><img src="/static/img/方形彩线/o16.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'app_spider' %}"><img src="/static/img/方形彩线/o16.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>爬虫</h4>
       <span class="text-muted">独立爬虫服务器，数据分析</span>
     </div>
@@ -66,12 +59,12 @@
       <span class="text-muted">简单的小游戏——俄罗斯方块</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_user_profile' %}?pan=True"><img src="/static/img/方形蓝线/h1.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'app_user_profile' %}?pan=1"><img src="/static/img/方形蓝线/h1.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>存储</h4>
       <span class="text-muted">用户区简单的网盘功能</span>
     </div>
     <div class="col-xs-4 col-sm-3 placeholder">
-      <div class="div-small"><a href="{% url 'app_user_settings' %}"><img src="/static/img/方形具象电脑/r12.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
+      <div class="div-small"><a href="{% url 'settings' %}"><img src="/static/img/方形具象电脑/r12.png" class="img-responsive img-rounded" alt="Generic placeholder thumbnail"></a></div>
       <h4>设置</h4>
       <span class="text-muted">网站监控、数据操作与设置</span>
     </div>

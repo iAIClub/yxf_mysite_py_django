@@ -6,5 +6,5 @@ from django.http import HttpResponse
 
 # Create your views here.
 def index(request):
-    return HttpResponse(render(request, 'app_tutorial/index.html'))
+    return HttpResponse(render(request, 'app_webtrans/index.html'))
 
