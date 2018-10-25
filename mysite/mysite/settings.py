@@ -63,6 +63,15 @@ if cf.getboolean("meta","logger") is True:
 else:
     pass
 
+# [proxy]
+PROXY = {
+    'URL':cf.get('proxy','url'),
+    'IP':cf.get('proxy','ip'),
+    'PORT':cf.get('proxy','port'),
+    'PASSWORD':cf.get('proxy','password'),
+    'ENCRYPTION':cf.get('proxy','encryption'),
+}
+
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 

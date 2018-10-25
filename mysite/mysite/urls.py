@@ -58,12 +58,20 @@ spider_urlpatterns = [
 ]
 
 visual_urlpatterns = [
-    url(r'^map/$', app_visual_views.map,name='app_visual_map'),
-    url(r'^game/$', app_visual_views.game,name='app_visual_game'),
+    url(r'^charvideo/$', app_visual_views.charvideo,name='app_visual_charvideo'),
+    url(r'^dsvisual/$', app_visual_views.dsvisual,name='app_visual_dsvisual'),
+    url(r'^picture/$', app_visual_views.picture,name='app_visual_picture'),
+    url(r'^paint/$', app_visual_views.paint,name='app_visual_paint'),
+    url(r'^tetris/$', app_visual_views.tetris,name='app_visual_tetris'),
     url(r'^$', app_visual_views.index,name='app_visual'),
 ]
 
 webtrans_urlpatterns = [
+    url(r'^tcptrans/$', app_webtrans_views.tcptrans,name='app_webtrans_tcptrans'),
+    url(r'^nat/$', app_webtrans_views.nat,name='app_webtrans_nat'),
+    url(r'^wechat/$', app_webtrans_views.wechat,name='app_webtrans_wechat'),
+    url(r'^map/$', app_webtrans_views.map,name='app_webtrans_map'),
+    url(r'^proxy/$', app_webtrans_views.proxy,name='app_webtrans_proxy'),
     url(r'^$', app_webtrans_views.index,name='app_webtrans'),
 ]
 

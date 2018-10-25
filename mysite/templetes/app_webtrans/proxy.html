@@ -1,0 +1,34 @@
+<div id="proxy">
+    <p style="color: red;">注意：本站访问外网仅供技术交流，切勿用作其他用途。</p>
+    <input type="text" value="https://www.youtube.com"  style="width: 400px;">
+    <button class="btn btn-success btn-inline">访问</button>
+    <iframe id="mainiframe" scrolling="auto">
+    </iframe>
+</div>
+<script type="text/javascript">
+function changeFrameHeight(){
+    var ifm= document.getElementById("mainiframe");
+    ifm.height=document.documentElement.clientHeight+250;
+}
+window.onresize=function(){ changeFrameHeight();}
+$(function(){
+    changeFrameHeight();
+
+    $("#proxy button").click(function(){
+        var link = $("#proxy input").val();
+        $.ajax({
+            url: "{% url 'app_webtrans_proxy' %}",
+            type:"POST",
+            timeouut:10000,
+            data:{
+              "purpose":"iframe",
+              "url":$("#proxy input").val(),
+              "csrfmiddlewaretoken":"{{ csrf_token }}"
+            },
+            success:function (data) {
+              $("#mainiframe").val(data);
+            }
+        });
+    });
+});
+</script>

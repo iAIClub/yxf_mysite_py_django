@@ -129,3 +129,5 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 
 服务端口：80-nginx，9090-uwsgi(local)，5432-postgresql  
 
+已部署网站：[http://avata.cc]  [http://iotec.cc]  
+
