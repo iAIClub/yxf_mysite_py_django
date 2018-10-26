@@ -5,7 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect
 from app_webtrans.models import APP_FILE_ROOT,APP_TEMPLETE_ROOT
-from mysite.settings import PROXY
+from mysite.settings import BAIDUMAP
 
 def index(request):
     return HttpResponseRedirect(reverse('app_webtrans_tcptrans'))
@@ -32,6 +32,7 @@ def map(request):
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
         'title':'地图应用',\
         'display':'map',\
+        'ak':BAIDUMAP['AK'],\
         }))
 
 def proxy(request):

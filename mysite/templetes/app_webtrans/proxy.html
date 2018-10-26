@@ -2,7 +2,8 @@
     <p style="color: red;">注意：本站访问外网仅供技术交流，切勿用作其他用途。</p>
     <input type="text" value="https://www.youtube.com"  style="width: 400px;">
     <button class="btn btn-success btn-inline">访问</button>
-    <iframe id="mainiframe" scrolling="auto">
+    <iframe id="mainiframe" scrolling="auto" src="https://www.baidu.com">
+        #document
     </iframe>
 </div>
 <script type="text/javascript">
@@ -21,12 +22,13 @@ $(function(){
             type:"POST",
             timeouut:10000,
             data:{
-              "purpose":"iframe",
-              "url":$("#proxy input").val(),
-              "csrfmiddlewaretoken":"{{ csrf_token }}"
+                "purpose":"iframe",
+                "url":$("#proxy input").val(),
+                "csrfmiddlewaretoken":"{{ csrf_token }}"
             },
             success:function (data) {
-              $("#mainiframe").val(data);
+                $("#mainiframe").empty();
+                $("#mainiframe").load("#document "+data);
             }
         });
     });

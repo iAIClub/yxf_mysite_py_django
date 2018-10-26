@@ -1,5 +1,7 @@
 {% extends "common/base.html" %}
 
+
+
 {% block left %}
 <div class="col-xs-4 col-sm-3 col-md-2 hidden-xs" id="left">
     <div class="panel">
@@ -20,7 +22,7 @@
 {% endblock %}
 
 {% block content %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-12 col-sm-12 col-md-12" id="content">
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-12 col-sm-12 col-md-12" id="content" style="padding-left: 0;padding-right:0;">
 {% if display == 'map' %}
 {% include 'app_webtrans/map.html' %}
 {% elif display == 'tcptrans' %}
@@ -37,4 +39,7 @@
 {% endblock %}
 
 {% block right %}
+{% endblock %}
+
+{% block toolbar %}
 {% endblock %}

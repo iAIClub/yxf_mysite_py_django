@@ -63,13 +63,18 @@ if cf.getboolean("meta","logger") is True:
 else:
     pass
 
-# [proxy]
-PROXY = {
-    'URL':cf.get('proxy','url'),
-    'IP':cf.get('proxy','ip'),
-    'PORT':cf.get('proxy','port'),
-    'PASSWORD':cf.get('proxy','password'),
-    'ENCRYPTION':cf.get('proxy','encryption'),
+# # [proxy]
+# PROXY = {
+#     'URL':cf.get('proxy','url'),
+#     'IP':cf.get('proxy','ip'),
+#     'PORT':cf.get('proxy','port'),
+#     'PASSWORD':cf.get('proxy','password'),
+#     'ENCRYPTION':cf.get('proxy','encryption'),
+# }
+
+# [baidumap]
+BAIDUMAP = {
+    'AK':cf.get('baidumap','ak'),
 }
 
 # Quick-start development settings - unsuitable for production

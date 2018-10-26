@@ -58,7 +58,8 @@ spider_urlpatterns = [
 ]
 
 visual_urlpatterns = [
-    url(r'^charvideo/$', app_visual_views.charvideo,name='app_visual_charvideo'),
+    url(r'^charvideo/av/(?P<suburl>.+)', app_visual_views.charvideo,name='app_visual_charvideo_av'),
+    url(r'^charvideo/$', app_visual_views.charvideo,{'suburl':None},name='app_visual_charvideo'),
     url(r'^dsvisual/$', app_visual_views.dsvisual,name='app_visual_dsvisual'),
     url(r'^picture/$', app_visual_views.picture,name='app_visual_picture'),
     url(r'^paint/$', app_visual_views.paint,name='app_visual_paint'),
