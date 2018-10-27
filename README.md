@@ -13,9 +13,9 @@ yxf_mysite_py_django : 网站服务项目
 
 git根目录：yxf_mysite_py_django  
 
-网站项目根目录：yxf_mysite_py_django/mysite（后面以./mysite表示）  
+git分支：master稳定版；develop开发版  
 
-与网站内容无关的环境配置脚本：yxf_mysite_py_django/scripts  
+网站项目根目录：yxf_mysite_py_django/mysite（后面以./mysite表示）  
 
 ### 项目依赖  
 
@@ -31,7 +31,9 @@ ngnix==1.12.x
 
 postgresql==10.x  
 
-yxf_mysite_py_django/requirments  
+yxf_mysite_py_django/requirments2.txt  
+
+yxf_mysite_py_django/requirments3.txt  
 
 ### 项目架构
 
@@ -128,6 +130,8 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 服务器主机：VPS（ip，ssh（22），sftp（22），root管理员），提供HTTP网站服务  
 
 服务端口：80-nginx，9090-uwsgi(local)，5432-postgresql  
+
+上传：脚本上传（屏蔽了数据、临时文件）  
 
 已部署网站：[http://avata.cc]  [http://iotec.cc]  
 
