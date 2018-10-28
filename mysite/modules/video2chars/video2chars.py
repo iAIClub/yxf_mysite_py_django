@@ -68,7 +68,7 @@ class Video2Chars:
 if __name__ == '__main__':
     #命令行参数工具click
     @click.command()
-    @click.option("--chars_width", default=200, help='The width of the generated video, in characters, default to 200')
+    @click.option("--chars_width", default=150, help='The width of the generated video, in characters, default to 200')
     @click.option("--fps", default=8, help='frames per second, defaults to 8')
     @click.option("--pixels", default=None, type=str, help='the chars sequence used to generate character animation')
     @click.option("--t_start", default=0, help="the start time that the video needs to be converted(in seconds)")

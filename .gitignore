@@ -1,0 +1,10 @@
+#middle file
+__pycache__
+*.pyc
+*.log
+
+#website userdata
+mysite/media/*
+
+#sensitive config
+mysite/settings.cfg
