@@ -2,7 +2,8 @@
 __pycache__
 *.pyc
 *.log
-
+mysite/app_[a-z]*/migrations/*
+!mysite/app_[a-z]*/migrations/__init__.py
 
 #website userdata
 mysite/media/*
