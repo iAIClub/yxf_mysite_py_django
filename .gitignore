@@ -3,6 +3,7 @@ __pycache__
 *.pyc
 *.log
 
+
 #website userdata
 mysite/media/*
 
