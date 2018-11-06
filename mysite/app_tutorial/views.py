@@ -24,8 +24,8 @@ def index(request):
 #/search
 def search(request):
     return HttpResponse(render(request, 'common/base.html',{\
-        'title':'菲菲的技术网站',\
-        'list':columns,\
+        'title':'菲菲的技术网站 - 搜索',\
+        'list':'',\
         }))
 
 #文档首页
@@ -48,7 +48,7 @@ def tutorial(request):
         except:
             doc.keywords=[]
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html', {\
-        'title':'菲菲的技术网站 - 文档',\
+        'title':'文档',\
         'active':active,\
         'active_column':active_column,\
         'left_list':columns,\
@@ -99,7 +99,7 @@ def doc(request, column_slug, doc_slug):
                     upload_file = request.FILES.get('file',None)
                     new_docfile = upload_file
                     if upload_file is None:
-                        f = file('media/'+APP_FILE_ROOT+str(new_slug)+'.md','w+')
+                        f = open('media/'+APP_FILE_ROOT+str(new_slug)+'.md','w+')
                         new_docfile = File(f)
                         new_docfile.write('')
                         new_docfile.name = new_slug+'.md'
@@ -139,7 +139,7 @@ def doc(request, column_slug, doc_slug):
                     doc = Tutorial.objects.get(column__slug=arg_column, slug=arg_slug)
 
                     # md file
-                    f1 = file('media/'+APP_FILE_ROOT+str(arg_slug)+'.md','w+')#在文件系统中打开临时文件暂存
+                    f1 = open('media/'+APP_FILE_ROOT+str(arg_slug)+'.md','w+')#在文件系统中打开临时文件暂存
                     new_docfile = File(f1)
                     new_docfile.write(text_md)
                     new_docfile.name = str(arg_slug)+'.md'
@@ -147,7 +147,7 @@ def doc(request, column_slug, doc_slug):
                     doc.content=new_docfile
 
                     # html file
-                    f2 = file('media/'+APP_FILE_ROOT+str(arg_slug)+'.html','w+')#在文件系统中打开临时文件暂存
+                    f2 = open('media/'+APP_FILE_ROOT+str(arg_slug)+'.html','w+')#在文件系统中打开临时文件暂存
                     new_docfile_html = File(f2)
                     new_docfile_html.write(text_html)
                     new_docfile_html.name = str(arg_slug)+'.html'
@@ -174,7 +174,7 @@ def doc(request, column_slug, doc_slug):
             try:
                 content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
             except:
-                f = file('media/'+APP_FILE_ROOT+'index.md','w+')
+                f = open('media/'+APP_FILE_ROOT+'index.md','w+')
                 new_docfile = File(f)
                 new_docfile.write('')
                 new_docfile.name = doc_slug+'.md'

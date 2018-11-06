@@ -10,6 +10,9 @@ import os
 
 APP_FILE_ROOT = 'app_user_pan/'
 APP_TEMPLETE_ROOT = 'app_user/'
+if not os.path.isdir('media/'+APP_FILE_ROOT):
+    os.mkdir('media/'+APP_FILE_ROOT.rstrip('/'))
+
 
 #上传之前动态生成路径 两个固定参数：instance调取当前对象，filename获取上传文件名
 def get_filePathAndName(instance, filename):

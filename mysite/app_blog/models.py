@@ -10,6 +10,9 @@ import os
 
 APP_FILE_ROOT = 'app_blog_post/'
 APP_TEMPLETE_ROOT = 'app_blog/'
+if not os.path.isdir('media/'+APP_FILE_ROOT):
+    os.mkdir('media/'+APP_FILE_ROOT.rstrip('/'))
+
 
 #上传文件之前动态生成路径
 def get_postFilePath(instance, filename):

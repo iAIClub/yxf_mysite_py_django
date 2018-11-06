@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-from django.db import models
+import os
 
 APP_FILE_ROOT = 'app_visual_file/'
 APP_TEMPLETE_ROOT = 'app_visual/'
+if not os.path.isdir('media/'+APP_FILE_ROOT):
+    os.mkdir('media/'+APP_FILE_ROOT.rstrip('/'))

@@ -14,6 +14,7 @@ sys.setdefaultencoding('utf8')
 from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT
 
 
+
 #网站设置区，仅限管理员操作，使用另一套模板
 #/settings
 @login_required(login_url='/user/login')
@@ -27,7 +28,7 @@ def settings(request):
             return HttpResponseRedirect(reverse('settings')+'?status=1')
         else:
             return HttpResponse(render(request, APP_TEMPLETE_ROOT+'settings.html',{\
-                'title':'菲菲的技术网站',\
+                'title':'设置',\
                 'arg_status':arg_status,\
                 'arg_history':arg_history,\
                 'arg_data':arg_data,\
@@ -36,12 +37,14 @@ def settings(request):
     else:
         return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')
 
-#直接跳转，无内容
+
+# 直接跳转，无内容
 def user(request):
     return HttpResponseRedirect(reverse('app_user_profile'))
 
-#对应登录模板，登录逻辑
-#/user/login
+
+# 对应登录模板，登录逻辑
+# /user/login
 def login(request):
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
@@ -64,8 +67,9 @@ def login(request):
     else:
         return HttpResponse(render(request, APP_TEMPLETE_ROOT+'login.html'))
 
-#对应注册模板，注册逻辑
-#/user/register
+
+# 对应注册模板，注册逻辑
+# /user/register
 def register(request):
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
@@ -94,8 +98,9 @@ def register(request):
     else:
         return HttpResponse(render(request, APP_TEMPLETE_ROOT+'register.html'))
 
-#用户区。左侧列出用户的所有操作项，中间输出操作内容（所属博客文档，所属网盘文件，用户信息更改和注销），右侧按需显示相关信息
-#/user/profile
+
+# 用户区。左侧列出用户的所有操作项，中间输出操作内容（所属博客文档，所属网盘文件，用户信息更改和注销），右侧按需显示相关信息
+# /user/profile
 @login_required(login_url='/user/login')
 def profile(request):
     #页面请求处理：根据GET参数解析模板，返回对应的页面内容
@@ -114,7 +119,7 @@ def profile(request):
             return HttpResponseRedirect(reverse('app_user_profile')+'?list=1')
         else:
             return HttpResponse(render(request, APP_TEMPLETE_ROOT+'profile.html',{\
-                'title':'菲菲的技术网站',\
+                'title':'用户区',\
                 'user':user,\
                 'arg_list':arg_list,\
                 'arg_config':arg_config,\
@@ -206,8 +211,9 @@ def profile(request):
     else:
         return JsonResponse({"status":0})
 
-#对应文件下载链接，无模板，直接返回文件。链接是翻译后的虚拟文件路径，并非实际路径
-#/user/download/..
+
+# 对应文件下载链接，无模板，直接返回文件。链接是翻译后的虚拟文件路径，并非实际路径
+# /user/download/..
 @login_required(login_url='/user/login')
 def download(request, suburl):
     filename = suburl.split('/')[-1]

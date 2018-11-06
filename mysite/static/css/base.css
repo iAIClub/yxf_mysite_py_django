@@ -79,7 +79,7 @@ iframe{
 
 /*toolbar*/
 #toolbar{
-    /*位置与大小*/position:fixed;right:1px;bottom:10px;
+    /*位置与大小*/position:fixed;right:1px;bottom:20px;
     /*层叠顺序*/z-index:2001;
     /*效果*/font-size:0.75rem;
 }
@@ -170,9 +170,6 @@ iframe{
             color: darkcyan;
         }
     /*main footer*/
-    #footer{
-        border: 1px solid #fff;
-    }
-    #footer:hover{
-        border: 1px solid #169fe6;
+    #footer .zztj a{
+        color:#000;
     }

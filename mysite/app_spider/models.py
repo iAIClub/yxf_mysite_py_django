@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import os
 
-from django.db import models
+APP_API = ''
+APP_FILE_ROOT = 'app_spider_file/'
+APP_TEMPLETE_ROOT = 'app_spider/'
+if not os.path.isdir('media/'+APP_FILE_ROOT):
+    os.mkdir('media/'+APP_FILE_ROOT.rstrip('/'))
 
-# Create your models here.

@@ -26,6 +26,9 @@ cf.read("settings.cfg")
 # [Debug]
 DEBUG = cf.getboolean("meta", "debug")
 
+# [host]
+HOST = cf.get("meta","host")
+
 # Database
 # https://docs.djangoproject.com/en/1.11/ref/settings/#databases
 # [配置数据库]

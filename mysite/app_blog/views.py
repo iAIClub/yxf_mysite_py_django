@@ -32,7 +32,7 @@ def blog(request):
             except:
                 post.keywords=[]
         return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html', {\
-            'title':'菲菲的技术网站 - 文档',\
+            'title':'博客',\
             'active':active,\
             'active_post_class':active_post_class,\
             'left_list':post_classes,\
@@ -55,7 +55,7 @@ def blog(request):
                 upload_file = request.FILES.get('file',None)
                 new_postfile = upload_file
                 if upload_file is None:
-                    f = file('media/'+APP_FILE_ROOT+str(new_post_id)+'.md','w+')
+                    f = open('media/'+APP_FILE_ROOT+str(new_post_id)+'.md','w+')
                     new_postfile = File(f)
                     new_postfile.write('')
                     new_postfile.name = str(new_post_id)+'.md'

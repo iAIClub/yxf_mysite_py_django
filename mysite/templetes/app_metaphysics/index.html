@@ -8,43 +8,282 @@
             功能列表
         </div>
         <div class="list-group">
-            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ list_res }}">万年历</a>
-            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ pan_res }}">八字</a>
-            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ cancel_res }}">六爻</a>
-            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ config_res }}">金口诀</a>
-            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ cancel_res }}">小成图</a>
-            <a class="list-group-item" href="{% url 'app_user_profile' %}?{{ cancel_res }}">API</a>
+            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=wannianli">玄学历法</a>
+            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=bazi">八字</a>
+            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=liuyao">六爻</a>
+            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=jinkoujue">金口诀</a>
+            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=xiaochengtu">小成图</a>
+            <a class="list-group-item" href="http://{{ host }}:8002/bazi?date=2018-10-1&time=12:20" target="_blank">API测试</a>
+        </div>
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-calendar"></span>
+            今日日历
+        </div>
+        <div class="list-group" id="leftcalendar" style="font-size:0.8rem;">
         </div>
     </div>
 </div>
+<script>
+$(function(){
+    var myDate = new Date();
+    var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
+    var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
+    $.ajax({
+        url: "http://{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json",
+        type:"GET",
+        timeouut:10000,
+        success:function (data) {
+            var parsedJson = eval(data);
+            if(parsedJson){
+                for(let item in parsedJson){
+                    if(item<=2){
+                        $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item][1]+'</div>');
+                    }else if(item<=3){
+                        $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                    }
+                };
+            }
+        }
+    });
+});
+</script>
 {% endblock %}
 
 {% block content %}
+<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/3.1.4/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/zh-cn.js"></script>
+<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/3.1.4/js/bootstrap-datetimepicker.min.js"></script>
+{% if op == 'wannianli' %}
 <div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title"><a href="{% url 'app_tutorial' %}doc/{{ active }}" title="进入栏目">{{ active_column.name }}</a> 栏目的所有文档</h3><hr>
-    <div class="row placeholders">
-      <style type="text/css">
-          #content .content-description{
-          overflow: hidden;
-          -webkit-line-clamp: 3;
-          text-overflow: ellipsis;
-          -webkit-box-orient:vertical;
-          display:-webkit-box;
-        }
-      </style>
-      <div class="list-group">
-          {% for item in content_list %}
-          {% if item.slug != 'index' %}
-            <a href="{% url 'app_tutorial' %}doc/{{ active_column.slug }}/{{ item.slug }}" class="list-group-item">
-              <h4 style="display: inline;color:darkorange;" class="list-group-item-heading">{{ item.title }}</h4><span class="list-group-item-text pull-right label label-info">{{ item.column.name }}</span>
-              <p class="list-group-item-text pull-right">{% for keyword in item.keywords %}<span class="label label-default" style="margin: 5px;">{{ keyword }}</span>{% endfor %}</p>
-              <p class="list-group-item-text content-description">{{ item.description }}</p>
-            </a>
-          {% endif %}
-          {% endfor %}
-      </div>
+    <h3 class="main" id="content-title">玄学历法</h3><hr>
+    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
+    <button class="btn btn-success btn-inline">转到</button>
+    <hr>
+    <div class="row placeholders" id="contentcalendar">
     </div>
 </div>
+<script>
+$(function(){
+    var myDate = new Date();
+    var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
+    var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
+    $.ajax({
+        url: "http://{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
+        type:"GET",
+        timeouut:10000,
+        success:function (data) {
+            var parsedJson = eval(data);
+            if(parsedJson){
+                for(let item in parsedJson){
+                    if(item<=2){
+                        $("#contentcalendar").append('<div class="list-group-item">'+parsedJson[item][1]+'</div>');
+                    }else{
+                        $("#contentcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                    }
+                };
+            }
+        }
+    });
+    $('#datetimepicker').datetimepicker();
+    $("#content button").click(function(){
+        $.ajax({
+            url: "http://{{ host }}:8002/wannianli?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                var parsedJson = eval(data);
+                if(parsedJson){
+                    $("#contentcalendar").html("");
+                    for(let item in parsedJson){
+                        if(item<=2){
+                            $("#contentcalendar").append('<div class="list-group-item">'+parsedJson[item][1]+'</div>');
+                        }else{
+                            $("#contentcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                        }
+                    };
+                }
+            }
+        });
+    });
+});
+</script>
+{% elif op == 'bazi' %}
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
+    <h3 class="main" id="content-title">八字排盘</h3><hr>
+    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
+    <span>请选择性别：</span>
+    <select id="xingbie">
+        <option>男</option>
+        <option>女</option>
+    </select>
+    <button class="btn btn-success btn-inline">排盘</button>
+    <hr>
+    <div class="row placeholders" id="pan">
+    </div>
+</div>
+<script>
+$(function(){
+    $('#datetimepicker').datetimepicker();
+    $("#content button").click(function(){
+        $.ajax({
+            url: "http://{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                if(data){
+                    $("#pan").html("");
+                    $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:550px;overflow-x:scroll;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                }
+            }
+        });
+    });
+});
+</script>
+{% elif op == 'liuyao' %}
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
+    <h3 class="main" id="content-title">六爻排盘</h3><hr>
+    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
+    <span>请选择起卦方法：</span>
+    <select id="qiguafangfa">
+        <option>标准时间起卦</option>
+    </select>
+    <span>请选择纳干支法：</span>
+    <select id="naganzhifa">
+        <option>传统京氏</option>
+        <option>先天甲子易</option>
+    </select>
+    <button class="btn btn-success btn-inline">排盘</button>
+    <hr>
+    <div class="row placeholders" id="pan">
+    </div>
+</div>
+<script>
+$(function(){
+    $('#datetimepicker').datetimepicker();
+    $("#content button").click(function(){
+        $.ajax({
+            url: "http://{{ host }}:8002/liuyao?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&qiguafangfa="+$("#qiguafangfa").val()+"&naganzhifa="+$("#naganzhifa").val()+"&op=str",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                if(data){
+                    $("#pan").html("");
+                    $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:200px;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                }
+            }
+        });
+    });
+});
+</script>
+{% elif op == 'jinkoujue' %}
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
+    <h3 class="main" id="content-title">金口诀排盘</h3><hr>
+    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
+    <span>请选择地分：</span>
+    <select id="difen">
+        <option>子</option>
+        <option>丑</option>
+        <option>寅</option>
+        <option>卯</option>
+        <option>辰</option>
+        <option>巳</option>
+        <option>午</option>
+        <option>未</option>
+        <option>申</option>
+        <option>酉</option>
+        <option>戌</option>
+        <option>亥</option>
+    </select>
+    <span>请选择月将：</span>
+    <select id="yuejiang">
+        <option>子</option>
+        <option>丑</option>
+        <option>寅</option>
+        <option>卯</option>
+        <option>辰</option>
+        <option>巳</option>
+        <option>午</option>
+        <option>未</option>
+        <option>申</option>
+        <option>酉</option>
+        <option>戌</option>
+        <option>亥</option>
+    </select>
+    <span>请选择占时：</span>
+    <select id="zhanshi">
+        <option>子</option>
+        <option>丑</option>
+        <option>寅</option>
+        <option>卯</option>
+        <option>辰</option>
+        <option>巳</option>
+        <option>午</option>
+        <option>未</option>
+        <option>申</option>
+        <option>酉</option>
+        <option>戌</option>
+        <option>亥</option>
+    </select>
+    <button class="btn btn-success btn-inline">排盘</button>
+    <hr>
+    <div class="row placeholders" id="pan">
+    </div>
+</div>
+<script>
+$(function(){
+    $('#datetimepicker').datetimepicker();
+    $("#content button").click(function(){
+        $.ajax({
+            url: "http://{{ host }}:8002/jinkoujue?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&difen="+$("#difen").val()+"&yuejiang="+$("#yuejiang").val()+"&zhanshi="+$("#zhanshi").val()+"&op=str",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                if(data){
+                    $("#pan").html("");
+                    $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:200px;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                }
+            }
+        });
+    });
+});
+</script>
+{% elif op == 'xiaochengtu' %}
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
+    <h3 class="main" id="content-title">小成图排盘</h3><hr>
+    <span>请选择日期时间：</span><input type="text" style="width:130px;" value="2012-05-15 21:05" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
+    <span>请输入灵动数：</span><input type="number" value="0" id="lingdongshu" style="width:50px;">
+    <span>请选择归藏方法：</span>
+    <select id="guizangfangfa">
+        <option>四正</option>
+        <option>四隅</option>
+        <option>四正四隅</option>
+        <option>本卦</option>
+    </select>
+    <button class="btn btn-success btn-inline">排盘</button>
+    <hr>
+    <div class="row placeholders" id="pan">
+    </div>
+</div>
+<script>
+$(function(){
+    $('#datetimepicker').datetimepicker();
+    $("#content button").click(function(){
+        $.ajax({
+            url: "http://{{ host }}:8002/xiaochengtu?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&guizangfangfa="+$("#guizangfangfa").val()+"&op=str",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                if(data){
+                    $("#pan").html("");
+                    $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:200px;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                }
+            }
+        });
+    });
+});
+</script>
+{% endif %}
 {% endblock %}
 
 {% block right %}
@@ -53,22 +292,46 @@
     <div class="panel">
         <div class="panel-heading">
             <span class="glyphicon glyphicon-flag"></span>
-            栏目信息
+            今年分月干支
         </div>
-        <div class="list-group">
-            <a class="list-group-item glyphicon glyphicon-tags" title="关键词">&nbsp;{{ active_column.info }}</a>
+        <div class="list-group" id="rightcalendar" style="font-size:0.8rem;">
         </div>
     </div>
-    {% if request.user.is_superuser %}
     <div class="panel">
         <div class="panel-heading">
-            <span class="glyphicon glyphicon-edit"></span>
-            栏目操作
+            <span class="glyphicon glyphicon-flag"></span>
+            今月分日干支
         </div>
-        <div class="list-group">
-            <a class="list-group-item glyphicon glyphicon-plus">请到后台管理</a>
+        <div class="list-group" id="rightcalendar" style="font-size:0.8rem;">
         </div>
     </div>
-    {% endif %}
+    <div class="panel">
+        <div class="panel-heading">
+            <span class="glyphicon glyphicon-flag"></span>
+            今日分时干支
+        </div>
+        <div class="list-group" id="rightcalendar" style="font-size:0.8rem;">
+        </div>
+    </div>
 </div>
+<script>
+$(function(){
+    var myDate = new Date();
+    var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
+    var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
+    $.ajax({
+        url: "http://{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json&subop=get_GanzhiOneYear&year="+myDate.getFullYear(),
+        type:"GET",
+        timeouut:10000,
+        success:function (data) {
+            var parsedJson = eval(data);
+            if(parsedJson){
+                for(let item in parsedJson){
+                    $("#rightcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                };
+            }
+        }
+    });
+});
+</script>
 {% endblock %}

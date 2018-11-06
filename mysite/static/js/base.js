@@ -15,7 +15,6 @@ $(document).ready(function(){
 	//侧边栏活动项目
 	$("#left").find("a").each(
 		function(){
-			console.log(document.location.href);
             if (this.href == document.location.href){
                 $(this).addClass('active');
             }else if(document.location.href.search(this.href) >= 0){

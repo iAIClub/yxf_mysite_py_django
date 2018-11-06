@@ -13,7 +13,7 @@ def index(request):
 
 def dsvisual(request):
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
-        'title':'可视化数据结构与算法',\
+        'title':'数据结构与算法',\
         'display':'dsvisual',\
         }))
 
