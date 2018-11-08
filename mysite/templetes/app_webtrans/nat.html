@@ -1,5 +1,38 @@
 <div id="nat">
+    <button class="btn btn-success btn-inline" id="neiwangfuwu">内网服务</button>
+    <button class="btn btn-success btn-inline" id="neiwangwenjian">内网文件</button>
+    <button class="btn btn-success btn-inline" id="chuantoujiankong">穿透监控</button><br>
+    <span>当前网址：</span><input type="text" style="width: 400px;" id="wangzhi" value="http://nat.avata.cc:8003">
+    <button class="btn btn-info btn-inline" id="xinbiaoqian">新标签访问</button>
+    <iframe id="mainiframe" scrolling="auto" src="http://nat.avata.cc:8003">
+        #document
+    </iframe>
 </div>
 <script type="text/javascript">
-    
+function changeFrameHeight(){
+    var ifm= document.getElementById("mainiframe");
+    ifm.height=document.documentElement.clientHeight+250;
+}
+window.onresize=function(){ changeFrameHeight();}
+$(function(){
+    changeFrameHeight();
+    $("#neiwangfuwu").click(function(){
+        var link = "http://nat.avata.cc:8003";
+        $("#wangzhi").val(link);
+        $("#mainiframe").attr("src", link);
+    });
+    $("#neiwangwenjian").click(function(){
+        var link = "http://nat.avata.cc:8006";
+        $("#wangzhi").val(link);
+        $("#mainiframe").attr("src", link);
+    });
+    $("#chuantoujiankong").click(function(){
+        var link = "http://avata.cc:8004";
+        $("#wangzhi").val(link);
+        $("#mainiframe").attr("src", link);
+    });
+    $("#xinbiaoqian").click(function(){
+        window.open($("#wangzhi").val());
+    });
+});
 </script>

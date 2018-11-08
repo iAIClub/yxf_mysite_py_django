@@ -11,16 +11,16 @@ def index(request):
     return HttpResponseRedirect(reverse('app_webtrans_tcptrans'))
 
 def tcptrans(request):
-    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html'),{\
+    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
         'title':'TCP通信',\
         'display':'tcptrans',\
-        })
+        }))
 
 def nat(request):
-    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html'),{\
+    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
         'title':'内网穿透',\
         'display':'nat',\
-        })
+        }))
 
 def wechat(request):
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
