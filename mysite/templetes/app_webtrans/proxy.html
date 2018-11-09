@@ -1,23 +1,13 @@
 <div id="proxy">
-    <p style="color: red;">注意：本站访问外网仅供技术交流，切勿用作其他用途。</p>
+    <p class="text-danger">注意：本站访问外网仅供技术交流，切勿用作其他用途。</p>
     <input type="text" value="https://www.youtube.com"  style="width: 400px;">
-    <button class="btn btn-success btn-inline">访问</button>
-    <iframe id="mainiframe" scrolling="auto" src="https://www.baidu.com">
-        #document
-    </iframe>
+    <button class="btn btn-success btn-inline">访问</button><hr>
 </div>
 <script type="text/javascript">
-function changeFrameHeight(){
-    var ifm= document.getElementById("mainiframe");
-    ifm.height=document.documentElement.clientHeight+250;
-}
-window.onresize=function(){ changeFrameHeight();}
 $(function(){
-    changeFrameHeight();
-
     $("#proxy button").click(function(){
         var link = $("#proxy input").val();
-        $("#mainiframe").attr("src", link);
+        window.open(window.location.pathname+"?url="+link);
     });
 });
 </script>

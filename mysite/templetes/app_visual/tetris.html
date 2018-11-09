@@ -1,15 +1,17 @@
-<div id="tetris">
-  <div style="display:inline-block">
-   <canvas id="tetris-can" height="480" width="300" style="border:2px solid black;margin-top: 12px;"></canvas>
-  </div>
-  <div id="tetris-info" style="display:inline-block;height:480px;margin-top: 12px;vertical-align: top;font-size:14pt; color:green;">
-      <button class="btn btn-success" id="tetrisStart">开始</button>
-      <button class="btn btn-danger" id="tetrisRestart">重开</button>
-      <div>
-          <span>得分:</span>
-          <span id="tetris-score">0</span>
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-12 col-sm-12 col-md-12" id="content" style="padding-left: 0;padding-right:0;">
+    <div id="tetris">
+      <div style="display:inline-block">
+       <canvas id="tetris-can" height="480" width="300" style="border:2px solid black;margin-top: 12px;"></canvas>
       </div>
-   </div>
+      <div id="tetris-info" style="display:inline-block;height:480px;margin-top: 12px;vertical-align: top;font-size:14pt; color:green;">
+          <button class="btn btn-success" id="tetrisStart">开始</button>
+          <button class="btn btn-danger" id="tetrisRestart">重开</button>
+          <div>
+              <span>得分:</span>
+              <span id="tetris-score">0</span>
+          </div>
+       </div>
+    </div>
 </div>
 <script type="text/javascript">
     /*参考原作者代码https://blog.csdn.net/cc_fys/article/details/77942077*/
