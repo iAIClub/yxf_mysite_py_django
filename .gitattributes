@@ -1,14 +1,39 @@
-#warning! don't use: [* text=auto eol=lf] it will break normal files!
-*.sh text=auto eol=lf
-*.py text=auto eol=lf
-*.html text=auto eol=lf
-*.css text=auto eol=lf
-*.js text=auto eol=lf
-*.txt text=auto eol=lf
-*.md text=auto eol=lf
-*.cfg text=auto eol=lf
-*.conf text=auto eol=lf
-*.ini text=auto eol=lf
+# Set the default behavior, in case people don't have core.autocrlf set.
+* text=auto
 
+# Declare files that will always have LF line endings on checkout.
+*.sh text eol=lf
+
+# Declare files that will always have CRLF line endings on checkout.
+*.bat text eol=crlf
+
+# Denote all files that are truly binary and should not be modified.
+# img
+*.png binary
+*.jpg binary
+*.ico binary
+*.svg binary
+*.gif binary
+
+# font
+*.ttf binary
+*.eot binary
+*.woff binary
+*.otf binary
+*.woff2 binary
+
+# doc
+*.xlsx binary
+*.docx binary
+
+# media
+*.mp3 binary
+*.mp4 binary
+
+# data
+*.db binary
+*.dat binary
+
+# git linguist set
 *.js linguist-language=Python
 *.css linguist-language=Python
