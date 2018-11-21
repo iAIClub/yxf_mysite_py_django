@@ -39,7 +39,7 @@ yxf_mysite_py_django/requirments3.txt
 
 数据库服务器（提供数据持久化服务）：postgresql  
 
-应用容器（MVC模式的容器，服务主体）：django（配置项：manage.py+mysite/*）  
+应用容器（MVC模式的容器，服务主体）：django（配置项：manage.py+mysite/*）,前端jquery+bootstrap  
 
 通用网关服务器（中间件，只提供通信转交服务）：uwsgi（配置项：mysite_conf/uwsgi.ini）  
 
@@ -129,9 +129,20 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 
 服务器主机：VPS（ip，ssh（22），sftp（22），root管理员），提供HTTP网站服务  
 
-服务端口：80-nginx，9090-uwsgi(local)，5432-postgresql  
-
 上传：脚本上传master（屏蔽了数据、临时文件）  
 
-已部署网站：[http://avata.cc]  [http://iotec.cc]  
+已部署网站：[//avata.cc]  [//iotec.cc]  
 
+------------
+
+## TODO
+
+加入文档格式转换逻辑（利用pandoc工具）  
+
+网站管理、备份、同步，站内站外博文同步  
+
+海外服务器被墙应急处理  
+
+前端外观框架重构（由Bootstrap换为Layui）  
+
+加入前端应用框架Vue  

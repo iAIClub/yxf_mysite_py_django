@@ -1,24 +1,27 @@
-<div class="main col-xs-offset-9 col-sm-offset-9 col-md-offset-9 col-xs-3 col-sm-3 col-md-3" id="right">
-    <br/>
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-book"></span>
-            文档栏目
-        </div>
-        <div class="list-group">
+<div id="right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title" style="color: green;">
+                <i class="layui-icon layui-icon-read"></i>
+                文档栏目
+            </div>
             {% for item in list %}
-            <a class="list-group-item glyphicon glyphicon-chevron-right" href="{% url 'app_tutorial' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+            <div class="layui-colla-content layui-show">
+                <a href="{% url 'app_tutorial' %}doc/{{ item.slug }}" title="{{ item.info }}"><i class="layui-icon layui-icon-right"></i>{{ item.name }}</a>
+            </div>
             {% endfor %}
         </div>
     </div>
-    <div class="panel">
-        <div class="panel-heading" style="color: orangered;">
-            <span class="glyphicon glyphicon-fire"></span>
-            最新内容
-        </div>
-        <div class="list-group">
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title" style="color: orangered;">
+                <i class="layui-icon layui-icon-fire"></i>
+                最新内容
+            </div>
             {% for item in list %}
-            <a class="list-group-item glyphicon glyphicon-hand-right" href="{% url 'app_tutorial' %}doc/{{ item.slug }}" title="{{ item.info }}">{{ item.name }}</a>
+            <div class="layui-colla-content layui-show">
+                <a href="{% url 'app_tutorial' %}doc/{{ item.slug }}" title="{{ item.info }}"><i class="layui-icon layui-icon-right"></i>{{ item.name }}</a>
+            </div>
             {% endfor %}
         </div>
     </div>

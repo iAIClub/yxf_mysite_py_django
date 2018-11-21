@@ -1,167 +1,237 @@
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-<style type="text/css">#content .row { padding-left:15px;padding-right: 15px;}</style>
-{% if arg_list %}
-  <h3>{{ user.username }} - 文章列表【建设中】</h3>
-  <hr/>
-  <div class="row placeholders">
-  </div>
-{% elif arg_pan %}
-  <h3>{{ user.username }} - 网盘文件</h3>
-  <hr/>
-  <div class="row placeholders">
-    <form style="display: inline;" role="form" method="post" enctype="multipart/form-data" action="{% url 'app_user_profile' %}">
-      {% csrf_token %}
-      <input type="text" name="purpose" value="upload_file" style="display: none;">
-      <p style="display: inline;">归属用户：</p>
-      <input style="max-width: 100px;" type="text" name="username" readonly="true" value="{{ user.username }}" required>
-      <p style="display: inline;">上传到：</p>
-      <input style="max-width: 100px;" type="text" name="filepath" required autofocus>
-      <input style="display: inline;max-width:75px; " type="file" multiple name="upload-file" id="file-upload" accept="text/*,image/*,audio/*,video/*,.flv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.json,.md,.rtf,.7z,.rar,.zip,.bz2,.xz,.tar,.iso,.img,.deb,.rpm,.shtml,.xhtml" required>
-      <button class="btn btn-success btn-inline" type="submit" id="submit" disabled="true">上传</button>
-    </form>
-    <button class="btn btn-warning btn-inline" id="clean">清空</button>
-    <ul id="file-list">
-    </ul>
-    <div>
-      <h5 id="page-message"></h5>
-      {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
-    </div>
-    <hr/>
-    <div class="row placeholders">
-      <ul class="list-group">
-        <button class="delete" style="display: none;"></button><!--隐藏的程序控件-->
-        {% for item in pan_list %}
-        <li class="list-group-item">
-          <a href="{% url 'app_user' %}download/{{ item.username }}/{{ item.userpath }}/{{ item.filename }}"><button class="btn btn-info btn-sm btn-inline download">下载</button></a>
-          <p style="display: none;">{{ item.userpath }}</p>
-          <p style="display: none;">{{ item.filename }}</p>
-          <b title="于 {{ item.upload_time }} 上传">{{ item.userpath }}/{{ item.filename }}</b>
-          <button class="btn btn-danger btn-sm btn-inline delete">删除</button>
-        </li>
-        {% endfor %}
-      </ul>
-    </div>
-    <style type="text/css">
-      #content button {
-        min-width: 50px;
-        max-width: 200px;
-        margin: auto;
-      }
+<div id="content" class="layui-col-xs9 layui-col-sm9 layui-col-md9">
+    <style>
+        .layui-card{
+            padding:10px;
+        }
     </style>
-    <script type="text/javascript">
-      $(function(){
-          //clean
-          $("#clean").click(function(){
-            $("#page-message").empty();
-            $("#file-upload").val("");
-            $("#file-list").empty();
-            $("#submit").removeAttr("disabled");
-          });
-          //file upload
-          $("#file-upload").change(function(){
-            $("#submit").removeAttr("disabled");
-            var fp = $("#file-upload");
-            var lg = fp[0].files.length; // get length
-            var items = fp[0].files;
-            var fragment = "";
-            var size = 0;
-            if (lg > 0) {
-                for (var i = 0; i < lg; i++) {
-                  var fileName = items[i].name; // get file name
-                  var fileSize = items[i].size; // get file size
-                  var fileType = items[i].type; // get file type
-                  // append li to UL tag to display File info
-                  fragment += "<li title=\"(" + fileSize + " bytes) - Type: " + fileType + "\" >" + fileName +"</li>";
-                  size += fileSize;
-                  if (size > 64000000){
-                    $("#page-message").append("文件大小超限！最高一次性上传64M！");
-                    $("#submit").attr("disabled", true);
-                  }
+{% if arg_list %}
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{{ user.username }} - 文章列表【建设中】</legend>
+    </fieldset>
+    <div class="layui-card">
+    </div>
+{% elif arg_pan %}
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{{ user.username }} - 网盘文件</legend>
+    </fieldset>
+    <div class="layui-card">
+        <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="layui-form-item pane">
+                <label class="layui-form-label" >归属用户</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" type="text" name="purpose" value="upload_file" style="display: none;">
+                    <input class="layui-input" type="text" name="username" readonly="readonly" value="{{ user.username }}" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label" >上传到</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" type="text" name="filepath" placeholder="填写路径" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label" >选择文件</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" type="file" multiple name="upload-file" id="file-upload" accept="text/*,image/*,audio/*,video/*,.flv,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.pdf,.json,.md,.rtf,.7z,.rar,.zip,.bz2,.xz,.tar,.iso,.img,.deb,.rpm,.shtml,.xhtml" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-disabled" type="submit" id="submit">上传</button>
+                    <button class="layui-btn layui-btn-primary" id="clean">清空</button>
+                </div>
+            </div>
+        </form>
+        <table class="layui-table">
+            <tbody id="file-list">
+            </tbody>
+        </table>
+        <table class="layui-table">
+                <thead>
+                    <tr>
+                        <th>文件路径</th>
+                        <th>文件名称</th>
+                        <th>文件操作1</th>
+                        <th>文件操作2</th>
+                    </tr>
+                </thead>
+            <tbody>
+                {% for item in pan_list %}
+                <tr class="list-group-item">
+                    <td>{{ item.userpath }}</td>
+                    <td title="于 {{ item.upload_time }} 上传">{{ item.filename }}</td>
+                    <td><a href="{% url 'app_user' %}download/{{ item.username }}/{{ item.userpath }}/{{ item.filename }}"><button class="layui-btn layui-btn-normal">下载</button></a></td>
+                    <td><button class="layui-btn layui-btn-danger deletefile">删除</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+
+            //clean
+            $("#clean").click(function(){
+                $("#page-message").empty();
+                $("#file-upload").val("");
+                $("#file-list").empty();
+                $("#submit").addClass("layui-btn-disabled");
+            });
+
+            //file upload
+            $("#file-upload").change(function(){
+                $("#submit").removeClass("layui-btn-disabled");
+                var fp = $("#file-upload");
+                var lg = fp[0].files.length; // get length
+                var items = fp[0].files;
+                var fragment = "";
+                var size = 0;
+                if (lg > 0) {
+                    for (var i = 0; i < lg; i++) {
+                        var fileName = items[i].name; // get file name
+                        var fileSize = items[i].size; // get file size
+                        var fileType = items[i].type; // get file type
+                        fragment += "<tr><td>" + fileName + "<p style='float:right;'>"+ fileSize + " bytes - Type: " + fileType + "</p></td></tr>";
+                        size += fileSize;
+                        if (size > 64000000){
+                            layer.msg("文件大小超限！最高一次性上传64M！");
+                            $("#submit").addClass("layui-btn-disabled");
+                        }
+                    }
+                    $("#file-list").append(fragment);
                 }
-                $("#file-list").append(fragment);
-              }
-          });
-          //file delete
-          $(".delete").click(function(){
-              $.ajax({
-                url: "{% url 'app_user_profile' %}",
-                type:"POST",
-                timeouut:10000,
-                data:{
-                  "purpose":"delete_file",
-                  "username":"{{ request.user.username }}",
-                  "userpath":$(this).prev().prev().prev().text(),
-                  "filename":$(this).prev().prev().text(),
-                  "csrfmiddlewaretoken":"{{ csrf_token }}"
-                },
-                success:function (data) {
-                  var parsedJson = eval(data);
-                  if(parsedJson.status=="ok"){window.location.reload();}
-                }
-              });
-          });
-      });
-    </script>
-  </div>
+            });
+
+            //file delete
+            $(".deletefile").click(function(){
+                $.ajax({
+                    url: "{% url 'app_user_profile' %}",
+                    type:"POST",
+                    timeouut:10000,
+                    data:{
+                        "purpose":"delete_file",
+                        "username":"{{ request.user.username }}",
+                        "userpath":$(this).parent().prev().prev().prev().text(),
+                        "filename":$(this).parent().prev().prev().text(),
+                        "csrfmiddlewaretoken":"{{ csrf_token }}"
+                    },
+                    success:function (data) {
+                        var parsedJson = eval(data);
+                        if(parsedJson.status=="ok"){window.location.reload();}
+                    }
+                });
+            });
+        });
+        </script>
+    </div>
 {% elif arg_config %}
-  <h3>{{ user.username }} - 用户信息</h3><hr>
-  <div class="row placeholders">
-  <form role="form" method="post" action="{% url 'app_user_profile' %}">
-    {% csrf_token %}
-    <input type="text" name="purpose" value="change_config" style="display: none;">
-    <h4>用户名：</h4>
-    <input type="text" name="username" class="form-control" placeholder="用户名"  readonly="true" value="{{ user.username }}" required autofocus>
-    <h4>旧密码：</h4>
-    <input type="password" name="pd_old" class="form-control" placeholder="密码" required>
-    <h4>新密码：</h4>
-    <input type="password" name="pd_new" class="form-control" placeholder="密码" required>
-    <h4>确认新密码：</h4>
-    <input type="password" name="pd_new_c" class="form-control" placeholder="密码" required>
-    <h4>邮箱：</h4>
-    <input type="text" name="email" class="form-control" placeholder="邮箱" value="{{ user.email }}" required>
-    <br/>
-    <button class="btn btn-primary btn-block" type="submit" id="submit">提交修改</button>
-    <br/>
-    {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
-  </form>
-  <style type="text/css">
-    #content button {
-      min-width: 100px;
-      max-width: 150px;
-      width: 40%;
-      margin: auto;
-    }
-  </style>
-  </div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{{ user.username }} - 配置信息</legend>
+    </fieldset>
+    <div class="layui-card">
+        <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="purpose" value="change_config" style="display: none;">
+                    <input type="text" name="username" class="layui-input" placeholder="用户名"  readonly="readonly" value="{{ user.username }}" required autofocus>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">旧密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="pd_old" class="layui-input" autocomplete="off" placeholder="密码" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">新密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="pd_new" class="layui-input" autocomplete="off" placeholder="密码" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">确认新密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="pd_new_c" class="layui-input" autocomplete="off" placeholder="密码" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" class="layui-input" autocomplete="off" placeholder="邮箱" value="{{ user.email }}" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <div class="layui-input-block">
+                    <button class="layui-btn" type="submit">提交修改</button>
+                </div>
+            </div>
+        </form>
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+        });
+        </script>
+    </div>
 {% elif arg_cancel %}
-  <h3>用户注销 - {{ user.username }}</h3><hr>
-  <div class="row placeholders">
-  <h4 style="color:red">注意：此操作将在系统中永久删除此用户，请谨慎操作！</h4>
-  <form role="form" method="post" action="{% url 'app_user_profile' %}">
-    {% csrf_token %}
-    <input type="text" name="purpose" value="cancel_user" style="display: none;">
-    <h4>用户名：</h4>
-    <input type="text" name="username" class="form-control" placeholder="用户名"  readonly="true" value="{{ user.username }}" required autofocus>
-    <h4>密码：</h4>
-    <input type="password" name="pd" class="form-control" placeholder="密码" required>
-    <h4>确认密码：</h4>
-    <input type="password" name="pd_c" class="form-control" placeholder="密码" required>
-    <h4>邮箱：</h4>
-    <input type="text" name="email" class="form-control" placeholder="邮箱" required>
-    <br/>
-    <button class="btn btn-danger btn-block" type="submit" id="submit">注销</button>
-    <br/>
-    {% for m in messages %}<h5>{{ m }}</h5>{% endfor %}
-  </form>
-  <style type="text/css">
-    #content button {
-      min-width: 100px;
-      max-width: 150px;
-      width: 40%;
-      margin: auto;
-    }
-  </style>
-  </div>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>{{ user.username }} - 用户注销</legend>
+    </fieldset>
+    <div class="layui-card">
+        <h3 style="color:red">注意：此操作将在系统中永久删除此用户，请谨慎操作！</h3><br/>
+        <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-block">
+                    <input type="text" name="purpose" value="cancel_user" style="display: none;">
+                    <input type="text" name="username" class="layui-input" placeholder="用户名" readonly="readonly" value="{{ user.username }}" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="pd" class="layui-input" autocomplete="off" placeholder="密码" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">确认密码</label>
+                <div class="layui-input-block">
+                    <input type="password" name="pd_c" class="layui-input" autocomplete="off" placeholder="密码" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <label class="layui-form-label">邮箱</label>
+                <div class="layui-input-block">
+                    <input type="text" name="email" class="layui-input" autocomplete="off" placeholder="邮箱" required>
+                </div>
+            </div>
+            <div class="layui-form-item pane">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-danger" type="submit">注销</button>
+                </div>
+            </div>
+        </form>
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+        });
+        </script>
+    </div>
 {% else %}
 {% endif %}
 </div>

@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+	<html lang="zh-CN">
+	<head>
+		<meta charset="utf-8">
+		<meta http-equiv="X-UA-Compatible" content="IE=edge">
+		<meta name="viewport" content="width=device-width, initial-scale=1">
+		{% block head %}
+			{% block title %}
+				<title>{{ title }}</title>
+			{% endblock %}
+
+			<link rel="shortcut icon" href="/static/favicon/favicon64.ico" type="image/x-icon">
+			<link href="/static/lib/bootstrap/3.3.0/css/bootstrap.min.css" rel="stylesheet">
+			<link href="/static/css/base.css" rel="stylesheet">
+			<script src="/static/lib/jquery/jquery-3.3.1.min.js" ></script>
+			<script src="/static/lib/bootstrap/3.3.0/js/bootstrap.min.js" ></script>
+			<script src="/static/js/base.js" ></script>
+
+			{% block extracss %}
+			{% endblock %}
+
+			{% block extrajs %}
+			{% endblock %}
+
+		{% endblock %}
+	</head>
+
+	<body>
+	{% block navbar %}
+		{% include "common/navbar.html" %}
+	{% endblock %}
+
+	{% block page %}
+		<div class="container-fluid">
+			<div class="row" id="page">
+				{% block left %}
+					{% include "common/left.html" %}
+				{% endblock %}
+
+				{% block main %}
+				<div class="main col-xs-offset-0 col-sm-offset-3 col-md-offset-2 col-xs-12 col-sm-9 col-md-10" id="main">
+					{% block title_content_right %}
+						<div class="row" id="title-content-right">
+							{% block content %}
+		    					{% include "common/content.html" %}
+		  					{% endblock %}
+							{% block right %}
+		    					{% include "common/right.html" %}
+		  					{% endblock %}
+						</div>
+					{% endblock %}
+					{% block footer %}
+						{% include "common/footer.html" %}
+					{% endblock %}
+				</div>
+				{% endblock %}
+
+				{% block toolbar %}
+					{% include "common/toolbar.html" %}
+				{% endblock %}
+			</div>
+		</div>
+	{% endblock %}
+
+	{% block addition %}
+	{% endblock %}
+	</body>
+</html>

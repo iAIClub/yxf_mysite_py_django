@@ -2,16 +2,10 @@
 
 /*global*/
 html{
-    font-size: 75%;
+
 }
 body {
-    margin: 0;
-    padding-top: 51px;
-    font-size: 1.2em;
-    background: #fff;
-    color: #333;
-    word-break:break-all;
-    word-wrap: break-word;
+    background-color:#F2F2F2;
 }
 iframe{
     margin: 0;
@@ -21,67 +15,62 @@ iframe{
     border: 0;
     overflow-y: hidden;
 }
+img{
+    max-width:100%;
+    max-height:100%;
+}
+.layui-colla-content:hover{
+    background-color:#eee;
+}
+.layui-collapse{
+    background-color:#fff;
+}
+.layui-card,.layui-collapse{
+    margin:10px;
+}
 
 /*navbar*/
-#navbar{
-    background-color: #417690;
+#navbar .layui-nav{
+    padding:0;
 }
-#navbar a{
-    color: #fff;
+#navbar,#navbar .layui-nav-child{
+    background-color: #2F4056;
 }
-.dropdown a,.dropdown ul,.dropdown li{
-    background-color: #417690;
+#navbar .layui-nav a{
+    color:#fff;
 }
-.navbar-default .navbar-nav>.open>a, .navbar-default .navbar-nav>.open>a:hover, .navbar-default .navbar-nav>.open>a:focus {
-    background-color: #0F3357;
+#navbar .layui-nav a:hover{
+    background-color:#0F3357;
 }
-.navbar-default .navbar-nav>.active>a, .navbar-default .navbar-nav>.active>a:hover, .navbar-default .navbar-nav>.active>a:focus {
-    background-color: #0F3357;
+.layui-header,#navbar .layui-main,#navbar .logo img{
+    height:50px;
 }
-.dropdown-menu>.active>a, .dropdown-menu>.active>a:hover, .dropdown-menu>.active>a:focus {
-    background-color: #0F3357;
+#navbar .layui-nav .layui-nav-item{
+    line-height: 50px;
 }
-#navbar a:hover,#navbar button:hover{
-    background-color: #0F3357;
-    color: #fff;
+#navbar .layui-nav .layui-nav-item a{
+    padding: 0 15px;
 }
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #fff;
+#navbar .layui-nav-child{
+    top: 50px;
 }
 
 /*left*/
-#left{
-	position: fixed;
-    top: 51px;/*bootstrap*/
-    bottom: 0;
-    left: 0;
-    margin: 0;
-    z-index: 1000;
-    display: block;
-    padding: 1px;
-    overflow-y: hidden;
-    background-color: #F1F1F1;
-    border: 1px solid #F1F1F1;
+#left .layui-nav{
+    background-color:#393D49;
 }
-#left .panel-heading{
-    color: darkgreen;
+.layui-layout-admin .layui-side{
+    top:50px;
 }
-.panel {
-    background-color: #F1F1F1;
-    border-radius: 0;
+#left .layui-nav .layui-nav-item{
+    line-height: 30px;
 }
-.img-responsive{
-    border-radius: 25px;
-}
-#left:hover{overflow-y: auto;border:1px solid #ff5e52; }
-#left a{color: darkcyan;}
-#left .active, #left .active:focus, #left .active:hover{color: #fff;}
 
 /*toolbar*/
 #toolbar{
-    /*位置与大小*/position:fixed;right:1px;bottom:20px;
-    /*层叠顺序*/z-index:2001;
-    /*效果*/font-size:0.75rem;
+    position:fixed;right:20px;bottom:20px;
+    z-index:2001;
+    font-size:0.75rem;
 }
 #toolbar a{
     position:relative;
@@ -94,42 +83,34 @@ iframe{
     overflow:hidden;
     text-decoration:none;
 }
-#toolbar .glyphicon{
+#toolbar .layui-icon{
     display:block;
-    color: darkcyan;
-    margin-top: 10px;
-    margin-left: 10px;
-    width:40px;
-    height:40px;
-    font-size:20px;
+    font-size:40px;
+    color:#009688;
     -webkit-transition:all .3s ease-out 0s;
     transition:all 0.3s ease-out 0s;
 }
 #toolbar .txt{
     display:block;
     width:30px;
-    height:38px;
-    line-height:38px;
-    line-height:19px;
+    height:40px;
+    line-height:20px;
     padding-top:2px;
     margin:auto;
-    color:#fff;
+    color:#009688;
     font-style:normal;
     font-weight:400;
     text-align:center;
 }
-#toolbar a:hover{
-    background:#aaa;
-}
-#toolbar a:hover .glyphicon{
-    margin-top:-40px;
+#toolbar a:hover .layui-icon{
+    margin-top:-45px;
 }
 #toolbar .qrcode{
     position:fixed;
     background-color: rgba(255,255,255,0.5);
     text-align:center;
-    right:51px;
-    bottom:40px;
+    right:61px;
+    bottom:20px;
     width: 150px;
     height: 150px;
     display: none;
@@ -144,32 +125,23 @@ iframe{
     background-size: cover;
 }
 
+/*footer*/
+#footer,#footer a{
+    color:#777;
+}
+#footer a:hover{
+    color:darkcyan;
+}
+
 /*main*/
-    /*main title-content-right*/
-        /*main title*/
-        /*main content*/
-        #content{
-            border: 1px solid #fff;
-            margin: 0;
-        }
-        #content:hover{
-            border: 1px solid #169fe6;
-        }
-        /*main right*/
-        #right{
-            border: 1px solid #fff;
-            margin: 0;
-        }
-        #right .panel-heading{
-            color: darkgreen;
-        }
-        #right:hover{
-            border:1px solid #ff5e52;
-        }
-        #right a{
-            color: darkcyan;
-        }
-    /*main footer*/
-    #footer .zztj a{
-        color:#000;
-    }
+.layui-layout-admin .layui-body{
+    top:50px;
+    bottom:0;
+}
+
+/*main content*/
+
+/*main right*/
+#right a{
+    color: darkcyan;
+}

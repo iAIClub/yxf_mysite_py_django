@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals,print_function
 from pyquery import PyQuery as pq
 
 
@@ -8,9 +8,9 @@ class SearchTutorial(object):
         self.wp = pq(
             url='http://so.ziqiangxuetang.com/cse/search'
             '?s=73600958046581005&q=%s' % keyword, encoding='utf-8')
-        print self.wp
+        print(self.wp)
         self.results = self.wp('#results .result h3 a')
-        if self.results == []:
+        if not self.results:
             self.result_string = (
                 '抱歉，没有找到与【%s】相关的结果。请更换其它搜索词再次尝试 '
                 '或者 访问<a href="http://www.ziqiangxuetang.com">自强学堂</a>'
@@ -29,7 +29,7 @@ class SearchTutorial(object):
 
 def main():
     s = SearchTutorial('Django')
-    print s.result_string
+    print(s.result_string)
 
 
 if __name__ == '__main__':

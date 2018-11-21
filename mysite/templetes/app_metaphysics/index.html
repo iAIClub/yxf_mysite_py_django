@@ -1,59 +1,83 @@
 {% extends "common/base.html" %}
 
 {% block left %}
-<div class="col-xs-4 col-sm-3 col-md-2 hidden-xs" id="left">
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-book"></span>
-            功能列表
-        </div>
-        <div class="list-group">
-            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=wannianli">玄学历法</a>
-            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=bazi">八字</a>
-            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=liuyao">六爻</a>
-            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=jinkoujue">金口诀</a>
-            <a class="list-group-item" href="{% url 'app_metaphysics' %}?op=xiaochengtu">小成图</a>
-            <a class="list-group-item" href="http://{{ host }}:8002/bazi?date=2018-10-1&time=12:20" target="_blank">API测试</a>
-        </div>
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-calendar"></span>
-            今日日历
-        </div>
-        <div class="list-group" id="leftcalendar" style="font-size:0.8rem;">
-        </div>
+<div id="left" class="layui-side layui-bg-black">
+    <div class="layui-side-scroll">
+        <ul class="layui-nav layui-nav-tree">
+            <li class="layui-nav-item layui-nav-itemed">
+                <a href="javascript:;">功能列表</a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <a href="{% url 'app_metaphysics' %}?op=wannianli">玄学历法</a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'app_metaphysics' %}?op=bazi">八字</a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'app_metaphysics' %}?op=liuyao">六爻</a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'app_metaphysics' %}?op=jinkoujue">金口诀</a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'app_metaphysics' %}?op=xiaochengtu">小成图</a>
+                    </dd>
+                    <dd>
+                        <a href="http://{{ host }}:8002/bazi?date=2018-10-1&time=12:20" target="_blank">API测试</a>
+                    </dd>
+                </dl>
+            </li>
+        </ul>
+        <ul class="layui-nav layui-nav-tree">
+            <li class="layui-nav-item layui-nav-itemed">
+                <a href="javascript:;">今日日历</a>
+                <dl class="layui-nav-child">
+                    <dd>
+                        <div id="leftcalendar" style="font-size:0.8rem;"></div>
+                    </dd>
+                </dl>
+            </li>
+        </ul>
     </div>
-</div>
-<script>
-$(function(){
-    var myDate = new Date();
-    var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
-    var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
-    $.ajax({
-        url: "http://{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json",
-        type:"GET",
-        timeouut:10000,
-        success:function (data) {
-            var parsedJson = eval(data);
-            if(parsedJson){
-                for(let item in parsedJson){
-                    if(item<=2){
-                        $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item][1]+'</div>');
-                    }else if(item<=3){
-                        $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
-                    }
-                };
+    <script>
+    $(function(){
+        var myDate = new Date();
+        var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
+        var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
+        $.ajax({
+            url: "//{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                var parsedJson = eval(data);
+                if(parsedJson){
+                    for(let item in parsedJson){
+                        if(item<=2){
+                            $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item][1]+'</div>');
+                        }else if(item<=3){
+                            $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                        }
+                    };
+                }
             }
-        }
+        });
     });
-});
-</script>
+    </script>
+</div>
 {% endblock %}
 
 {% block content %}
-<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/3.1.4/css/bootstrap-datetimepicker.min.css" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/zh-cn.js"></script>
-<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/3.1.4/js/bootstrap-datetimepicker.min.js"></script>
+<!--<link href="https://cdn.bootcss.com/bootstrap-datetimepicker/3.1.4/css/bootstrap-datetimepicker.min.css" rel="stylesheet">-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/moment.min.js"></script>-->
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.22.2/locale/zh-cn.js"></script>-->
+<!--<script src="https://cdn.bootcss.com/bootstrap-datetimepicker/3.1.4/js/bootstrap-datetimepicker.min.js"></script>-->
+<script>
+$(document).ready(function(){
+    layui.use(['laydate'], function(){
+       var laydate = layui.laydate;
+    });
+});
+</script>
 {% if op == 'wannianli' %}
 <div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
     <h3 class="main" id="content-title">玄学历法</h3><hr>
@@ -69,7 +93,7 @@ $(function(){
     var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
     var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
     $.ajax({
-        url: "http://{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
+        url: "//{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
         type:"GET",
         timeouut:10000,
         success:function (data) {
@@ -88,7 +112,7 @@ $(function(){
     $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
-            url: "http://{{ host }}:8002/wannianli?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
+            url: "//{{ host }}:8002/wannianli?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
             type:"GET",
             timeouut:10000,
             success:function (data) {
@@ -127,7 +151,7 @@ $(function(){
     $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
-            url: "http://{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str",
+            url: "//{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str",
             type:"GET",
             timeouut:10000,
             success:function (data) {
@@ -163,7 +187,7 @@ $(function(){
     $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
-            url: "http://{{ host }}:8002/liuyao?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&qiguafangfa="+$("#qiguafangfa").val()+"&naganzhifa="+$("#naganzhifa").val()+"&op=str",
+            url: "//{{ host }}:8002/liuyao?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&qiguafangfa="+$("#qiguafangfa").val()+"&naganzhifa="+$("#naganzhifa").val()+"&op=str",
             type:"GET",
             timeouut:10000,
             success:function (data) {
@@ -235,7 +259,7 @@ $(function(){
     $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
-            url: "http://{{ host }}:8002/jinkoujue?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&difen="+$("#difen").val()+"&yuejiang="+$("#yuejiang").val()+"&zhanshi="+$("#zhanshi").val()+"&op=str",
+            url: "//{{ host }}:8002/jinkoujue?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&difen="+$("#difen").val()+"&yuejiang="+$("#yuejiang").val()+"&zhanshi="+$("#zhanshi").val()+"&op=str",
             type:"GET",
             timeouut:10000,
             success:function (data) {
@@ -270,7 +294,7 @@ $(function(){
     $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
-            url: "http://{{ host }}:8002/xiaochengtu?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&guizangfangfa="+$("#guizangfangfa").val()+"&op=str",
+            url: "//{{ host }}:8002/xiaochengtu?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&guizangfangfa="+$("#guizangfangfa").val()+"&op=str",
             type:"GET",
             timeouut:10000,
             success:function (data) {
@@ -287,51 +311,63 @@ $(function(){
 {% endblock %}
 
 {% block right %}
-<div class="main col-xs-offset-9 col-sm-offset-9 col-md-offset-9 col-xs-3 col-sm-3 col-md-3" id="right">
+<div id="right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
     <br/>
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-flag"></span>
-            今年分月干支
-        </div>
-        <div class="list-group" id="rightcalendar" style="font-size:0.8rem;">
-        </div>
-    </div>
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-flag"></span>
-            今月分日干支
-        </div>
-        <div class="list-group" id="rightcalendar" style="font-size:0.8rem;">
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                <span class="glyphicon glyphicon-flag"></span>
+                今年分月干支
+            </div>
+            <div class="layui-colla-content layui-show">
+                <div id="rightcalendar" style="font-size:0.8rem;"></div>
+            </div>
         </div>
     </div>
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-flag"></span>
-            今日分时干支
-        </div>
-        <div class="list-group" id="rightcalendar" style="font-size:0.8rem;">
+    <br/>
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                <span class="glyphicon glyphicon-flag"></span>
+                今年分日干支
+            </div>
+            <div class="layui-colla-content layui-show">
+                <div style="font-size:0.8rem;"></div>
+            </div>
         </div>
     </div>
-</div>
-<script>
-$(function(){
-    var myDate = new Date();
-    var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
-    var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
-    $.ajax({
-        url: "http://{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json&subop=get_GanzhiOneYear&year="+myDate.getFullYear(),
-        type:"GET",
-        timeouut:10000,
-        success:function (data) {
-            var parsedJson = eval(data);
-            if(parsedJson){
-                for(let item in parsedJson){
-                    $("#rightcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
-                };
+    <br/>
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                <span class="glyphicon glyphicon-flag"></span>
+                今年分时干支
+            </div>
+            <div class="layui-colla-content layui-show">
+                <div style="font-size:0.8rem;"></div>
+            </div>
+        </div>
+    </div>
+    <script>
+    $(function(){
+        var myDate = new Date();
+        var myDateDate = myDate.getFullYear()+"-"+String(Number(myDate.getMonth()+1))+"-"+myDate.getDate();
+        var myDateTime = myDate.getHours()+":"+myDate.getMinutes();
+        $.ajax({
+            url: "//{{ host }}:8002/wannianli?date="+myDateDate+"&time="+myDateTime+"&op=json&subop=get_GanzhiOneYear&year="+myDate.getFullYear(),
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                var parsedJson = eval(data);
+                if(parsedJson){
+                    for(let item in parsedJson){
+                        $("#rightcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                    };
+                }
             }
-        }
+        });
     });
-});
-</script>
+    </script>
+</div>
+
 {% endblock %}

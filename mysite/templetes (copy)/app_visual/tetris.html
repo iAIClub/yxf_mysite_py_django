@@ -1,0 +1,327 @@
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-12 col-sm-12 col-md-12" id="content" style="padding-left: 0;padding-right:0;">
+    <div id="tetris">
+      <div style="display:inline-block">
+       <canvas id="tetris-can" height="480" width="300" style="border:2px solid black;margin-top: 12px;"></canvas>
+      </div>
+      <div id="tetris-info" style="display:inline-block;height:480px;margin-top: 12px;vertical-align: top;font-size:14pt; color:green;">
+          <button class="btn btn-success" id="tetrisStart">开始</button>
+          <button class="btn btn-danger" id="tetrisRestart">重开</button>
+          <div>
+              <span>得分:</span>
+              <span id="tetris-score">0</span>
+          </div>
+       </div>
+    </div>
+</div>
+<script type="text/javascript">
+    /*参考原作者代码https://blog.csdn.net/cc_fys/article/details/77942077*/
+
+    //数据结构
+    //小方块宽高长度
+    var cubeW=20;
+    //5x5的俄罗斯方块画布，共7种基本形状，每个基本形状由4个不同位置的小方块组成，通过对左上角的偏移量记录小方块位置，偏移量12为中心点
+    var cubeArr=[[6,7,12,13],[7,8,11,12],[6,7,11,12],[7,12,17,8],[7,12,16,17],[7,12,17,22],[7,11,12,13]];
+    //俄罗斯方块随机颜色
+    var colorArr=['#ffc0cb','#dda0dd','#9370db','#6495ed','#fa8072','#ff8c00','#008000'];
+    //旋转模型，以当前位置作为index得到的值即下一个位置，实际上就是初始表格旋转90度
+    var rotateArr=[4,9,14,19,24,3,8,13,18,23,2,7,12,17,22,1,6,11,16,21,0,5,10,15,20];
+
+    //获取html相关区域
+    var canvas=document.getElementById('tetris-can');
+    var ctx=canvas.getContext('2d');
+    var score=document.getElementById('tetris-score');
+    var canWidth=canvas.width;
+    var canHeight=canvas.height;
+
+    //俄罗斯方块绘制前信息
+    var downInfor={};
+    //游戏区域背景小方块
+    var staticCube=[];
+    //游戏方块当前位置
+    var myposition;
+
+    window.onload=function() //初始化
+    {
+        drawlines();//绘制m*n的游戏区域，行列数量根据canWidth/canHeight与cubeW的比例得来
+        for(var i=0;i<(canWidth/cubeW);i++)//初始化背景小方块 0无方块，1有方块
+        {
+            staticCube[i]=[];
+            for(var j=0;j<(canHeight/cubeW);j++)
+            {
+                staticCube[i][j]=0;
+            }
+        }
+        initCube();//随机生成一个俄罗斯方块
+        //myposition=setInterval('movedown()',500);  //添加计时器，俄罗斯方块定时降落
+    }
+    function drawlines()  //绘制m*n的游戏区域，行列数量根据canWidth/canHeight与cubeW的比例得来
+    {
+        ctx.lineWidth=1;
+        ctx.strokeStyle='#ddd';
+        for(var i=0;i<(canWidth/cubeW);i++)//绘制网格纵线
+        {
+          ctx.moveTo(cubeW*i,0);
+          ctx.lineTo(cubeW*i,canHeight);
+        }
+        ctx.stroke();
+        for(var j=0;j<(canHeight/cubeW);j++)//绘制网格横线
+        {
+            ctx.moveTo(0,cubeW*j);
+            ctx.lineTo(canHeight,cubeW*j);
+        }
+        ctx.stroke();
+    }
+    function initCube()//随机生成一个俄罗斯方块
+    {
+      var index=Math.floor(Math.random()*cubeArr.length);
+      downInfor.cubeNow=cubeArr[index].concat();//当前俄罗斯方块的四个小方块的实际位置
+      downInfor.index=index;//当前俄罗斯方块的形状序号
+      downInfor.prepoint=[5,-1];//当前俄罗斯方块的上一状态的中心位置
+      downInfor.point=[5,-1];//当前俄罗斯方块的中心位置
+      drawEle(colorArr[downInfor.index]);
+    }
+    function drawEle(color)//绘制俄罗斯方块
+    {
+        ctx.fillStyle=color;
+        ctx.strokeStyle='#fff';
+        for(var i=0;i<4;i++)//分别计算每个俄罗斯方块的四个小方块的位置
+        {
+            var movex=downInfor.cubeNow[i]%5;//除5的余数即列偏移,x
+            var movey=Math.floor(downInfor.cubeNow[i]/5);//除5的整商即行偏移,y
+            ctx.fillRect(cubeW*(downInfor.point[0]+movex),cubeW*(downInfor.point[1]+movey),cubeW,cubeW);
+            ctx.strokeRect(cubeW*(downInfor.point[0]+movex),cubeW*(downInfor.point[1]+movey),cubeW,cubeW)
+        }
+    }
+    function movedown()//降落
+    {
+        var length,isempty=true,px,py,movex,movey,max=0;
+        for(var i=0;i<4;i++)
+        {
+            if(max<downInfor.cubeNow[i])
+                max=downInfor.cubeNow[i];
+        }
+        length=Math.ceil(max/5);//找出cubeNow的最大值除5，即俄罗斯方块形状自身的高度
+        for(var i=0;i<4;i++)//俄罗斯方块当前位置的四个小方块与背景比对
+        {
+            px=downInfor.point[0]+downInfor.cubeNow[i]%5;
+            py=downInfor.point[1]+1+Math.floor(downInfor.cubeNow[i]/5);
+            if(staticCube[px][py]==1)
+            {
+                isempty=false;
+                break;
+            }
+        }
+        if((downInfor.point[1]+length)<(canHeight/cubeW)&&isempty)//若无冲突且当前中心位置高度加上形状高度小于最大高度则继续降落
+        {
+            downInfor.prepoint=downInfor.point.concat();//注意引用类型
+            downInfor.point[1]=downInfor.point[1]+1;
+            clearEle();
+            drawEle(colorArr[downInfor.index]);
+        }
+        else//不能移动的时候，即已经落地
+        {
+            for(var i=0;i<4;i++)
+            {
+                px=downInfor.point[0]+downInfor.cubeNow[i]%5;
+                py=downInfor.point[1]+Math.floor(downInfor.cubeNow[i]/5);
+                staticCube[px][py]=1;
+            }
+            drawEle('#555');
+            checkfullLine();
+        }
+    }
+    function moveLeft()//键盘控制左移
+    {
+        var leftroom=4,isempty=true,px,py,movex,movey;
+        for(var i=0;i<4;i++)
+        {
+            px=downInfor.point[0]-1+downInfor.cubeNow[i]%5;
+            py=downInfor.point[1]+Math.floor(downInfor.cubeNow[i]/5);
+            if(px<0)
+            {
+                isempty=false;
+                break;
+            }
+            if((downInfor.cubeNow[i]%5)<leftroom)
+                leftroom=downInfor.cubeNow[i]%5;//求取最小的leftroom
+            if(staticCube[px][py]==1)
+            {
+                isempty=false;
+                break;
+            }
+        }
+        if((downInfor.point[0]+leftroom)>=0&&isempty)//要求point+leftroom大于等于0避免越界
+        {
+            downInfor.prepoint=downInfor.point.concat();
+            downInfor.point[0]=downInfor.point[0]-1;
+            clearEle();
+            drawEle(colorArr[downInfor.index]);
+        }
+    }
+    function moveRight()//键盘控制右移，与左移同理
+    {
+        var rightroom=0,isempty=true,px,py,movex,movey;
+        for(var i=0;i<4;i++)
+        {
+            px=downInfor.point[0]+1+downInfor.cubeNow[i]%5;
+            py=downInfor.point[1]+Math.floor(downInfor.cubeNow[i]/5);
+            if((downInfor.cubeNow[i]%5)>rightroom)
+                rightroom=downInfor.cubeNow[i]%5;
+            if(px>=(canWidth/cubeW))
+            {
+                isempty=false;
+                break;
+            }
+            if(staticCube[px][py]==1)
+            {
+                isempty=false;
+                break;
+            }
+        }
+        if((downInfor.point[0]+rightroom+1)<(canWidth/cubeW)&&isempty)
+        {
+            downInfor.prepoint=downInfor.point.concat();
+            downInfor.point[0]=downInfor.point[0]+1;
+            clearEle();
+            drawEle(colorArr[downInfor.index]);
+        }
+    }
+    function moverotate()//键盘控制旋转
+    {
+        var isempty=true,px,py,movex,movey, tempRotate=[0,0,0,0],leftroom=4,rightroom=0;
+        for(var i=0;i<4;i++)
+        {
+            tempRotate[i]=rotateArr[downInfor.cubeNow[i]];
+        }
+        for(var i=0;i<4;i++)
+        {
+            px=downInfor.point[0]+tempRotate[i]%3;
+            py=downInfor.point[1]+Math.floor(tempRotate[i]/3);
+            if(px<0||px>=(canWidth/cubeW))
+            {
+                isempty=false;
+                break;
+            }
+            if((downInfor.cubeNow[i]%5)<leftroom)
+                leftroom=downInfor.cubeNow[i]%5;
+            if((downInfor.cubeNow[i]%5)>rightroom)
+                rightroom=downInfor.cubeNow[i]%5;
+            if(staticCube[px][py]==1)
+            {
+                isempty=false;
+                break;
+            }
+        }
+        if((downInfor.point[0]+leftroom)>=0&&(downInfor.point[0]+rightroom+1)<(canWidth/cubeW)&&isempty)//加入避免越界的逻辑
+        {
+            downInfor.prepoint=downInfor.point.concat();
+            clearEle();
+            downInfor.cubeNow=tempRotate.concat();
+            drawEle(colorArr[downInfor.index]);
+        }
+    }
+    function clearEle()
+    {
+        ctx.lineWidth=1;
+        ctx.strokeStyle='#ddd';
+        for(var i=0;i<4;i++)
+        {
+            var movex=downInfor.cubeNow[i]%5;
+            var movey=Math.floor(downInfor.cubeNow[i]/5);
+            ctx.clearRect(cubeW*(downInfor.prepoint[0]+movex),cubeW*(downInfor.prepoint[1]+movey),cubeW,cubeW);
+            ctx.strokeRect(cubeW*(downInfor.prepoint[0]+movex),cubeW*(downInfor.prepoint[1]+movey),cubeW,cubeW)
+        }
+    }
+    function checkfullLine()//检测是否有一行满了，每当方块落地时检测
+    {
+        var isFullLine=true,index=0,changeScore=false;
+        for(var i=0;i<canWidth/cubeW;i++)//检测最顶行是否有落下的方块
+        {
+            if(staticCube[i][0]==1)
+            {
+                alert('游戏结束!');
+                clearInterval(myposition);
+                return;
+            }
+        }
+        for(var i=canHeight/cubeW-1;i>=0;i--)//检测每一行是否有空方块
+        {
+            isFullLine=true;
+            for(var j=0;j<(canWidth/cubeW);j++)
+            {
+                if(staticCube[j][i]==0)
+                {
+                    isFullLine=false;
+                }
+            }
+            if(isFullLine)//若有满行，加一分并重置此行的数据
+            {
+                score.innerHTML=parseInt(score.innerText)+1;
+                changeScore=true;
+                for(var s=i;s>=0;s--) {
+                    for (var j = 0; j < (canWidth / cubeW); j++) {
+                        (s- 1) >= 0 ? staticCube[j][s] = staticCube[j][s - 1] : staticCube[j][s] = 0;
+                    }
+                }
+            }
+        }
+        if(changeScore)//重新绘制
+        {
+            ctx.clearRect(0,0,canWidth,canHeight);
+            drawlines();
+            ctx.fillStyle='555';
+            ctx.strokeStyle='#fff';
+            for(var i=0;i<(canWidth/cubeW);i++)
+            {
+                for(var j=0;j<(canHeight/cubeW);j++)
+                {
+                    if(staticCube[i][j]==1)
+                    {
+                        ctx.fillRect(cubeW*i,cubeW*j,cubeW,cubeW);
+                        ctx.strokeRect(cubeW*i,cubeW*j,cubeW,cubeW);
+                    }
+                }
+            }
+        }
+        initCube();
+    }
+    window.onkeydown=function (evt)
+      {
+         switch(evt.keyCode)
+         {
+             case 37: //左
+                 moveLeft();
+                 break;
+             case 38: //上
+                 moverotate();
+                 break;
+             case 39: //右
+                 moveRight();
+                 break;
+             case 40: //下
+                 movedown();
+                 break;
+             default:
+                 break;
+         }
+      }
+
+    $("#tetrisStart").on('click',function(){
+        if(myposition)
+        {
+            myposition=clearInterval(myposition);
+            $("#tetrisStart").text("开始");
+        }
+        else
+        {
+            myposition=setInterval('movedown()',300);  //添加计时器，俄罗斯方块定时降落
+            $("#tetrisStart").text("暂停");
+        }
+        $("#tetrisStart").toggleClass("btn-success");
+        $("#tetrisStart").toggleClass("btn-warning");
+    });
+
+    $("#tetrisRestart").on('click',function(){
+        window.location.reload();
+    });
+</script>

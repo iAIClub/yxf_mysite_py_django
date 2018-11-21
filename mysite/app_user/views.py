@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
-
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse,HttpResponseBadRequest,StreamingHttpResponse
@@ -39,6 +38,7 @@ def settings(request):
 
 
 # 直接跳转，无内容
+# /user
 def user(request):
     return HttpResponseRedirect(reverse('app_user_profile'))
 
@@ -158,23 +158,21 @@ def profile(request):
             username = request.user
             user = User.objects.get(username=username)
             userpath = request.POST.get('filepath',None)
-            # try:
-            for upload_file in request.FILES.getlist('upload-file'):#<input type="file" name="upload-file">
-                filename = upload_file.name
-                # upload_file.size #文件大小    做文件上传大小限制
-                # upload_file.content_type #文件类型  做文件上传类型限制
-                #通用方法：上传到模型类的文件字段FileField（缺点：需要处理与文件系统同步的问题，删除模型不会删除文件）
-                #文件模型类，直接把上传的文件传递给FileField字段，框架会自动调用文件系统新建对应的实体文件
-                model_file = PanFile.objects.create(user=user,userpath=str(userpath),filename=str(filename),file=upload_file)
-                model_file.save()
-            messages.success(request,'上传成功！')
-                #另一种方法：直接调用文件系统创建文件，不经过框架模型类（缺点：不能通过数据库监视）
+            try:
+                for upload_file in request.FILES.getlist('upload-file'):#<input type="file" name="upload-file">
+                    filename = upload_file.name
+                    # upload_file.size #文件大小    做文件上传大小限制
+                    # upload_file.content_type #文件类型  做文件上传类型限制
+                    model_file = PanFile.objects.create(user=user,userpath=str(userpath),filename=str(filename),file=upload_file)
+                    model_file.save()
+                messages.success(request,'上传成功！')
+                # 另一种方法：直接调用文件系统创建文件，不经过框架模型类（缺点：不能通过数据库监视）
                 # destination = open(filepath+'/'+filename,'wb+')#打开文件进行二进制的写操作
                 # for chunk in upload_file.chunks(): #分块写入文件
                 #     destination.write(chunk)
                 # destination.close()
-            # except:
-            #     messages.error(request,'上传失败！')
+            except:
+                messages.error(request,'上传失败！')
             return HttpResponseRedirect(request.path+'?pan=1')
         #表单提交处理：删除文件
         elif purpose == 'delete_file':

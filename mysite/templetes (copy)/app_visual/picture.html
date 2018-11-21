@@ -1,0 +1,155 @@
+<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-12 col-sm-12 col-md-12" id="content" style="padding-left: 0;">
+    <div id="picture">
+        <div class="row">
+            <div id="myCarousel" class="col-xs-6 col-sm-6 col-md-6 carousel slide" data-ride="carousel" data-interval="3000" data-pause="hover" style="width:50%;padding-left:0;padding-right:0;">
+                <!-- 轮播（Carousel）指标 -->
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                </ol>
+                <!-- 轮播（Carousel）项目 -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="/static/img/高清大图/01.jpg">
+                        <div class="carousel-caption">01</div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/img/高清大图/02.jpg">
+                        <div class="carousel-caption">02</div>
+                    </div>
+                </div>
+                <!-- 轮播（Carousel）导航 -->
+                <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+                <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+            </div>
+            <div id="myCarousel2" class="col-xs-6 col-sm-6 col-md-6 carousel slide" data-ride="carousel" data-interval="3000" data-pause="hover" style="width:50%;padding-left:0;padding-right:0;">
+                <!-- 轮播（Carousel）指标 -->
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarousel2" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel2" data-slide-to="1"></li>
+                    <li data-target="#myCarousel2" data-slide-to="2"></li>
+                    <li data-target="#myCarousel2" data-slide-to="3"></li>
+                </ol>
+                <!-- 轮播（Carousel）项目 -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <img src="/static/img/高清大图/01_02.jpg">
+                        <div class="carousel-caption">合成</div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/img/高清大图/01_02_bl.jpg">
+                        <div class="carousel-caption">黑白</div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/img/高清大图/01_iv.jpg">
+                        <div class="carousel-caption">反色</div>
+                    </div>
+                    <div class="item">
+                        <img src="/static/img/高清大图/01_lt.jpg">
+                        <div class="carousel-caption">增亮</div>
+                    </div>
+                </div>
+                <!-- 轮播（Carousel）导航 -->
+                <a class="carousel-control left" href="#myCarousel2" data-slide="prev">&lsaquo;</a>
+                <a class="carousel-control right" href="#myCarousel2" data-slide="next">&rsaquo;</a>
+            </div>
+        </div>
+        <h4>图像处理</h4>
+        <div>
+            <input id="op" value="image" type="text" style="display:none;">
+            <span>图片1：</span><input id="image1" type="file" accept="image/*" style="display:inline;width:200px;">
+            <h5 class="text-success">合成（可选）</h5>
+            <span>图片2：</span><input id="image2" type="file" accept="image/*" style="display:inline;width:200px;">
+            <span>alpha：</span><input id="blend_alpha" type="number" max=1 min=0 step="0.1" value=0.5 style="display:inline;width:50px;">
+            <span>（out = image1 *(1.0 - alpha) + image2 * alpha）</span>
+            <h5 class="text-success">掩码图（可选）</h5>
+            <span>图片3（限png格式）：</span><input id="mask" type="file" accept="image/png" style="display:inline;width:200px;">
+            <span>（out = image1 + image2 * mask[alpha]）</span>
+            <h5 class="text-success">处理（可选）</h5>
+            <span>调整亮度（暂只支持增减固定值）：</span><input id="eval_liangdu" type="number" max=1 min=-1 step="1" value=0 style="display:inline;width:50px;">
+            <label><input id="eval_fanse" type="checkbox">反色</label>
+            <label><input id="eval_heibai" type="checkbox">黑白</label>
+            <label><input id="eval_erzhi" type="checkbox" value="0">二值化</label>
+            <label><input id="filter_blur" type="checkbox">模糊滤镜</label>
+            <label><input id="filter_contour" type="checkbox">轮廓滤镜</label>
+            <button class="btn btn-success" id="image_process">执行</button>
+            <br>
+            <div><img src="" id="img_i"></div>
+        </div>
+        <hr><h4>生成验证码</h4>
+        <div>
+            <button class="btn btn-success" id="capcha">执行</button>
+            <br>
+            <div><img src="" id="img_c"></div>
+        </div>
+        <hr><h4>生成二维码</h4>
+        <div>
+            <span>请输入二维码内容：</span><input id="qrcode_text" type="text" value="http://avata.cc">
+            <button class="btn btn-success" id="qrcode">执行</button>
+            <br>
+            <div><img src="" id="img_q"></div>
+        </div>
+    </div>
+</div>
+<script type="text/javascript">
+$(function(){
+    $("#image_process").click(function(){
+        var formdata = new FormData();
+        formdata.append("csrfmiddlewaretoken","{{ csrf_token }}");
+        formdata.append("op",$("#op").val());
+        formdata.append("image1",document.getElementById("image1").files[0]);
+        formdata.append("image2",document.getElementById("image2").files[0]);
+        formdata.append("blend_alpha",$("#blend_alpha").val());
+        formdata.append("mask",document.getElementById("mask").files[0]);
+        formdata.append("eval_liangdu",$("#eval_liangdu").val());
+        formdata.append("eval_fanse",$("#eval_fanse").is(":checked"));
+        formdata.append("eval_heibai",$("#eval_heibai").is(":checked"));
+        formdata.append("eval_erzhi",$("#eval_erzhi").is(":checked"));
+        formdata.append("filter_blur",$("#filter_blur").is(":checked"));
+        formdata.append("filter_contour",$("#filter_contour").is(":checked"));
+        console.log($("#eval_erzhi").is(":checked"));
+        $.ajax({
+            url: window.location.pathname,
+            type:"POST",
+            data:formdata,
+            cache: false, //上传文件不需要缓存
+            processData: false, // 告诉jQuery不要去处理发送的数据
+            contentType: false, // 告诉jQuery不要去设置Content-Type请求头
+            timeouut:10000,
+            success:function (data) {
+                $("#img_i").attr("width","100%");
+                $("#img_i").attr("src","data:image/jpeg;base64,"+data);
+            }
+        });
+    });
+    $("#capcha").click(function(){
+        $.ajax({
+            url: window.location.pathname,
+            type:"POST",
+            data:{
+                "csrfmiddlewaretoken":"{{ csrf_token }}",
+                "op":"capcha"
+            },
+            timeouut:10000,
+            success:function (data) {
+                $("#img_c").attr("src","data:image/jpeg;base64,"+data);
+            }
+        });
+    });
+    $("#qrcode").click(function(){
+        $.ajax({
+            url: window.location.pathname,
+            type:"POST",
+            data:{
+                "csrfmiddlewaretoken":"{{ csrf_token }}",
+                "op":"qrcode",
+                "text":$("#qrcode_text").val()
+            },
+            timeouut:10000,
+            success:function (data) {
+                $("#img_q").attr("src","data:image/jpeg;base64,"+data);
+            }
+        });
+    });
+});
+</script>

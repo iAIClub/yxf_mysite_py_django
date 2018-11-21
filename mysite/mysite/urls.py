@@ -1,19 +1,4 @@
 # -*- coding: utf-8 -*-
-"""mysite URL Configuration
-
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/1.11/topics/http/urls/
-Examples:
-Function views
-    1. Add an import:  from my_app import views
-    2. Add a URL to urlpatterns:  url(r'^$', views.home, name='home')
-Class-based views
-    1. Add an import:  from other_app.views import Home
-    2. Add a URL to urlpatterns:  url(r'^$', Home.as_view(), name='home')
-Including another URLconf
-    1. Import the include() function: from django.conf.urls import url, include
-    2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
-"""
 from django.conf.urls import include, url
 from django.contrib import admin
 from app_tutorial import views as app_tutorial_views
@@ -35,7 +20,7 @@ tutorial_urlpatterns = [
 ]
 
 user_urlpatterns = [
-    url(r'^download/(?P<suburl>.+)', app_user_views.download,name='app_user_download_url'),
+    url(r'^download/(?P<suburl>.+)$', app_user_views.download,name='app_user_download_url'),
     url(r'^login/$', app_user_views.login,name='app_user_login'),
     url(r'^register/$', app_user_views.register,name='app_user_register'),
     url(r'^profile/$', app_user_views.profile,name='app_user_profile'),
@@ -57,7 +42,7 @@ spider_urlpatterns = [
 ]
 
 visual_urlpatterns = [
-    url(r'^charvideo/av/(?P<suburl>.+)', app_visual_views.charvideo,name='app_visual_charvideo_av'),
+    #url(r'^charvideo/av/(?P<suburl>.+)$', app_visual_views.charvideo,name='app_visual_charvideo_av'),
     url(r'^charvideo/$', app_visual_views.charvideo,{'suburl':None},name='app_visual_charvideo'),
     url(r'^dsvisual/$', app_visual_views.dsvisual,name='app_visual_dsvisual'),
     url(r'^picture/$', app_visual_views.picture,name='app_visual_picture'),
@@ -67,6 +52,8 @@ visual_urlpatterns = [
 ]
 
 webtrans_urlpatterns = [
+    url(r'^socket/(?P<type>[^/]+)$', app_webtrans_views.socket,name='app_webtrans_socket'),
+    url(r'^websocket/$', app_webtrans_views.websocket,name='app_webtrans_websocket'),
     url(r'^tcptrans/$', app_webtrans_views.tcptrans,name='app_webtrans_tcptrans'),
     url(r'^nat/$', app_webtrans_views.nat,name='app_webtrans_nat'),
     url(r'^wechat/$', app_webtrans_views.wechat,name='app_webtrans_wechat'),

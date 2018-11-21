@@ -16,7 +16,7 @@ from app_tutorial.models import Column,Tutorial,APP_FILE_ROOT,APP_TEMPLETE_ROOT
 def index(request):
     columns = Column.objects.all()
     return HttpResponse(render(request, 'common/base.html', {\
-        'title':'菲菲的技术网站',\
+        'title':'知道驿站',\
         'list':columns,\
         }))
 
@@ -24,7 +24,7 @@ def index(request):
 #/search
 def search(request):
     return HttpResponse(render(request, 'common/base.html',{\
-        'title':'菲菲的技术网站 - 搜索',\
+        'title':'知道驿站 - 搜索',\
         'list':'',\
         }))
 
