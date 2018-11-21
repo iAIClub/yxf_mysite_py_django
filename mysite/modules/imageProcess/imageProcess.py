@@ -111,7 +111,7 @@ class ImageProcess:
 
     def convert_image(self,image_path2='',info=False,blend=False,composite=False,eval=False,filter=False,
                       blend_alpha=0.5,
-                      composite_path='06.png',
+                      composite_path='',
                       eval_liangdu=0,eval_fanse=False,eval_heibai=False,eval_erzhi=False,
                       filter_blur=False,filter_contour=False):
         if info:
@@ -130,7 +130,7 @@ class ImageProcess:
 
     def convert_image_cli(self,output_path,image_path2,op,
                         blend_alpha=0.3,
-                        composite_path='06.png',
+                        composite_path='',
                         eval_liangdu=0,eval_fanse=False,eval_heibai=True,eval_erzhi=False,
                         filter_blur=False,filter_contour=False):
         if op == 'info':

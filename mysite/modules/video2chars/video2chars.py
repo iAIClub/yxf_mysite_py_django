@@ -6,6 +6,9 @@ import numpy
 from moviepy.editor import *
 from PIL import Image, ImageFont, ImageDraw
 import click
+#库的缺陷，没办法用绝对路径，只能把字体放到当前路径
+# font_path = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),'static/font/')
+
 
 """参考原作者代码https://github.com/ryan4yin"""
 """视频转码过程非常耗CPU资源，只能线下提前转好，线上服务器不可使用"""
