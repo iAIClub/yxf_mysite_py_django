@@ -37,7 +37,7 @@
         }
     </style>
     <fieldset class="layui-elem-field layui-field-title">
-        <legend><a id="content-title" href="{% url 'app_tutorial' %}doc/{{ active }}" title="进入栏目" style="color:darkcyan;">{{ active_column.name }}</a> 栏目的所有文档</legend>
+        <legend><a id="content-title" href="{% url 'app_tutorial' %}doc/{{ active }}" title="进入栏目" style="color:darkcyan;">{{ active_column.name }}</a> - 所有文档</legend>
     </fieldset>
     {% for item in content_list %}
     {% if item.slug != 'index' %}
