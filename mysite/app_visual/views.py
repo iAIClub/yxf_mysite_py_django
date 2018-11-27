@@ -119,9 +119,10 @@ def tetris(request):
         'display':'tetris',\
         }))
 
-def charvideo(request,suburl):
-    if suburl:
-        file = 'media/'+APP_FILE_ROOT+'av/'+suburl+'.mp4'
+def charvideo(request):
+    if request.method == 'GET' and request.GET.get('av',None):
+        av = request.GET['av']
+        file = 'media/'+APP_FILE_ROOT+'av/'+av+'.mp4'
         #内部函数：分批流式读取大文件
         def file_iterator(file_name, chunk_size=8192, offset=0, length=None):
             #chunk_size=8192:片段长度8M

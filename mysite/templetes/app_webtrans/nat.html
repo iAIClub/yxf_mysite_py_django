@@ -1,38 +1,40 @@
-<div id="nat">
-    <button class="btn btn-success btn-inline" id="neiwangfuwu">内网服务</button>
-    <button class="btn btn-success btn-inline" id="neiwangwenjian">内网文件</button>
-    <button class="btn btn-success btn-inline" id="chuantoujiankong">穿透监控</button><br>
-    <span>当前网址：</span><input type="text" style="width: 400px;" id="wangzhi" value="http://nat.avata.cc:8003">
-    <button class="btn btn-info btn-inline" id="xinbiaoqian">新标签访问</button><hr>
+<div id="nat" class="layui-col-xs12 layui-col-sm12 layui-col-md12">
+    <input type="text" style="width: 400px;display:inline" id="wangzhi" class="layui-input" value="http://nat.avata.cc:8003">
+    <button class="layui-btn" id="xinbiaoqian">新标签访问</button>
+    <div class="layui-btn-group" style="display:inline">
+        <button class="layui-btn layui-btn-normal" id="neiwangfuwu">内网服务</button>
+        <button class="layui-btn layui-btn-normal" id="neiwangwenjian">内网文件</button>
+        <button class="layui-btn " id="chuantoujiankong">穿透监控</button><hr>
+    </div>
     <iframe id="mainiframe" scrolling="auto" src="http://nat.avata.cc:8003">
         #document
     </iframe>
+    <script type="text/javascript">
+    function changeFrameHeight(){
+        var ifm= document.getElementById("mainiframe");
+        ifm.height=document.documentElement.clientHeight+250;
+    }
+    window.onresize=function(){ changeFrameHeight();}
+    $(function(){
+        changeFrameHeight();
+        $("#neiwangfuwu").click(function(){
+            var link = "http://nat.avata.cc:8003";
+            $("#wangzhi").val(link);
+            $("#mainiframe").attr("src", link);
+        });
+        $("#neiwangwenjian").click(function(){
+            var link = "http://nat.avata.cc:8006";
+            $("#wangzhi").val(link);
+            $("#mainiframe").attr("src", link);
+        });
+        $("#chuantoujiankong").click(function(){
+            var link = "http://avata.cc:8004";
+            $("#wangzhi").val(link);
+            $("#mainiframe").attr("src", link);
+        });
+        $("#xinbiaoqian").click(function(){
+            window.open($("#wangzhi").val());
+        });
+    });
+    </script>
 </div>
-<script type="text/javascript">
-function changeFrameHeight(){
-    var ifm= document.getElementById("mainiframe");
-    ifm.height=document.documentElement.clientHeight+250;
-}
-window.onresize=function(){ changeFrameHeight();}
-$(function(){
-    changeFrameHeight();
-    $("#neiwangfuwu").click(function(){
-        var link = "http://nat.avata.cc:8003";
-        $("#wangzhi").val(link);
-        $("#mainiframe").attr("src", link);
-    });
-    $("#neiwangwenjian").click(function(){
-        var link = "http://nat.avata.cc:8006";
-        $("#wangzhi").val(link);
-        $("#mainiframe").attr("src", link);
-    });
-    $("#chuantoujiankong").click(function(){
-        var link = "http://avata.cc:8004";
-        $("#wangzhi").val(link);
-        $("#mainiframe").attr("src", link);
-    });
-    $("#xinbiaoqian").click(function(){
-        window.open($("#wangzhi").val());
-    });
-});
-</script>

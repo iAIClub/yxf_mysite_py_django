@@ -44,8 +44,8 @@ def blog(request):
             try:
                 #表单提交处理：新建文档，对文件主体的操作转到编辑器页面进行
                 user = User.objects.filter(username=request.user.username)[0]
-                post_class_name = request.POST.get('post_class',None)
-                post_class = PostClass.objects.get(name=post_class_slug)
+                post_class_name = request.POST.get('postclass',None)
+                post_class = PostClass.objects.get(name=post_class_name)
                 new_title = request.POST.get('title',None)
                 new_keywords = request.POST.get('keywords',None)
                 new_description = request.POST.get('description',None)

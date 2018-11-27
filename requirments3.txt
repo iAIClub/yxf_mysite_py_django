@@ -2,3 +2,5 @@ pillow
 numpy
 click
 moviepy
+twisted
+autobahn[twisted]

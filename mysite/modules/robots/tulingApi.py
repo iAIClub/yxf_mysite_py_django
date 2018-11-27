@@ -1,8 +1,18 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+import json
+import requests
+import os
+import sys
+import configparser
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(BASE_DIR)
+cf = configparser.ConfigParser()
+cf.read(os.path.join(BASE_DIR,"settings.cfg"))
 
-tuling_url = 'http://openapi.tuling123.com/openapi/api/v2'
-tuling_ak = 'ec1c97e388e44c6ba7bb03c3c6c9e701'
+__tuling_url = cf.get("tuling","url")
+__tuling_ak = cf.get("tuling","ak")
+__tuling_id = str(cf.get("tuling","id"))
 
 '''
 https://www.kancloud.cn/turing/www-tuling123-com/718227
@@ -61,3 +71,42 @@ Response example:
 }
 '''
 
+
+def __tuling_result(response):  # response type:str
+    # print(type(response))
+    res_json = json.loads(response,encoding='utf-8')
+    result = []
+    try:
+        for i in res_json['results']:
+            if i['resultType'] == 'url':
+                result.append(i['values']['url'])
+            if i['resultType'] == 'text':
+                result.append(i['values']['text'])
+    except:
+        result.append('机器人接口出错！')
+    return result  # result type:str
+
+
+def tuling_request(request):
+    request_str = '''
+    {
+        "reqType":0,
+        "perception": {
+            "inputText": {
+    '''
+    request_str += '"text": "{}"'.format(request)
+    request_str += '''
+            },
+            "selfInfo": {
+            }
+        },
+        "userInfo": {
+    '''
+    request_str += '"apiKey": "{}",'.format(__tuling_ak)+'"userId": "{}"'.format(__tuling_id)
+    request_str += '''
+            }
+        }
+    '''
+    response = requests.post(__tuling_url,data=request_str.encode('utf-8'))
+    result = __tuling_result(response.text)
+    return result  # text list

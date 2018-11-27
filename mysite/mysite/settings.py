@@ -27,7 +27,8 @@ cf.read("settings.cfg")
 DEBUG = cf.getboolean("meta", "debug")
 HOST = cf.get("meta","host")
 BAIDUMAP = {
-    'AK':cf.get('baidumap','ak'),
+    'url':cf.get('baidumap','url'),
+    'ak':cf.get('baidumap','ak'),
 }
 DATABASES = {
     'default': {

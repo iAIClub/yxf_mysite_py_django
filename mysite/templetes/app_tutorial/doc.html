@@ -103,7 +103,6 @@
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <div class="layui-colla-title">
-                <span class="glyphicon glyphicon-book"></span>
                 文档操作
             </div>
             <div class="layui-colla-content layui-show">
@@ -115,7 +114,6 @@
             <div class="layui-colla-content layui-show">
                 <a class="layui-icon layui-icon-delete" href="#layer-delete" onclick="handleDelete()" style="color: red;">删除</a>
             </div>
-            {% for m in messages %}<div class="layui-colla-content layui-show"><h5>{{ m }}</h5></div>{% endfor %}
         </div>
     </div>
     {% endif %}

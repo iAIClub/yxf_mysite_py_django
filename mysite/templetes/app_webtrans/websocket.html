@@ -1,81 +1,136 @@
-<div id="websocket">
-    {% if request.user.is_superuser %}
-    <div class="row" style="margin-right:0;">
-        <div class="col-xs-9 col-sm-9 col-md-9">
-            <h4>通过Websocket与后台的图灵机器人实时对话</h4>
-            <textarea style="width:100%;height:450px;background-color:honeydew;" readonly="readonly"></textarea>
-            <div>
-                <input type="text" id="message" style="width:75%;">
-                <button class="btn btn-info" id="send">发送</button>
+<div id="content" class="layui-col-xs9 layui-col-sm9 layui-col-md9">
+    <style>
+        .textarea{
+            overflow:auto;
+        }
+        .receiver{
+            clear:both;
+        }
+        .receiver div:nth-of-type(1){
+            float: left;
+        }
+        .receiver div:nth-of-type(2){
+            background-color: #e2e2e2;
+            float: left;
+            margin: 0 20px 10px 15px;
+            padding: 10px 10px 10px 0px;
+            border-radius:7px;
+        }
+        .receiver div:first-child i,.sender div:first-child i{
+            font-size:40px;
+            width:50px;
+            height: 50px;
+        }
+        .sender{
+            clear:both;
+        }
+        .sender div:nth-child(1){
+            float: right;
+        }
+        .sender div:nth-of-type(2){
+            float:right;
+            background-color: #5FB878;
+            margin: 0 10px 10px 20px;
+            padding: 10px 0px 10px 10px;
+            border-radius:7px;
+        }
+        .left_triangle{
+            height:0px;
+            width:0px;
+            border-width:8px;
+            border-style:solid;
+            border-color:transparent #e2e2e2 transparent transparent;
+            position: relative;
+            left:-16px;
+            top:3px;
+        }
+        .right_triangle{
+            height:0px;
+            width:0px;
+            border-width:8px;
+            border-style:solid;
+            border-color:transparent transparent transparent #5FB878;
+            position: relative;
+            right:-16px;
+            top:3px;
+        }
+    </style>
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>通过Websocket与后台的图灵机器人实时对话</legend>
+    </fieldset>
+    <div id="websocket" class="layui-card">
+        <div class="layui-card-body">
+            {% if request.user.is_superuser %}
+            <div class="textarea" style="width:100%;height:400px;background-color:honeydew;margin-bottom:5px;">
                 <br>
             </div>
-        </div>
-        <div class="col-xs-3 col-sm-3 col-md-3">
-            <br>
-            <div class="panel">
-                <div class="panel-heading" style="color:darkgreen">
-                    <span class="glyphicon glyphicon-flag"></span>
-                    TCP服务器
-                </div>
-                <div class="list-group" id="server" style="font-size:0.8rem;">
-                    <a class="list-group-item" id="tcpserver" href="javascript:;">TcpSrver</a>
-                </div>
+            <input type="text" class="layui-input" id="message" placeholder="按Enter可快捷发送" style="width:80%;display:inline-block;">
+            <button class="layui-btn" id="send">发送</button>
             </div>
-            <div class="panel">
-                <div class="panel-heading" style="color:darkgreen">
-                    <span class="glyphicon glyphicon-flag"></span>
-                    TCP通信在线用户
-                </div>
-                <div class="list-group" id="onlineuser" style="font-size:0.8rem;">
-                    <a class="list-group-item" href="javascript:;">1</a>
-                </div>
+            {% else %}
+            <h4>请先登录！</h4>
+            {% endif %}
+    </div>
+    <script type="text/javascript">
+    $(function(){
+        //connect
+        if (socket) {
+            socket.close()
+        }
+        var socket = new WebSocket("ws://" + window.location.hostname + ':8007');
+        socket.onopen = function () {
+            console.log("websocket connect");
+            socket.send('你好！');
+            $("#tcpserver").text("tuling123_server(已连接)");
+            $("#tcpserver span").toggleClass("layui-bg-green");
+        };
+        socket.onclose = function () {
+            console.log("websocket close");
+        };
+        socket.onerror = function () {
+            console.log("websocket error");
+        };
+
+        //message
+        socket.onmessage = function (e) {
+            var receiver_str = '<div class="receiver">';
+            receiver_str += '<div><i class="layui-icon layui-icon-chat"></i>';
+            receiver_str += '</div><div><div class="left_triangle"></div><span>';
+            receiver_str += e.data;
+            receiver_str += '</span></div></div>';
+            $('#websocket .textarea').append(receiver_str);
+            $("#websocket .textarea").scrollTop($("#websocket .textarea")[0].scrollHeight);
+        };
+        $("#send").click(function(){
+            var sender_str = '<div class="sender">';
+            sender_str += '<div><i class="layui-icon layui-icon-username"></i>';
+            sender_str += '</div><div><div class="right_triangle"></div><span>';
+            sender_str += $('#message').val();
+            sender_str += '</span></div></div>';
+            $('#websocket .textarea').append(sender_str);
+            $("#websocket .textarea").scrollTop($("#websocket .textarea")[0].scrollHeight);
+            socket.send($('#message').val());
+            $('#message').val("");
+        });
+    });
+
+    //keypress
+    $(document).keydown(function(e){
+        if(e.which == 13){
+            $("#send").click();
+        }
+    });
+    </script>
+</div>
+<div id="content-right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                TCP服务器
+            </div>
+            <div class="layui-colla-content layui-show" id="server" style="font-size:0.8rem;">
+                <a id="tcpserver" href="javascript:;"><span class="layui-badge-dot"></span>tuling123_server(未连接)</a>
             </div>
         </div>
     </div>
-    {% else %}
-    <h4>请先登录！</h4>
-    {% endif %}
 </div>
-<script type="text/javascript">
-$(function(){
-    //heartbeat
-    function keepalive(ws) {
-        var time = new Date();
-        if ((time.getTime() - last_health > 35000)) {
-            //ws.close();
-            //clearInterval(window.heartbeat_timer)
-        } else {
-            if (ws.bufferedAmount == 0 && ws.readyState == 1) {
-                ws.send('ping')
-            }
-        }
-    }
-
-    //connect
-    if (socket) {
-        socket.close()
-    }
-    var socket = new WebSocket("ws://" + window.location.hostname + ':8007');
-    socket.onopen = function () {
-        console.log("websocket connect");
-        //socket.send('hello');
-        //window.heartbeat_timer = setInterval(function () {keepalive(socket)}, 30000);
-    };
-    socket.onclose = function () {
-        console.log("websocket close");
-    };
-    socket.onerror = function () {
-        console.log("websocket error");
-    };
-
-    //message
-    socket.onmessage = function (e) {
-        $('#websocket textarea').append("[server]"+e.data+'\n');
-    };
-    $("#send").click(function(){
-        $('#websocket textarea').append("<p style=''>"+$('#message').val()+"</p>");
-        socket.send($('#message').val());
-        $('#message').val("");
-    });
-});
-</script>

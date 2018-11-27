@@ -1,11 +1,14 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import time
 import sys
+import os
 from twisted.internet import reactor, protocol
 from twisted.python import log
 from autobahn.twisted.websocket import WebSocketServerProtocol,WebSocketServerFactory
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.append(BASE_DIR)
+from modules.robots.tulingApi import tuling_request
 
 
 '''
@@ -25,11 +28,11 @@ class MyWebSocketProtocol(WebSocketServerProtocol):
     def onMessage(self, payload, isBinary):
         if isBinary:
             print("Binary message received: {} bytes".format(len(payload)))
+            text = None
         else:
             print("Text message received: {}".format(payload.decode('utf8')))
-
-        # echo back message verbatim
-        self.sendMessage(payload, isBinary)
+        for i in tuling_request(payload.decode('utf8')):
+            self.sendMessage(i.encode('utf-8'), isBinary)
 
     def onClose(self, wasClean, code, reason):
         print("WebSocket connection closed: {}".format(reason))

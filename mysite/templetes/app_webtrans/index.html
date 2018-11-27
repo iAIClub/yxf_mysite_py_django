@@ -36,9 +36,9 @@
 {% endblock %}
 
 {% block content %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-12 col-sm-12 col-md-12" id="content" style="padding-left: 0;padding-right:0;">
 {% if display == 'map' %}
-{% include 'app_webtrans/map.html' %}
+<iframe src="{% url 'app_webtrans_map_content' %}" style="height:80vh;">
+</iframe>
 {% elif display == 'tcptrans' %}
 {% include 'app_webtrans/tcptrans.html' %}
 {% elif display == 'websocket' %}
@@ -51,7 +51,6 @@
 {% include 'app_webtrans/proxy.html' %}
 {% else %}
 {% endif %}
-</div>
 {% endblock %}
 
 {% block right %}

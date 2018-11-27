@@ -7,5 +7,3 @@ pyquery
 pillow
 click
 qrcode
-twisted
-autobahn[twisted]

@@ -5,7 +5,6 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from app_webtrans.models import APP_FILE_ROOT,APP_TEMPLETE_ROOT
-#from dwebsocket import accept_websocket,require_websocket
 from mysite.settings import BAIDUMAP
 
 def index(request):
@@ -39,7 +38,12 @@ def map(request):
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
         'title':'地图应用',\
         'display':'map',\
-        'ak':BAIDUMAP['AK'],\
+        }))
+
+def map_content(request):
+    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'map.html',{\
+        'url':BAIDUMAP['url'],\
+        'ak':BAIDUMAP['ak'],\
         }))
 
 def proxy(request):
@@ -66,14 +70,11 @@ def proxy(request):
             'display':'proxy',\
             }))
 
-# dwebsocket库中的BUG（可能是因为没有兼容python2）
-# /usr/lib/python2.7/site-packages/dwebsocket/backends/default/websocket.py 把使用的queue库改为Queue
-# /usr/lib/python2.7/site-packages/dwebsocket/backends/default/protocol.py 把data=bytes(data,'utf-8')改成data=bytes(data)
 #@accept_websocket
-def socket(request, type):
-    if type == 'websocket' and request.is_websocket():
-        request.websocket.send('[server]Welcome!'.encode('utf-8'))
-        for message in request.websocket:  # websocket是一个持续接收客户端输入的生成器，不会阻塞
-            request.websocket.send('[server]received'.encode('utf-8'))
-    else:
-        pass
+# def socket(request, type):
+#     if type == 'websocket' and request.is_websocket():
+#         request.websocket.send('[server]Welcome!'.encode('utf-8'))
+#         for message in request.websocket:  # websocket是一个持续接收客户端输入的生成器，不会阻塞
+#             request.websocket.send('[server]received'.encode('utf-8'))
+#     else:
+#         pass
