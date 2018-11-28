@@ -33,7 +33,7 @@
                 <a href="javascript:;">今日日历</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <div id="leftcalendar" style="font-size:0.8rem;"></div>
+                        <div id="leftcalendar"></div>
                     </dd>
                 </dl>
             </li>
@@ -53,9 +53,9 @@
                 if(parsedJson){
                     for(let item in parsedJson){
                         if(item<=2){
-                            $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item][1]+'</div>');
+                            $("#leftcalendar").append('<div style="font-size:0.8rem;white-space:normal;">'+parsedJson[item][1]+'</div>');
                         }else if(item<=3){
-                            $("#leftcalendar").append('<div class="list-group-item">'+parsedJson[item]+'</div>');
+                            $("#leftcalendar").append('<div style="font-size:0.8rem;white-space:normal;">'+parsedJson[item]+'</div>');
                         }
                     };
                 }
@@ -71,16 +71,28 @@
 $(document).ready(function(){
     layui.use(['laydate'], function(){
        var laydate = layui.laydate;
+       laydate.render({
+          elem: '#datetimepicker',
+          type: 'datetime',
+          format: 'yyyy-MM-dd HH:mm',
+          value: '2018-08-18 12:00',
+        });
     });
 });
 </script>
 {% if op == 'wannianli' %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title">玄学历法</h3><hr>
-    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
-    <button class="btn btn-success btn-inline">转到</button>
-    <hr>
-    <div class="row placeholders" id="contentcalendar">
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>玄学历法</h3>
+        </div>
+        <div class="layui-card-body">
+            <span>日期时间：</span><input type="text" id="datetimepicker" class="layui-input" style="display:inline;width:130px;">
+            <button class="layui-btn">转到</button>
+            <hr>
+            <div id="contentcalendar">
+            </div>
+        </div>
     </div>
 </div>
 <script>
@@ -105,7 +117,6 @@ $(function(){
             }
         }
     });
-    $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
             url: "//{{ host }}:8002/wannianli?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&op=json"+"&return_fengshui=True&return_zhongyi=True&return_huangji=True",
@@ -129,58 +140,66 @@ $(function(){
 });
 </script>
 {% elif op == 'bazi' %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title">八字排盘</h3><hr>
-    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
-    <span>请选择性别：</span>
-    <select id="xingbie">
-        <option>男</option>
-        <option>女</option>
-    </select>
-    <button class="btn btn-success btn-inline">排盘</button>
-    <hr>
-    <div class="row placeholders" id="pan">
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>八字排盘</h3>
+        </div>
+        <div class="layui-card-body">
+            <span>日期时间：</span><input type="text" style="width:130px;display:inline;" id="datetimepicker" class="layui-input">
+            <span>性别：</span>
+            <select id="xingbie" class="layui-input" style="width:130px;display:inline;" >
+                <option>男</option>
+                <option>女</option>
+            </select>
+            <button class="layui-btn">排盘</button>
+            <div id="pan">
+            </div>
+        </div>
     </div>
-</div>
-<script>
-$(function(){
-    $('#datetimepicker').datetimepicker();
-    $("#content button").click(function(){
-        $.ajax({
-            url: "//{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str",
-            type:"GET",
-            timeouut:10000,
-            success:function (data) {
-                if(data){
-                    $("#pan").html("");
-                    $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:550px;overflow-x:scroll;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+    <script>
+    $(function(){
+        $("#content button").click(function(){
+            $.ajax({
+                url: "//{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str",
+                type:"GET",
+                timeouut:10000,
+                success:function (data) {
+                    if(data){
+                        $("#pan").html("");
+                        $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:550px;overflow-x:scroll;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                    }
                 }
-            }
+            });
         });
     });
-});
-</script>
+    </script>
+</div>
 {% elif op == 'liuyao' %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title">六爻排盘</h3><hr>
-    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
-    <span>请选择起卦方法：</span>
-    <select id="qiguafangfa">
-        <option>标准时间起卦</option>
-    </select>
-    <span>请选择纳干支法：</span>
-    <select id="naganzhifa">
-        <option>传统京氏</option>
-        <option>先天甲子易</option>
-    </select>
-    <button class="btn btn-success btn-inline">排盘</button>
-    <hr>
-    <div class="row placeholders" id="pan">
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>六爻排盘</h3>
+        </div>
+        <div class="layui-card-body">
+            <span>日期时间：</span><input type="text" style="width:130px;display:inline;" id="datetimepicker" class="layui-input">
+            <span>起卦方法：</span>
+            <select id="qiguafangfa" class="layui-input" style="width:130px;display:inline;" >
+                <option>标准时间起卦</option>
+            </select>
+            <span>纳干支法：</span>
+            <select id="naganzhifa" class="layui-input" style="width:130px;display:inline;" >
+                <option>传统京氏</option>
+                <option>先天甲子易</option>
+            </select>
+            <button class="layui-btn">排盘</button>
+            <div id="pan">
+            </div>
+        </div>
     </div>
 </div>
 <script>
 $(function(){
-    $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
             url: "//{{ host }}:8002/liuyao?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&qiguafangfa="+$("#qiguafangfa").val()+"&naganzhifa="+$("#naganzhifa").val()+"&op=str",
@@ -197,62 +216,66 @@ $(function(){
 });
 </script>
 {% elif op == 'jinkoujue' %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title">金口诀排盘</h3><hr>
-    <span>请选择日期时间：</span><input type="text" value="2012-05-15 21:05"  style="width:130px;" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
-    <span>请选择地分：</span>
-    <select id="difen">
-        <option>子</option>
-        <option>丑</option>
-        <option>寅</option>
-        <option>卯</option>
-        <option>辰</option>
-        <option>巳</option>
-        <option>午</option>
-        <option>未</option>
-        <option>申</option>
-        <option>酉</option>
-        <option>戌</option>
-        <option>亥</option>
-    </select>
-    <span>请选择月将：</span>
-    <select id="yuejiang">
-        <option>子</option>
-        <option>丑</option>
-        <option>寅</option>
-        <option>卯</option>
-        <option>辰</option>
-        <option>巳</option>
-        <option>午</option>
-        <option>未</option>
-        <option>申</option>
-        <option>酉</option>
-        <option>戌</option>
-        <option>亥</option>
-    </select>
-    <span>请选择占时：</span>
-    <select id="zhanshi">
-        <option>子</option>
-        <option>丑</option>
-        <option>寅</option>
-        <option>卯</option>
-        <option>辰</option>
-        <option>巳</option>
-        <option>午</option>
-        <option>未</option>
-        <option>申</option>
-        <option>酉</option>
-        <option>戌</option>
-        <option>亥</option>
-    </select>
-    <button class="btn btn-success btn-inline">排盘</button>
-    <hr>
-    <div class="row placeholders" id="pan">
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>金口诀排盘</h3>
+        </div>
+        <div class="layui-card-body">
+            <span>日期时间：</span><input type="text" class="layui-input" style="width:130px;display:inline;" id="datetimepicker">
+            <span>地分：</span>
+            <select id="difen" class="layui-input" style="width:70px;display:inline;">
+                <option>子</option>
+                <option>丑</option>
+                <option>寅</option>
+                <option>卯</option>
+                <option>辰</option>
+                <option>巳</option>
+                <option>午</option>
+                <option>未</option>
+                <option>申</option>
+                <option>酉</option>
+                <option>戌</option>
+                <option>亥</option>
+            </select>
+            <span>月将：</span>
+            <select id="yuejiang" class="layui-input" style="width:70px;display:inline;">
+                <option>子</option>
+                <option>丑</option>
+                <option>寅</option>
+                <option>卯</option>
+                <option>辰</option>
+                <option>巳</option>
+                <option>午</option>
+                <option>未</option>
+                <option>申</option>
+                <option>酉</option>
+                <option>戌</option>
+                <option>亥</option>
+            </select>
+            <span>占时：</span>
+            <select id="zhanshi" class="layui-input" style="width:70px;display:inline;">
+                <option>子</option>
+                <option>丑</option>
+                <option>寅</option>
+                <option>卯</option>
+                <option>辰</option>
+                <option>巳</option>
+                <option>午</option>
+                <option>未</option>
+                <option>申</option>
+                <option>酉</option>
+                <option>戌</option>
+                <option>亥</option>
+            </select>
+            <button class="layui-btn">排盘</button>
+            <div id="pan">
+            </div>
+        </div>
     </div>
 </div>
 <script>
 $(function(){
-    $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
             url: "//{{ host }}:8002/jinkoujue?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&difen="+$("#difen").val()+"&yuejiang="+$("#yuejiang").val()+"&zhanshi="+$("#zhanshi").val()+"&op=str",
@@ -269,25 +292,29 @@ $(function(){
 });
 </script>
 {% elif op == 'xiaochengtu' %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title">小成图排盘</h3><hr>
-    <span>请选择日期时间：</span><input type="text" style="width:130px;" value="2012-05-15 21:05" id="datetimepicker" data-date-format="YYYY-MM-DD HH:mm">
-    <span>请输入灵动数：</span><input type="number" value="0" id="lingdongshu" style="width:50px;">
-    <span>请选择归藏方法：</span>
-    <select id="guizangfangfa">
-        <option>四正</option>
-        <option>四隅</option>
-        <option>四正四隅</option>
-        <option>本卦</option>
-    </select>
-    <button class="btn btn-success btn-inline">排盘</button>
-    <hr>
-    <div class="row placeholders" id="pan">
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>小成图排盘</h3>
+        </div>
+        <div class="layui-card-body">
+            <span>日期时间：</span><input type="text" class="layui-input" style="width:130px;display:inline;" id="datetimepicker">
+            <span>灵动数：</span><input type="number" value=0 min=0 step="1" id="lingdongshu" class="layui-input" style="width:70px;display:inline;">
+            <span>归藏方法：</span>
+            <select id="guizangfangfa" class="layui-input" style="width:130px;display:inline;">
+                <option>四正</option>
+                <option>四隅</option>
+                <option>四正四隅</option>
+                <option>本卦</option>
+            </select>
+            <button class="layui-btn">排盘</button>
+            <div id="pan">
+            </div>
+        </div>
     </div>
 </div>
 <script>
 $(function(){
-    $('#datetimepicker').datetimepicker();
     $("#content button").click(function(){
         $.ajax({
             url: "//{{ host }}:8002/xiaochengtu?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&guizangfangfa="+$("#guizangfangfa").val()+"&op=str",
@@ -308,11 +335,9 @@ $(function(){
 
 {% block right %}
 <div id="right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
-    <br/>
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <div class="layui-colla-title">
-                <span class="glyphicon glyphicon-flag"></span>
                 今年分月干支
             </div>
             <div class="layui-colla-content layui-show">
@@ -320,24 +345,20 @@ $(function(){
             </div>
         </div>
     </div>
-    <br/>
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <div class="layui-colla-title">
-                <span class="glyphicon glyphicon-flag"></span>
-                今年分日干支
+                今月分日干支
             </div>
             <div class="layui-colla-content layui-show">
                 <div style="font-size:0.8rem;"></div>
             </div>
         </div>
     </div>
-    <br/>
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <div class="layui-colla-title">
-                <span class="glyphicon glyphicon-flag"></span>
-                今年分时干支
+                今日分时干支
             </div>
             <div class="layui-colla-content layui-show">
                 <div style="font-size:0.8rem;"></div>

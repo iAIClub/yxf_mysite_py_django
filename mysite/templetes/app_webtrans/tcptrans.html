@@ -1,35 +1,16 @@
-<div id="tcptrans">
+<div id="content" class="layui-col-xs9 layui-col-sm9 layui-col-md9">
     {% if request.user.is_superuser %}
-    <div class="row" style="margin-right:0;">
-        <div class="col-xs-9 col-sm-9 col-md-9">
-            <h4>通过IRC服务建立聊天室和点对点即时通信（请选择右侧的频道和在线用户进行通信）</h4>
-            <textarea style="width:100%;height:450px;background-color:honeydew;" readonly="readonly"></textarea>
-            <div>
-                <input type="text" id="message" style="width:75%;">
-                <button class="btn btn-info" id="send">发送</button>
-                <button class="btn btn-info" id="toggle">正在连接...</button>
-                <br>
-            </div>
+    <div id="tcptrans" class="layui-card">
+        <div class="layui-card-header">
+            <h3>通过IRC服务建立聊天室和点对点即时通信（请选择右侧的频道和在线用户进行通信）</h3>
         </div>
-        <div class="col-xs-3 col-sm-3 col-md-3">
-            <br>
-            <div class="panel">
-                <div class="panel-heading" style="color:darkgreen">
-                    <span class="glyphicon glyphicon-flag"></span>
-                    TCP服务器
-                </div>
-                <div class="list-group" id="server" style="font-size:0.8rem;">
-                    <a class="list-group-item" id="tcpserver" href="javascript:;">TcpSrver</a>
-                </div>
-            </div>
-            <div class="panel">
-                <div class="panel-heading" style="color:darkgreen">
-                    <span class="glyphicon glyphicon-flag"></span>
-                    TCP通信在线用户
-                </div>
-                <div class="list-group" id="onlineuser" style="font-size:0.8rem;">
-                    <a class="list-group-item" href="javascript:;">1</a>
-                </div>
+        <div class="layui-card-body">
+            <textarea style="width:100%;height:400px;background-color:honeydew;" readonly="readonly"></textarea>
+            <div>
+                <input type="text" id="message" class="layui-input" style="width:75%;display:inline-block;">
+                <button class="layui-btn" id="send">发送</button>
+                <button class="layui-btn layui-btn-primary" id="toggle">正在连接...</button>
+                <br>
             </div>
         </div>
     </div>
@@ -37,25 +18,54 @@
     <h4>请先登录！</h4>
     {% endif %}
 </div>
-<script type="text/javascript">
-$(function(){
-    /*$.ajax({
-        url: "http://"+window.location.host+":8007",
-        type:"GET",
-        success:function (data) {
-            $("#toggle").removeClass("btn-info");
-            $("#toggle").toggleClass("btn-danger");
-        }
-    });
-    $("#toggle").click(function(){
-        $.ajax({
-            url: "http://"+window.location.host+":8007/exit",
+<div id="content-right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                TCP服务器
+            </div>
+            <div class="layui-colla-content layui-show" id="server" style="font-size:0.8rem;">
+                <a id="tcpserver" href="javascript:;"><span class="layui-badge-dot"></span>TcpSrver(未连接)</a>
+            </div>
+        </div>
+    </div>
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                TCP通信在线用户
+            </div>
+            <div class="layui-colla-content layui-show" id="client" style="font-size:0.8rem;">
+                <a id="tcpclient" href="javascript:;">1</a>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    $(function(){
+        /*$.ajax({
+            url: "http://"+window.location.host+":8007",
             type:"GET",
             success:function (data) {
-                $("#toggle").toggleClass("btn-success");
+                $("#toggle").removeClass("btn-info");
                 $("#toggle").toggleClass("btn-danger");
             }
         });
-    });*/
-});
-</script>
+        $("#toggle").click(function(){
+            $.ajax({
+                url: "http://"+window.location.host+":8007/exit",
+                type:"GET",
+                success:function (data) {
+                    $("#toggle").toggleClass("btn-success");
+                    $("#toggle").toggleClass("btn-danger");
+                }
+            });
+        });*/
+    });
+
+    //keypress
+    $(document).keydown(function(e){
+        if(e.which == 13){
+            $("#send").click();
+        }
+    });
+    </script>
+</div>

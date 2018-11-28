@@ -19,14 +19,6 @@ tutorial_urlpatterns = [
     url(r'^$', app_tutorial_views.tutorial,name='app_tutorial'),
 ]
 
-user_urlpatterns = [
-    url(r'^download/(?P<suburl>.+)$', app_user_views.download,name='app_user_download_url'),
-    url(r'^login/$', app_user_views.login,name='app_user_login'),
-    url(r'^register/$', app_user_views.register,name='app_user_register'),
-    url(r'^profile/$', app_user_views.profile,name='app_user_profile'),
-    url(r'^$', app_user_views.user,name='app_user'),
-]
-
 blog_urlpatterns = [
     url(r'^image/(?P<user_name>[^/]+)/(?P<post_id>[^/]+)/(?P<image_name>[^/]+)$', app_blog_views.image,name='app_blog_image_url'),
     url(r'^image/(?P<user_name>[^/]+)/(?P<post_id>[^/]+)$', app_blog_views.image,{'image_name':None},name='app_blog_image_upload'),
@@ -37,8 +29,12 @@ blog_urlpatterns = [
     url(r'^$', app_blog_views.blog,name='app_blog'),
 ]
 
-spider_urlpatterns = [
-    url(r'^$', app_spider_views.index,name='app_spider'),
+user_urlpatterns = [
+    url(r'^download/(?P<suburl>.+)$', app_user_views.download,name='app_user_download_url'),
+    url(r'^login/$', app_user_views.login,name='app_user_login'),
+    url(r'^register/$', app_user_views.register,name='app_user_register'),
+    url(r'^profile/$', app_user_views.profile,name='app_user_profile'),
+    url(r'^$', app_user_views.user,name='app_user'),
 ]
 
 visual_urlpatterns = [
@@ -61,6 +57,10 @@ webtrans_urlpatterns = [
     url(r'^$', app_webtrans_views.index,name='app_webtrans'),
 ]
 
+spider_urlpatterns = [
+    url(r'^$', app_spider_views.index,name='app_spider'),
+]
+
 metaphysics_urlpatterns = [
     url(r'^$', app_metaphysics_views.index,name='app_metaphysics'),
 ]
@@ -72,7 +72,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),#所有内容仅对超级管理员开放，不可对外
     url(r'^tutorial/', include(tutorial_urlpatterns)),#最重要的应用，构造网站主体
     url(r'^user/', include(user_urlpatterns)),#对外开放的用户管理体系，其中settings页面只对管理员开放
-    url(r'^blog/', include(blog_urlpatterns)),#tutorial应用派生的的分支应用
+    url(r'^blog/', include(blog_urlpatterns)),#模仿tutorial应用的副本应用
     url(r'^spider/', include(spider_urlpatterns)),
     url(r'^visual/', include(visual_urlpatterns)),
     url(r'^webtrans/', include(webtrans_urlpatterns)),

@@ -109,7 +109,7 @@ def picture(request):
 
 def paint(request):
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
-        'title':'画图',\
+        'title':'计算机绘图',\
         'display':'paint',\
         }))
 

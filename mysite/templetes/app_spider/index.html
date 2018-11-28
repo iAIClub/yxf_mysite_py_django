@@ -8,22 +8,22 @@
                 <a href="javascript:;">功能列表</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="{% url 'app_user_profile' %}?{{ list_res }}">数据总览</a>
+                        <a href="{% url 'app_spider' %}?op=all">数据总览</a>
                     </dd>
                     <dd>
-                        <a href="{% url 'app_user_profile' %}?{{ pan_res }}">爬虫服务器监控</a>
+                        <a href="{% url 'app_spider' %}?op=myspider">爬虫服务器监控</a>
                     </dd>
                     <dd>
-                        <a href="{% url 'app_user_profile' %}?{{ cancel_res }}">租房买房数据分析</a>
+                        <a href="{% url 'app_spider' %}?op=zufang">租房买房数据分析</a>
                     </dd>
                     <dd>
-                        <a href="{% url 'app_user_profile' %}?{{ config_res }}">招聘数据分析</a>
+                        <a href="{% url 'app_spider' %}?op=zhaopin">招聘数据分析</a>
                     </dd>
                     <dd>
-                        <a href="{% url 'app_user_profile' %}?{{ cancel_res }}">婚恋数据分析</a>
+                        <a href="{% url 'app_spider' %}?op=hunlian">婚恋数据分析</a>
                     </dd>
                     <dd>
-                        <a href="{% url 'app_user_profile' %}?{{ cancel_res }}">API</a>
+                        <a href="http://iotec.cc/api/" target="_blank">API测试</a>
                     </dd>
                 </dl>
             </li>
@@ -33,55 +33,45 @@
 {% endblock %}
 
 {% block content %}
-<div class="main col-xs-offset-0 col-sm-offset-0 col-md-offset-0 col-xs-9 col-sm-9 col-md-9" id="content">
-    <h3 class="main" id="content-title"><a href="{% url 'app_tutorial' %}doc/{{ active }}" title="进入栏目">{{ active_column.name }}</a> 栏目的所有文档</h3><hr>
-    <div class="row placeholders">
-      <style type="text/css">
-          #content .content-description{
-          overflow: hidden;
-          -webkit-line-clamp: 3;
-          text-overflow: ellipsis;
-          -webkit-box-orient:vertical;
-          display:-webkit-box;
-        }
-      </style>
-      <div class="list-group">
-          {% for item in content_list %}
-          {% if item.slug != 'index' %}
-            <a href="{% url 'app_tutorial' %}doc/{{ active_column.slug }}/{{ item.slug }}" class="list-group-item">
-              <h4 style="display: inline;color:darkorange;" class="list-group-item-heading">{{ item.title }}</h4><span class="list-group-item-text pull-right label label-info">{{ item.column.name }}</span>
-              <p class="list-group-item-text pull-right">{% for keyword in item.keywords %}<span class="label label-default" style="margin: 5px;">{{ keyword }}</span>{% endfor %}</p>
-              <p class="list-group-item-text content-description">{{ item.description }}</p>
-            </a>
-          {% endif %}
-          {% endfor %}
-      </div>
+{% if op == 'all' %}
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>爬虫数据总览</h3>
+        </div>
+        <div class="layui-card-body">
+            <div>
+                content charts
+            </div>
+        </div>
     </div>
 </div>
+{% elif op == 'myspider' %}
+{% elif op == 'zufang' %}
+{% elif op == 'zhaopin' %}
+{% elif op == 'hunlian' %}
+{% endif %}
 {% endblock %}
 
 {% block right %}
-<div class="main col-xs-offset-9 col-sm-offset-9 col-md-offset-9 col-xs-3 col-sm-3 col-md-3" id="right">
-    <br/>
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-flag"></span>
-            栏目信息
-        </div>
-        <div class="list-group">
-            <a class="list-group-item glyphicon glyphicon-tags" title="关键词">&nbsp;{{ active_column.info }}</a>
-        </div>
-    </div>
-    {% if request.user.is_superuser %}
-    <div class="panel">
-        <div class="panel-heading">
-            <span class="glyphicon glyphicon-edit"></span>
-            栏目操作
-        </div>
-        <div class="list-group">
-            <a class="list-group-item glyphicon glyphicon-plus">请到后台管理</a>
+<div id="right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                状态信息
+            </div>
+            <div class="layui-colla-content layui-show">
+                {% if op == 'all' %}
+                <div>
+
+                </div>
+                {% elif op == 'myspider' %}
+                {% elif op == 'zufang' %}
+                {% elif op == 'zhaopin' %}
+                {% elif op == 'hunlian' %}
+                {% endif %}
+            </div>
         </div>
     </div>
-    {% endif %}
 </div>
 {% endblock %}
