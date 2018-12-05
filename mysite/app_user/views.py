@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from __future__ import unicode_literals
+from __future__ import unicode_literals,print_function
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse,HttpResponseBadRequest,StreamingHttpResponse
@@ -7,34 +7,88 @@ from django.contrib.auth import authenticate, login as authlogin, logout as auth
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib import messages
+from django.core.files import File
 import sys
+import shutil
+import os
+import glob
 reload(sys)
 sys.setdefaultencoding('utf8')
-from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT
-
+from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT,APP_TUTORIAL_ROOT
+from app_tutorial.models import Column,Tutorial
+from modules.docProcess.docProcess import unzip,execute_doc
 
 
 #网站设置区，仅限管理员操作，使用另一套模板
 #/settings
 @login_required(login_url='/user/login')
 def settings(request):
-    if request.user.is_superuser:
-        arg_status = request.GET.get('status',None)
-        arg_history = request.GET.get('history',None)
-        arg_data = request.GET.get('data',None)
-        arg_set = request.GET.get('set',None)
-        if arg_status is None and arg_history is None and arg_data is None and arg_set is None:
-            return HttpResponseRedirect(reverse('settings')+'?status=1')
+    if request.method == 'GET':
+        if request.user.is_superuser:
+            arg_status = request.GET.get('status',None)
+            arg_history = request.GET.get('history',None)
+            arg_doc = request.GET.get('doc', None)
+            arg_data = request.GET.get('data',None)
+            arg_set = request.GET.get('set',None)
+            if arg_status is None and arg_history is None and arg_doc is None and arg_data is None and arg_set is None:
+                return HttpResponseRedirect(reverse('settings')+'?status=1')
+            else:
+                return HttpResponse(render(request, APP_TEMPLETE_ROOT+'settings.html',{\
+                    'title':'设置',\
+                    'arg_status':arg_status,\
+                    'arg_history':arg_history, \
+                    'arg_doc': arg_doc, \
+                    'arg_data':arg_data,\
+                    'arg_set':arg_set,\
+                    }))
         else:
-            return HttpResponse(render(request, APP_TEMPLETE_ROOT+'settings.html',{\
-                'title':'设置',\
-                'arg_status':arg_status,\
-                'arg_history':arg_history,\
-                'arg_data':arg_data,\
-                'arg_set':arg_set,\
-                }))
-    else:
-        return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')
+            return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')
+    elif request.method == 'POST':
+        if request.user.is_superuser:
+            purpose = request.POST.get('purpose', None)
+            if purpose == 'upload_file':
+                # 上传后解压缩保存到应用目录下
+                try:
+                    for upload_file in request.FILES.getlist('upload-file'):
+                        zipfile_name = str(upload_file.name)
+                        column_slug = zipfile_name.split('.')[0]
+                        # save zipfile
+                        file = open(APP_TUTORIAL_ROOT+zipfile_name, 'wb+')
+                        for chunk in upload_file.chunks():
+                            file.write(chunk)
+                        file.close()
+                        # remove old doc
+                        if Column.objects.filter(slug=column_slug):
+                            old_column = Column.objects.filter(slug=column_slug)[0]
+                            old_column.delete()  # tutorial已关联此外键，会一并删除
+                        if os.path.exists(APP_TUTORIAL_ROOT+column_slug):
+                            shutil.rmtree(APP_TUTORIAL_ROOT+column_slug)
+                        # unzip
+                        unzip(APP_TUTORIAL_ROOT, zipfile_name)
+                        # deploy new doc:convert
+                        for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
+                            execute_doc(file1,do_html=False)
+                        # deploy new doc:columns
+                        new_column = Column.objects.create(slug=column_slug,name=column_slug)
+                        new_column.save()
+                        # deploy new doc:tutorials
+                        column = Column.objects.filter(slug=column_slug)[0]
+                        for file2 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.md'):
+                            f = open(file2, 'r')
+                            new_docfile = File(f)
+                            new_docfile_slug = file2.split('.')[0].split('/')[-1]
+                            new_docfile.name = new_docfile_slug + '.md'
+                            new_doc = Tutorial.objects.create(column=column, slug=new_docfile_slug, title=new_docfile_slug,content=new_docfile)
+                            new_doc.save()
+                            f.close()
+                            os.remove(file2)
+                            os.remove(file2.split('.')[0]+'.docx')
+                        # remove zipfile
+                        os.remove(APP_TUTORIAL_ROOT + str(upload_file.name))
+                    messages.success(request, '上传成功！')
+                except:
+                    messages.error(request, '上传失败！')
+                return HttpResponseRedirect(request.path + '?doc=1')
 
 
 # 直接跳转，无内容
@@ -90,7 +144,7 @@ def register(request):
                 messages.error(request,'注册失败！')
                 return HttpResponse(render(request, APP_TEMPLETE_ROOT+'register.html'))
         elif purpose == 'check_user':
-            username = request.POST.get('username',None)
+            username = request.POST.filter('username',None)
             count = User.objects.filter(username=username).count()
             return JsonResponse({"username":username,"count":count})
         else:
@@ -103,11 +157,10 @@ def register(request):
 # /user/profile
 @login_required(login_url='/user/login')
 def profile(request):
-    #页面请求处理：根据GET参数解析模板，返回对应的页面内容
+    # 页面请求处理：根据GET参数解析模板，返回对应的页面内容
     if request.method == 'GET':
-        arg_list = request.GET.get('list',None)
+        arg_pan = request.GET.get('pan', None)
         arg_config = request.GET.get('config',None)
-        arg_pan = request.GET.get('pan',None)
         arg_cancel = request.GET.get('cancel',None)
         user = User.objects.get(username=request.user.username)
         model_file = PanFile.objects.filter(user=request.user).all()
@@ -115,17 +168,15 @@ def profile(request):
         for item in model_file:
             pan_list.append({'username':user.username,'userpath':item.userpath,'filename':item.filename,'upload_time':item.upload_time})
         doc_list = []
-        if arg_config is None and arg_pan is None and arg_cancel is None and arg_list is None:
-            return HttpResponseRedirect(reverse('app_user_profile')+'?list=1')
+        if arg_config is None and arg_pan is None and arg_cancel is None:
+            return HttpResponseRedirect(reverse('app_user_profile')+'?pan=1')
         else:
             return HttpResponse(render(request, APP_TEMPLETE_ROOT+'profile.html',{\
                 'title':'用户区',\
                 'user':user,\
-                'arg_list':arg_list,\
                 'arg_config':arg_config,\
                 'arg_pan':arg_pan,\
                 'arg_cancel':arg_cancel,\
-                'list_res':'list=1',\
                 'config_res':'config=1',\
                 'pan_res':'pan=1',\
                 'cancel_res':'cancel=1',\
@@ -134,7 +185,7 @@ def profile(request):
                 }))
     elif request.method == 'POST':
         purpose = request.POST.get('purpose',None)
-        #表单提交处理：用户信息更改
+        # 表单提交处理：用户信息更改
         if purpose == 'change_config':
             username = request.POST.get('username',None)
             password_old = request.POST.get('pd_old',None)
@@ -153,7 +204,7 @@ def profile(request):
             else:
                 messages.error(request,'密码验证失败！')
             return HttpResponseRedirect(request.path+'?config=1')
-        #表单提交处理：上传文件
+        # 表单提交处理：上传文件
         elif purpose == 'upload_file':
             username = request.user
             user = User.objects.get(username=username)
@@ -174,31 +225,31 @@ def profile(request):
             except:
                 messages.error(request,'上传失败！')
             return HttpResponseRedirect(request.path+'?pan=1')
-        #表单提交处理：删除文件
+        # 表单提交处理：删除文件
         elif purpose == 'delete_file':
             username = request.user
             userpath = request.POST.get('userpath',None)
             filename = request.POST.get('filename',None)
-            try:
-                model_file = PanFile.objects.get(user__username=username,userpath=userpath,filename=filename)
+            if PanFile.objects.filter(user__username=username,userpath=userpath,filename=filename):
+                model_file = PanFile.objects.filter(user__username=username,userpath=userpath,filename=filename)[0]
                 model_file.delete()
                 messages.success(request,'删除成功！')
                 return JsonResponse({"status":"ok"})
-            except:
+            else:
                 return JsonResponse({"status":0})
-        #表单提交处理：注销用户
+        # 表单提交处理：注销用户
         elif purpose == 'cancel_user':
             username = request.POST.get('username',None)
             password = request.POST.get('pd',None)
             password_c = request.POST.get('pd_c',None)
             email = request.POST.get('email',None)
             if authenticate(username=username, password=password_c) is not None and (password == password_c) and email is not None:
-                try:
-                    user = User.objects.get(username=username,email=email)
+                if User.objects.filter(username=username,email=email):
+                    user = User.objects.filter(username=username,email=email)[0]
                     user.delete()
                     messages.success(request,'注销成功！')
                     return HttpResponseRedirect(reverse('index'))
-                except:
+                else:
                     messages.error(request,'注销失败！')
                     return HttpResponseRedirect(request.path+'?cancel=1')
             else:
@@ -215,7 +266,7 @@ def profile(request):
 @login_required(login_url='/user/login')
 def download(request, suburl):
     filename = suburl.split('/')[-1]
-    model_file = PanFile.objects.get(file=APP_FILE_ROOT+suburl) #FileField其实就是个存储了文件路径的char字符串
+    model_file = PanFile.objects.filter(file=APP_FILE_ROOT+suburl)[0] #FileField其实就是个存储了文件路径的char字符串
     response = HttpResponse(model_file.file)
     response['Content-Type'] = 'application/octet-stream' #设置为二进制流
     response['Content-Disposition'] = 'attachment;filename=' + filename #强制浏览器下载而不是查看流

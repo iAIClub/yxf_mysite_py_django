@@ -14,6 +14,9 @@
                         <a href="{% url 'settings' %}?history=1">清空历史记录</a>
                     </dd>
                     <dd>
+                        <a href="{% url 'settings' %}?doc=1">更新文档内容</a>
+                    </dd>
+                    <dd>
                         <a href="{% url 'settings' %}?data=1">操作网站数据</a>
                     </dd>
                     <dd>
@@ -28,18 +31,149 @@
 
 {% block content %}
 <div id="content" class="layui-col-xs10 layui-col-sm10 layui-col-md10">
+    <style>
+    .layui-card{
+        padding:10px;
+    }
+    </style>
+{% if arg_status %}
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>管理员网站设置【建设中】</legend>
+        <legend>实时网站状态</legend>
     </fieldset>
     <div class="layui-card">
-        <div style="width:100%;height:430px;position:relative;">
-            <iframe id="console-embedded" frameBorder="0" marginHeight="0" marginWidth="0" scrolling="no" style="width:100%; height:430px; background-color:#000;" src="https://www.pythonanywhere.com/embedded/">
-            </iframe>
-            <div style="width:100%;height:30px;position:absolute;top:0;left:0;background-color:#000;color:#fff;text-align:right;">
-                    <span id="info-source" style="color:#fff;margin-right:10px;">Online python console from <a href="https://www.pythonanywhere.com/" target="_blank" style="color:#fff;">PythonAnywhere</a></span>
-            </div>
-        </div>
+
     </div>
+{% elif arg_history %}
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>清空历史记录</legend>
+    </fieldset>
+    <div class="layui-card">
+
+    </div>
+{% elif arg_doc %}
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>更新文档内容</legend>
+    </fieldset>
+    <div class="layui-card">
+        <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="layui-form-item pane">
+                <label class="layui-form-label" >选择压缩包</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" type="text" name="purpose" value="upload_file" style="display: none;">
+                    <input class="layui-input" type="file" multiple name="upload-file" id="file-upload" accept="application/zip,.zip" required>
+                </div>
+            </div>
+            <h3>请把线下整理好的docx文档以文件夹为单位打包成zip格式。</h3>
+            <h3>上传后网站会自动部署，文件夹名映射为栏目slug，文档名映射为文档slug。</h3>
+            <hr>
+            <div class="layui-form-item pane">
+                <div class="layui-input-block">
+                    <button class="layui-btn layui-btn-disabled" type="submit" id="submit">上传</button>
+                    <button class="layui-btn layui-btn-primary" id="clean">清空</button>
+                </div>
+            </div>
+        </form>
+        <table class="layui-table">
+            <tbody id="file-list">
+            </tbody>
+        </table>
+        <table class="layui-table">
+            <thead>
+                <tr>
+                    <th>文件路径</th>
+                    <th>文件名称</th>
+                    <th>文件操作1</th>
+                    <th>文件操作2</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in pan_list %}
+                <tr class="list-group-item">
+                    <td>{{ item.userpath }}</td>
+                    <td title="于 {{ item.upload_time }} 上传">{{ item.filename }}</td>
+                    <td><a href="{% url 'app_user' %}download/{{ item.username }}/{{ item.userpath }}/{{ item.filename }}"><button class="layui-btn layui-btn-normal">下载</button></a></td>
+                    <td><button class="layui-btn layui-btn-danger deletefile">删除</button></td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+
+            //clean
+            $("#clean").click(function(){
+                $("#page-message").empty();
+                $("#file-upload").val("");
+                $("#file-list").empty();
+                $("#submit").addClass("layui-btn-disabled");
+            });
+
+            //file upload
+            $("#file-upload").change(function(){
+                $("#submit").removeClass("layui-btn-disabled");
+                var fp = $("#file-upload");
+                var lg = fp[0].files.length; // get length
+                var items = fp[0].files;
+                var fragment = "";
+                var size = 0;
+                if (lg > 0) {
+                    for (var i = 0; i < lg; i++) {
+                        var fileName = items[i].name; // get file name
+                        var fileSize = items[i].size; // get file size
+                        var fileType = items[i].type; // get file type
+                        fragment += "<tr><td>" + fileName + "<p style='float:right;'>"+ fileSize + " bytes - Type: " + fileType + "</p></td></tr>";
+                        size += fileSize;
+                        if (size > 64000000){
+                            layer.msg("文件大小超限！最高一次性上传64M！");
+                            $("#submit").addClass("layui-btn-disabled");
+                        }
+                    }
+                    $("#file-list").append(fragment);
+                }
+            });
+
+            //file delete
+            $(".deletefile").click(function(){
+                $.ajax({
+                    url: "{% url 'settings' %}",
+                    type:"POST",
+                    timeouut:10000,
+                    data:{
+                        "purpose":"delete_file",
+                        "userpath":$(this).parent().prev().prev().prev().text(),
+                        "filename":$(this).parent().prev().prev().text(),
+                        "csrfmiddlewaretoken":"{{ csrf_token }}"
+                    },
+                    success:function (data) {
+                        var parsedJson = eval(data);
+                        if(parsedJson.status=="ok"){window.location.reload();}
+                    }
+                });
+            });
+        });
+        </script>
+    </div>
+{% elif arg_data %}
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>操作网站数据</legend>
+    </fieldset>
+    <div class="layui-card">
+
+    </div>
+{% elif arg_set %}
+    <fieldset class="layui-elem-field layui-field-title">
+        <legend>网站配置选项</legend>
+    </fieldset>
+    <div class="layui-card">
+
+    </div>
+{% endif %}
 </div>
 {% endblock %}
 

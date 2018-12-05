@@ -158,35 +158,35 @@
 {% if request.user.is_superuser %}
 <div id="layer-new" style="display:none;padding:10px;">
     <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
-        <p>[slug] prefix:{% url 'app_tutorial' %}doc/{{ column.slug }}/</p>
+        <span class="layui-badge-rim">slug</span>prefix:{% url 'app_tutorial' %}doc/{{ column.slug }}/
         <div class="layui-form-item pane">
             <label class="layui-form-label">文档域</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="必填项" name="slug" required autocomplete="off" maxlength="256">
             </div>
         </div>
-        <p>[title]</p>
+        <span class="layui-badge-rim">title</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">文档标题</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="必填项" name="title" required autocomplete="off" maxlength="256">
             </div>
         </div>
-        <p>[keywords]</p>
+        <span class="layui-badge-rim">keywords</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">关键词</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="以半角分号区分多个关键字" name="keywords"  maxlength="256">
             </div>
         </div>
-        <p>[description]</p>
+        <span class="layui-badge-rim">description</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">描述</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" name="description">
             </div>
         </div>
-        <p>[content] 注：若不选择，则默认生成一个空白文件；上传后自动重命名；仅限.md格式</p>
+        <span class="layui-badge-rim">content</span>注：若不选择，则默认生成一个空白文件；上传后自动重命名；仅限.md格式
         <div class="layui-form-item pane">
             <label class="layui-form-label">实体文件</label>
             <div class="layui-input-block">
@@ -206,35 +206,35 @@
 </div>
 <div id="layer-edit" style="display:none;padding:10px;">
     <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
-        <p>[slug] {% url 'app_tutorial' %}doc/{{ column.slug }}/</p>
+        <span class="layui-badge-rim">slug</span>{% url 'app_tutorial' %}doc/{{ column.slug }}/
         <div class="layui-form-item pane">
             <label class="layui-form-label">文档域</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="必填项" value="{{ content_doc.slug }}" readonly="readonly" name="slug"  maxlength="256">
             </div>
         </div>
-        <p>[title]</p>
+        <span class="layui-badge-rim">title</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">文档标题</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="必填项" name="title" value="{{ content_doc.title }}" required autocomplete="off"  maxlength="256">
             </div>
         </div>
-        <p>[keywords]</p>
+        <span class="layui-badge-rim">keywords</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">关键词</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="以半角分号区分多个关键字" name="keywords" value="{{ content_doc.keywords }}" maxlength="256">
             </div>
         </div>
-        <p>[description]</p>
+        <span class="layui-badge-rim">description</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">描述</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" name="description" value="{{ content_doc.description }}">
             </div>
         </div>
-        <p>[content]</p>
+        <span class="layui-badge-rim">content</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">实体文件</label>
             <div class="layui-input-block">
@@ -254,14 +254,14 @@
 </div>
 <div id="layer-delete" style="display:none;padding:10px;">
     <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
-        <p>[slug] {% url 'app_tutorial' %}doc/{{ column.slug }}/</p>
+        <span class="layui-badge-rim">slug</span>{% url 'app_tutorial' %}doc/{{ column.slug }}/
         <div class="layui-form-item pane">
             <label class="layui-form-label">文档域</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="必填项" value="{{ content_doc.slug }}" readonly="readonly" name="slug"  maxlength="256">
             </div>
         </div>
-        <p>[title]</p>
+        <span class="layui-badge-rim">title</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">文档标题</label>
             <div class="layui-input-block">

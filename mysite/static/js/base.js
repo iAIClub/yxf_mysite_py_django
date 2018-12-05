@@ -45,7 +45,7 @@ $(document).ready(function(){
         }
     });
     $("#go-top").click(function(){
-        $("#page").animate({scrollTop: 0}, 300);
+        $("#page").animate({scrollTop: 0}, 1000);
     });
 
 	//显示二维码

@@ -8,15 +8,17 @@ from django.db.models.signals import pre_delete
 from django.dispatch.dispatcher import receiver
 import os
 
-APP_FILE_ROOT = 'app_user_pan/'
+APP_FILE_ROOT = 'media/app_user/'
+APP_TUTORIAL_ROOT = 'media/app_tutorial/'
 APP_TEMPLETE_ROOT = 'app_user/'
-if not os.path.isdir('media/'+APP_FILE_ROOT):
-    os.mkdir('media/'+APP_FILE_ROOT.rstrip('/'))
+if not os.path.isdir(APP_FILE_ROOT):
+    os.mkdir(APP_FILE_ROOT.rstrip('/'))
 
 
-#上传之前动态生成路径 两个固定参数：instance调取当前对象，filename获取上传文件名
+# 上传之前动态生成路径 两个固定参数：instance调取当前对象，filename获取上传文件名
 def get_filePathAndName(instance, filename):
-    return APP_FILE_ROOT+str(instance.user.username)+'/'+str(instance.userpath)+'/'+str(filename)
+    return 'media/app_user'+str(instance.user.username)+'/'+str(instance.userpath)+'/'+str(filename)
+
 
 # 用户上传文件表。文件域由三部分组成，映射到唯一url：UPLOAD_ROOT/username/userpath/filename
 @python_2_unicode_compatible
@@ -36,7 +38,8 @@ class PanFile(models.Model):
     def __str__(self):
         return self.filename
 
-#对模型进行删除时，文件系统同步删除，不然会越积越多（文件夹仍保留）
+
+# 对模型进行删除时，文件系统同步删除，不然会越积越多（文件夹仍保留）
 @receiver(pre_delete, sender=PanFile)
 def file_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.

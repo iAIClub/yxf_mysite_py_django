@@ -40,13 +40,13 @@ def tutorial(request):
     active_column = Column.objects.get(slug=active)
     docs = Tutorial.objects.filter(column__slug=active).order_by("publish_time")#选定栏目内的所有文档
     for doc in docs:
-        try:
-            tmp_keywords = []
-            for keyword in doc.keywords.split(';'):
+        tmp_keywords = []
+        if str(doc.keywords):
+            for keyword in str(doc.keywords).split(';'):
                 tmp_keywords.append(keyword)
             doc.keywords=tmp_keywords
-        except:
-            doc.keywords=[]
+        else:
+            doc.keywords = []
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html', {\
         'title':'文档',\
         'active':active,\
@@ -91,7 +91,7 @@ def doc(request, column_slug, doc_slug):
             try:
                 #表单提交处理：新建文档，对文件主体的操作转到编辑器页面进行，为防止重复创建同名记录，需在模型设置column+slug组成联合主键
                 if purpose == 'new':
-                    column = Column.objects.get(slug=column_slug)
+                    column = Column.objects.filter(slug=column_slug)[0]
                     new_slug = request.POST.get('slug',None)
                     new_title = request.POST.get('title',None)
                     new_keywords = request.POST.get('keywords',None)
@@ -99,14 +99,14 @@ def doc(request, column_slug, doc_slug):
                     upload_file = request.FILES.get('file',None)
                     new_docfile = upload_file
                     if upload_file is None:
-                        f = open('media/'+APP_FILE_ROOT+str(new_slug)+'.md','w+')
+                        f = open(APP_FILE_ROOT+str(new_slug)+'.md','w+')  # 打开临时文件
                         new_docfile = File(f)
                         new_docfile.write('')
                         new_docfile.name = new_slug+'.md'
                         new_doc = Tutorial.objects.create(column=column,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description,content=new_docfile)
                         new_doc.save()
                         f.close()
-                        os.remove('media/'+APP_FILE_ROOT+str(new_slug)+'.md')
+                        os.remove(APP_FILE_ROOT+str(new_slug)+'.md')  # 通过ORM会自动存储文件，此临时文件立即删除
                     else:
                         new_docfile.name = new_slug+'.md'
                         new_doc = Tutorial.objects.create(column=column,slug=new_slug,title=new_title,keywords=new_keywords,description=new_description,content=new_docfile)
@@ -125,9 +125,9 @@ def doc(request, column_slug, doc_slug):
                     return HttpResponseRedirect(reverse('app_tutorial_editmd')+'?path=tutorial/doc/'+column_slug+'/'+doc_slug+'&name='+doc_slug+'.md'+'&title='+new_title)
                 #表单提交处理：删除当前文档及其文件目录，成功后返回到栏目页
                 elif purpose == 'delete':
-                    content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
+                    content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
                     content_doc.delete()
-                    shutil.rmtree('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug))
+                    shutil.rmtree(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug))  # ORM自动删除文件后会遗留空文件夹，需要手动删除空文件夹
                     return HttpResponseRedirect(reverse('app_tutorial')+'doc/'+column_slug)
                 #表单提交处理：由editmd提交，保存修改，保存完成后仍然留在editmd页面
                 elif purpose == 'save':
@@ -139,27 +139,27 @@ def doc(request, column_slug, doc_slug):
                     doc = Tutorial.objects.get(column__slug=arg_column, slug=arg_slug)
 
                     # md file
-                    f1 = open('media/'+APP_FILE_ROOT+str(arg_slug)+'.md','w+')#在文件系统中打开临时文件暂存
+                    f1 = open(APP_FILE_ROOT+str(arg_slug)+'.md','w+')  # 在文件系统中打开临时文件暂存
                     new_docfile = File(f1)
                     new_docfile.write(text_md)
                     new_docfile.name = str(arg_slug)+'.md'
-                    doc.content.delete()#必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
+                    doc.content.delete()  # 必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
                     doc.content=new_docfile
 
                     # html file
-                    f2 = open('media/'+APP_FILE_ROOT+str(arg_slug)+'.html','w+')#在文件系统中打开临时文件暂存
+                    f2 = open(APP_FILE_ROOT+str(arg_slug)+'.html','w+')  # 在文件系统中打开临时文件暂存
                     new_docfile_html = File(f2)
                     new_docfile_html.write(text_html)
                     new_docfile_html.name = str(arg_slug)+'.html'
                     if doc.content_html is not None:
-                        doc.content_html.delete()#必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
+                        doc.content_html.delete()  # 必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
                     doc.content_html=new_docfile_html
 
                     doc.save()
                     f1.close()
                     f2.close()
-                    os.remove('media/'+APP_FILE_ROOT+str(arg_slug)+'.md')
-                    os.remove('media/'+APP_FILE_ROOT+str(arg_slug)+'.html')
+                    os.remove(APP_FILE_ROOT+str(arg_slug)+'.md')  # 删除临时文件
+                    os.remove(APP_FILE_ROOT+str(arg_slug)+'.html')  # 删除临时文件
                     return HttpResponse(str(arg_slug)+".md：保存成功！")
             except:
                 messages.error(request,'操作失败！')
@@ -171,37 +171,33 @@ def doc(request, column_slug, doc_slug):
         content_doc = []
         #1.尝试读取选定的文档。index页若没有则自动新建，其他文档若没有则返回404
         if doc_slug=='index':
-            try:
-                content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
-            except:
-                f = open('media/'+APP_FILE_ROOT+'index.md','w+')
+            if Tutorial.objects.filter(column__slug=column_slug, slug=doc_slug):
+                content_doc = Tutorial.objects.filter(column__slug=column_slug, slug=doc_slug)[0]
+            else:
+                f = open(APP_FILE_ROOT+'index.md','w+')
                 new_docfile = File(f)
                 new_docfile.write('')
                 new_docfile.name = doc_slug+'.md'
                 index = Tutorial.objects.create(column=column,slug=doc_slug,title=doc_slug,content=new_docfile)
                 index.save()
                 f.close()
-                os.remove('media/'+APP_FILE_ROOT+str(doc_slug)+'.md')
-                content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)
+                os.remove(APP_FILE_ROOT+str(doc_slug)+'.md')  # 删除临时文件
+                content_doc = Tutorial.objects.filter(column__slug=column_slug, slug=doc_slug)[0]
         else:
-            try:
-                content_doc = Tutorial.objects.get(column__slug=column_slug, slug=doc_slug)#文档
-            except:
+            if Tutorial.objects.filter(column__slug=column_slug, slug=doc_slug):
+                content_doc = Tutorial.objects.filter(column__slug=column_slug, slug=doc_slug)[0]
+            else:
                 html_404 = '<h1>Not Found</h1><p>The requested URL %s was not found on this server.</p>' %request.path
                 return HttpResponseNotFound(html_404)
         #2.使用独立的新变量尝试读取关键词，若没有则设置为空列表
         content_doc_keywords = []
-        try:
+        if content_doc.keywords:
             for keyword in content_doc.keywords.split(';'):
                 content_doc_keywords.append(keyword)
-        except:
-            pass
         #3.尝试读取文档对应的文件，若没有则默认为空
         content_doc_file = ''
-        try:
+        if content_doc.content:
             content_doc_file = content_doc.content.read()
-        except:
-            pass
         return HttpResponse(render(request, APP_TEMPLETE_ROOT+'doc.html',{\
             'title':content_doc.title,\
             'column':column,\
@@ -242,14 +238,14 @@ def image(request,column_slug,doc_slug,image_name):
         if request.method == 'POST' and request.user.is_superuser:
             try:
                 upload_image = request.FILES.get('editormd-image-file',None)
-                if not os.path.exists('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'):
-                    os.mkdir('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/')
-                with open('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(upload_image.name),'wb+') as f:
+                if not os.path.exists(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'):
+                    os.mkdir(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/')
+                with open(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(upload_image.name),'wb+') as f:
                     f.write(upload_image.read())
                 return JsonResponse({\
                     "success":1,\
                     "message":"success",\
-                    "url":request.path +'/'+str(upload_image.name)\
+                    "url":'http://'+request.get_host()+request.path +'/'+str(upload_image.name)\
                     })#get_host()获取域名，path获取去掉域名的相对网址
             except:
                 return JsonResponse({\
@@ -260,7 +256,7 @@ def image(request,column_slug,doc_slug,image_name):
         #图片链接
         elif request.method == 'GET':
             if image_name is not None:
-                with open('media/'+APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(image_name) , 'rb') as f:
+                with open(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(image_name) , 'rb') as f:
                     image = f.read()
                     response = HttpResponse(image)
                     response['Content-Type'] = 'image/'+image_name.split('.')[-1] #要设置具体格式才能在浏览器自动打开

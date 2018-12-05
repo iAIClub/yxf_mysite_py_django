@@ -4,13 +4,7 @@
             padding:10px;
         }
     </style>
-{% if arg_list %}
-    <fieldset class="layui-elem-field layui-field-title">
-        <legend>{{ user.username }} - 文章列表【建设中】</legend>
-    </fieldset>
-    <div class="layui-card">
-    </div>
-{% elif arg_pan %}
+{% if arg_pan %}
     <fieldset class="layui-elem-field layui-field-title">
         <legend>{{ user.username }} - 网盘文件</legend>
     </fieldset>
@@ -48,14 +42,14 @@
             </tbody>
         </table>
         <table class="layui-table">
-                <thead>
-                    <tr>
-                        <th>文件路径</th>
-                        <th>文件名称</th>
-                        <th>文件操作1</th>
-                        <th>文件操作2</th>
-                    </tr>
-                </thead>
+            <thead>
+                <tr>
+                    <th>文件路径</th>
+                    <th>文件名称</th>
+                    <th>文件操作1</th>
+                    <th>文件操作2</th>
+                </tr>
+            </thead>
             <tbody>
                 {% for item in pan_list %}
                 <tr class="list-group-item">

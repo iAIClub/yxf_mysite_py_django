@@ -6,3 +6,4 @@ pyquery
 pillow
 click
 qrcode
+chardet
