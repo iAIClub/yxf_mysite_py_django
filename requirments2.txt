@@ -7,3 +7,5 @@ pillow
 click
 qrcode
 chardet
+mammoth
+psutil

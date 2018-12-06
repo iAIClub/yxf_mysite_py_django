@@ -17,7 +17,7 @@ if not os.path.isdir(APP_FILE_ROOT):
 
 # 上传之前动态生成路径 两个固定参数：instance调取当前对象，filename获取上传文件名
 def get_filePathAndName(instance, filename):
-    return 'media/app_user'+str(instance.user.username)+'/'+str(instance.userpath)+'/'+str(filename)
+    return 'app_user/'+str(instance.user.username)+'/'+str(instance.userpath)+'/'+str(filename)
 
 
 # 用户上传文件表。文件域由三部分组成，映射到唯一url：UPLOAD_ROOT/username/userpath/filename

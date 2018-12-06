@@ -4,4 +4,3 @@ click
 moviepy
 twisted
 autobahn[twisted]
-mammoth

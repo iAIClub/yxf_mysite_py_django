@@ -60,7 +60,7 @@
             <div class="layui-form-item pane">
                 <label class="layui-form-label" >选择压缩包</label>
                 <div class="layui-input-block">
-                    <input class="layui-input" type="text" name="purpose" value="upload_file" style="display: none;">
+                    <input class="layui-input" type="text" name="purpose" value="update_doc" style="display: none;">
                     <input class="layui-input" type="file" multiple name="upload-file" id="file-upload" accept="application/zip,.zip" required>
                 </div>
             </div>
@@ -81,19 +81,15 @@
         <table class="layui-table">
             <thead>
                 <tr>
-                    <th>文件路径</th>
-                    <th>文件名称</th>
-                    <th>文件操作1</th>
-                    <th>文件操作2</th>
+                    <th>文档栏目</th>
+                    <th>文档名称</th>
                 </tr>
             </thead>
             <tbody>
-                {% for item in pan_list %}
+                {% for item in doc_list %}
                 <tr class="list-group-item">
-                    <td>{{ item.userpath }}</td>
-                    <td title="于 {{ item.upload_time }} 上传">{{ item.filename }}</td>
-                    <td><a href="{% url 'app_user' %}download/{{ item.username }}/{{ item.userpath }}/{{ item.filename }}"><button class="layui-btn layui-btn-normal">下载</button></a></td>
-                    <td><button class="layui-btn layui-btn-danger deletefile">删除</button></td>
+                    <td>{{ item.column }}</td>
+                    <td title="于 {{ item.update_time }} 上传">{{ item.title }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
@@ -136,25 +132,6 @@
                     }
                     $("#file-list").append(fragment);
                 }
-            });
-
-            //file delete
-            $(".deletefile").click(function(){
-                $.ajax({
-                    url: "{% url 'settings' %}",
-                    type:"POST",
-                    timeouut:10000,
-                    data:{
-                        "purpose":"delete_file",
-                        "userpath":$(this).parent().prev().prev().prev().text(),
-                        "filename":$(this).parent().prev().prev().text(),
-                        "csrfmiddlewaretoken":"{{ csrf_token }}"
-                    },
-                    success:function (data) {
-                        var parsedJson = eval(data);
-                        if(parsedJson.status=="ok"){window.location.reload();}
-                    }
-                });
             });
         });
         </script>

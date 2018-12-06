@@ -8,15 +8,15 @@ from django.dispatch.dispatcher import receiver
 from django.core.files.storage import FileSystemStorage
 import os
 
-APP_FILE_ROOT = 'app_blog_post/'
+APP_FILE_ROOT = 'media/app_blog/'
 APP_TEMPLETE_ROOT = 'app_blog/'
-if not os.path.isdir('media/'+APP_FILE_ROOT):
-    os.mkdir('media/'+APP_FILE_ROOT.rstrip('/'))
+if not os.path.isdir(APP_FILE_ROOT):
+    os.mkdir(APP_FILE_ROOT.rstrip('/'))
 
 
 #上传文件之前动态生成路径
 def get_postFilePath(instance, filename):
-    return APP_FILE_ROOT+str(instance.user.username)+'/'+str(filename)
+    return 'app_blog/'+str(instance.user.username)+'/'+str(filename)
 
 # 分类表
 @python_2_unicode_compatible

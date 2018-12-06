@@ -11,16 +11,19 @@ from django.core.files import File
 import sys
 import shutil
 import os
+import re
 import glob
+import psutil
+import logging
 reload(sys)
 sys.setdefaultencoding('utf8')
 from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT,APP_TUTORIAL_ROOT
 from app_tutorial.models import Column,Tutorial
-from modules.docProcess.docProcess import unzip,execute_doc
+from modules.docProcess import docProcess
 
 
-#网站设置区，仅限管理员操作，使用另一套模板
-#/settings
+# 网站设置区，仅限管理员操作，使用另一套模板
+# /settings
 @login_required(login_url='/user/login')
 def settings(request):
     if request.method == 'GET':
@@ -30,6 +33,14 @@ def settings(request):
             arg_doc = request.GET.get('doc', None)
             arg_data = request.GET.get('data',None)
             arg_set = request.GET.get('set',None)
+            doc_list = []
+            status_list = []
+            if arg_status:
+                pass
+            if arg_doc:
+                model_file = Tutorial.objects.filter().all()
+                for item in model_file:
+                    doc_list.append({'column': item.column.name, 'title': item.title,'update_time': item.update_time})
             if arg_status is None and arg_history is None and arg_doc is None and arg_data is None and arg_set is None:
                 return HttpResponseRedirect(reverse('settings')+'?status=1')
             else:
@@ -39,56 +50,106 @@ def settings(request):
                     'arg_history':arg_history, \
                     'arg_doc': arg_doc, \
                     'arg_data':arg_data,\
-                    'arg_set':arg_set,\
+                    'arg_set':arg_set, \
+                    'doc_list': doc_list, \
+                    'status_list':status_list,\
                     }))
         else:
             return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')
     elif request.method == 'POST':
         if request.user.is_superuser:
             purpose = request.POST.get('purpose', None)
-            if purpose == 'upload_file':
-                # 上传后解压缩保存到应用目录下
+            # 更新文档内容
+            if purpose == 'update_doc':
                 try:
                     for upload_file in request.FILES.getlist('upload-file'):
                         zipfile_name = str(upload_file.name)
                         column_slug = zipfile_name.split('.')[0]
-                        # save zipfile
+                        # 1.save zipfile
                         file = open(APP_TUTORIAL_ROOT+zipfile_name, 'wb+')
                         for chunk in upload_file.chunks():
                             file.write(chunk)
                         file.close()
-                        # remove old doc
+                        # 2.remove old doc
                         if Column.objects.filter(slug=column_slug):
                             old_column = Column.objects.filter(slug=column_slug)[0]
                             old_column.delete()  # tutorial已关联此外键，会一并删除
                         if os.path.exists(APP_TUTORIAL_ROOT+column_slug):
                             shutil.rmtree(APP_TUTORIAL_ROOT+column_slug)
-                        # unzip
-                        unzip(APP_TUTORIAL_ROOT, zipfile_name)
-                        # deploy new doc:convert
+                        # 3.unzip
+                        docProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
+                        # 4.deploy new doc:convert
                         for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
-                            execute_doc(file1,do_html=False)
-                        # deploy new doc:columns
+                            docProcess.execute_docx(file1)
+                        # 5.deploy new doc:columns
                         new_column = Column.objects.create(slug=column_slug,name=column_slug)
                         new_column.save()
-                        # deploy new doc:tutorials
+                        # 6.deploy new doc:tutorials
                         column = Column.objects.filter(slug=column_slug)[0]
                         for file2 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.md'):
                             f = open(file2, 'r')
                             new_docfile = File(f)
                             new_docfile_slug = file2.split('.')[0].split('/')[-1]
+                            new_docfile_keywords = ';'.join(re.split('[-,\+]',new_docfile_slug))
+                            new_docfile_description = ''
+                            while not new_docfile_description:  # utf-8中文字符不确定在哪个字节结束，需要尝试
+                                try_num = 0
+                                try:
+                                    try_num += 1
+                                    new_docfile_description += str(f.read(100+try_num))
+                                except UnicodeDecodeError:
+                                    pass
+                                if try_num >= 5:
+                                    break
                             new_docfile.name = new_docfile_slug + '.md'
-                            new_doc = Tutorial.objects.create(column=column, slug=new_docfile_slug, title=new_docfile_slug,content=new_docfile)
+                            new_doc = Tutorial.objects.create(column=column,
+                                                              slug=new_docfile_slug,
+                                                              title=new_docfile_slug,
+                                                              keywords=new_docfile_keywords,
+                                                              description=new_docfile_description,
+                                                              content=new_docfile)
                             new_doc.save()
                             f.close()
                             os.remove(file2)
-                            os.remove(file2.split('.')[0]+'.docx')
-                        # remove zipfile
+                        for file3 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.html'):
+                            f = open(file3, 'r')
+                            new_htmlfile = File(f)
+                            new_htmlfile_slug = file3.split('.')[0].split('/')[-1]
+                            new_htmlfile.name = new_htmlfile_slug + '.html'
+                            doc = Tutorial.objects.filter(column=column, slug=new_htmlfile_slug)[0]
+                            doc.content_html = new_htmlfile
+                            doc.save()
+                            f.close()
+                            os.remove(file3.split('.')[0] + '.html')
+                        # 7.remove zipfile
                         os.remove(APP_TUTORIAL_ROOT + str(upload_file.name))
                     messages.success(request, '上传成功！')
                 except:
                     messages.error(request, '上传失败！')
                 return HttpResponseRedirect(request.path + '?doc=1')
+            # 打包media文件数据
+            elif purpose == 'pack_media':
+                try:
+                    messages.success(request, '打包成功！')
+                except:
+                    messages.error(request, '打包失败！')
+                return HttpResponseRedirect(request.path + '?data=1')
+            # 导出数据库SQL脚本
+            elif purpose == 'dump_database':
+                try:
+                    messages.success(request, '导出成功！')
+                except:
+                    messages.error(request, '导出失败！')
+                return HttpResponseRedirect(request.path + '?data=1')
+            # 清空无用历史数据(app_user的空文件夹/app_webtrans的通信历史/网站日志)
+            elif purpose == 'clean_history':
+                return HttpResponseRedirect(request.path + '?history=1')
+            # 重启网站服务器
+            elif purpose == 'restart_web':
+                return HttpResponseRedirect(request.path + '?set=1')
+            # 重启VPS服务器
+            elif purpose == 'restart_vps':
+                return HttpResponseRedirect(request.path + '?set=1')
 
 
 # 直接跳转，无内容
@@ -165,9 +226,9 @@ def profile(request):
         user = User.objects.get(username=request.user.username)
         model_file = PanFile.objects.filter(user=request.user).all()
         pan_list = []
-        for item in model_file:
-            pan_list.append({'username':user.username,'userpath':item.userpath,'filename':item.filename,'upload_time':item.upload_time})
-        doc_list = []
+        if arg_pan:
+            for item in model_file:
+                pan_list.append({'username':user.username,'userpath':item.userpath,'filename':item.filename,'upload_time':item.upload_time})
         if arg_config is None and arg_pan is None and arg_cancel is None:
             return HttpResponseRedirect(reverse('app_user_profile')+'?pan=1')
         else:
@@ -181,7 +242,6 @@ def profile(request):
                 'pan_res':'pan=1',\
                 'cancel_res':'cancel=1',\
                 'pan_list':pan_list,\
-                'doc_list':doc_list,\
                 }))
     elif request.method == 'POST':
         purpose = request.POST.get('purpose',None)
@@ -210,18 +270,11 @@ def profile(request):
             user = User.objects.get(username=username)
             userpath = request.POST.get('filepath',None)
             try:
-                for upload_file in request.FILES.getlist('upload-file'):#<input type="file" name="upload-file">
+                for upload_file in request.FILES.getlist('upload-file'):
                     filename = upload_file.name
-                    # upload_file.size #文件大小    做文件上传大小限制
-                    # upload_file.content_type #文件类型  做文件上传类型限制
                     model_file = PanFile.objects.create(user=user,userpath=str(userpath),filename=str(filename),file=upload_file)
                     model_file.save()
                 messages.success(request,'上传成功！')
-                # 另一种方法：直接调用文件系统创建文件，不经过框架模型类（缺点：不能通过数据库监视）
-                # destination = open(filepath+'/'+filename,'wb+')#打开文件进行二进制的写操作
-                # for chunk in upload_file.chunks(): #分块写入文件
-                #     destination.write(chunk)
-                # destination.close()
             except:
                 messages.error(request,'上传失败！')
             return HttpResponseRedirect(request.path+'?pan=1')

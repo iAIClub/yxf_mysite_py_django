@@ -11,8 +11,9 @@ import os
 import shutil
 from app_tutorial.models import Column,Tutorial,APP_FILE_ROOT,APP_TEMPLETE_ROOT
 
-#网站首页
-#/
+
+# 网站首页
+# /
 def index(request):
     columns = Column.objects.all()
     return HttpResponse(render(request, 'common/base.html', {\
@@ -20,17 +21,19 @@ def index(request):
         'list':columns,\
         }))
 
-#站内搜索页，对应站内搜索模板
-#/search
+
+# 站内搜索页，对应站内搜索模板
+# /search
 def search(request):
     return HttpResponse(render(request, 'common/base.html',{\
         'title':'知道驿站 - 搜索',\
         'list':'',\
         }))
 
-#文档首页
-#左侧列出所有栏目（可切换选定项），中间列出选定栏目的所有文档（需注意关键词列表），右侧显示选定栏目的信息
-#/tutorial
+
+# 文档首页
+# 左侧列出所有栏目（可切换选定项），中间列出选定栏目的所有文档（需注意关键词列表），右侧显示选定栏目的信息
+# /tutorial
 def tutorial(request):
     columns = Column.objects.all()
     active = request.GET.get('active',None)#进入文档首页必须指定活动栏目
@@ -55,8 +58,9 @@ def tutorial(request):
         'content_list':docs,\
         }))
 
-#编辑器页，文档仅限管理员操作。可直接访问，也可通过iframe嵌入。新建文档、编辑文档的实际执行者
-#/tutorial/editmd
+
+# 编辑器页，文档仅限管理员操作。可直接访问，也可通过iframe嵌入。新建文档、编辑文档的实际执行者
+# /tutorial/editmd
 def editmd(request):
     if request.method == 'GET':
         #返回编辑器页面
@@ -75,14 +79,16 @@ def editmd(request):
             messages.error(request,'无效文档信息！')
             return HttpResponseRedirect(reverse('app_tutorial')+'doc/'+str(arg_path))
 
-#栏目页，与栏目文档页内容完全一致，通用一个模板，只不过显示的是默认index文档且url是栏目名
-#/tutorial/doc/colslug
+
+# 栏目页，与栏目文档页内容完全一致，通用一个模板，只不过显示的是默认index文档且url是栏目名
+# /tutorial/doc/colslug
 def column(request,column_slug):
     return doc(request=request,column_slug=column_slug,doc_slug='index')#交由doc()处理
 
-#栏目文档页
-##左侧列出本栏目所有文档（可切换文档），中间显示文档（需注意请求的是实体文件），右侧显示中间的文档对应的信息（需注意关键词列表）
-#/tutorial/doc/colslug/docslug
+
+# 栏目文档页
+# 左侧列出本栏目所有文档（可切换文档），中间显示文档（需注意请求的是实体文件），右侧显示中间的文档对应的信息（需注意关键词列表）
+# /tutorial/doc/colslug/docslug
 def doc(request, column_slug, doc_slug):
     #POST操作文档域
     if request.method == 'POST':
@@ -136,7 +142,7 @@ def doc(request, column_slug, doc_slug):
                     arg_slug = arg_path.split('/')[-1]
                     text_md = request.POST.get('editormd-markdown-textarea',None)
                     text_html = request.POST.get('editormd-html-textarea',None)
-                    doc = Tutorial.objects.get(column__slug=arg_column, slug=arg_slug)
+                    doc = Tutorial.objects.filter(column__slug=arg_column, slug=arg_slug)[0]
 
                     # md file
                     f1 = open(APP_FILE_ROOT+str(arg_slug)+'.md','w+')  # 在文件系统中打开临时文件暂存
@@ -207,8 +213,9 @@ def doc(request, column_slug, doc_slug):
             'content_doc_file':content_doc_file,\
             }))
 
-#导出文件操作，无对应模板
-#/tutorial/doc/colslug/docslug/docname
+
+# 导出文件操作，无对应模板
+# /tutorial/doc/colslug/docslug/docname
 def filed(request,column_slug,doc_slug,doc_name):
     if column_slug is not None and doc_slug is not None and doc_name is not None:
         #返回文档实体文件.html内容
@@ -228,9 +235,10 @@ def filed(request,column_slug,doc_slug,doc_name):
     else:
         return HttpResponse('None')
 
-#图片操作，无对应模板
-#tutorial/doc/colslug/docslug/image
-#tutorial/doc/colslug/docslug/image/imagename
+
+# 图片操作，无对应模板
+# tutorial/doc/colslug/docslug/image
+# tutorial/doc/colslug/docslug/image/imagename
 @csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
 def image(request,column_slug,doc_slug,image_name):
     if column_slug is not None and doc_slug is not None:
