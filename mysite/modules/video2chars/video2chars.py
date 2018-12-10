@@ -13,6 +13,7 @@ import click
 """参考原作者代码https://github.com/ryan4yin"""
 """视频转码过程非常耗CPU资源，只能线下提前转好，线上服务器不可使用"""
 
+
 class Video2Chars:
     def __init__(self, video_path, fps, pixels, chars_width, t_start=0, t_end=None):
         """
@@ -30,7 +31,7 @@ class Video2Chars:
             "MNEFTmneotli\"'. " #16阶
         self.chars_width = chars_width
         self.chars_height = int(chars_width/video_clip.aspect_ratio)#宽高比
-        self.video_clip:VideoClip = video_clip.resize((self.chars_width, self.chars_height))
+        self.video_clip = video_clip.resize((self.chars_width, self.chars_height))
         # 字体相关
         font_fp = resource_stream("video2chars", "DroidSansMono.ttf")
         self.font = ImageFont.truetype(font_fp, size=14)  # 使用等宽字体

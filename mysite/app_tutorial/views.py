@@ -10,24 +10,20 @@ from django.views.decorators.csrf import csrf_exempt
 import os
 import shutil
 from app_tutorial.models import Column,Tutorial,APP_FILE_ROOT,APP_TEMPLETE_ROOT
+from app_blog.models import PostClass
+from mysite.settings import HOST
 
 
 # 网站首页
 # /
 def index(request):
     columns = Column.objects.all()
+    post_classes = PostClass.objects.all()
     return HttpResponse(render(request, 'common/base.html', {\
         'title':'知道驿站',\
         'list':columns,\
-        }))
-
-
-# 站内搜索页，对应站内搜索模板
-# /search
-def search(request):
-    return HttpResponse(render(request, 'common/base.html',{\
-        'title':'知道驿站 - 搜索',\
-        'list':'',\
+        'list2':post_classes,\
+        'host':HOST,\
         }))
 
 
@@ -40,7 +36,7 @@ def tutorial(request):
     if active is None:
         active = columns[0].slug
         return HttpResponseRedirect(reverse('app_tutorial')+'?active='+active)
-    active_column = Column.objects.get(slug=active)
+    active_column = Column.objects.filter(slug=active)[0]
     docs = Tutorial.objects.filter(column__slug=active).order_by("publish_time")#选定栏目内的所有文档
     for doc in docs:
         tmp_keywords = []
@@ -93,7 +89,7 @@ def doc(request, column_slug, doc_slug):
     #POST操作文档域
     if request.method == 'POST':
         purpose = request.POST.get('purpose',None)
-        if purpose is not None and request.user.is_superuser:
+        if purpose and request.user.is_superuser:
             try:
                 #表单提交处理：新建文档，对文件主体的操作转到编辑器页面进行，为防止重复创建同名记录，需在模型设置column+slug组成联合主键
                 if purpose == 'new':
@@ -246,9 +242,7 @@ def image(request,column_slug,doc_slug,image_name):
         if request.method == 'POST' and request.user.is_superuser:
             try:
                 upload_image = request.FILES.get('editormd-image-file',None)
-                if not os.path.exists(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'):
-                    os.mkdir(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/')
-                with open(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(upload_image.name),'wb+') as f:
+                with open(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/'+str(upload_image.name),'wb+') as f:
                     f.write(upload_image.read())
                 return JsonResponse({\
                     "success":1,\
@@ -264,7 +258,7 @@ def image(request,column_slug,doc_slug,image_name):
         #图片链接
         elif request.method == 'GET':
             if image_name is not None:
-                with open(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/image/'+str(image_name) , 'rb') as f:
+                with open(APP_FILE_ROOT+str(column_slug)+'/'+str(doc_slug)+'/'+str(image_name) , 'rb') as f:
                     image = f.read()
                     response = HttpResponse(image)
                     response['Content-Type'] = 'image/'+image_name.split('.')[-1] #要设置具体格式才能在浏览器自动打开

@@ -20,11 +20,10 @@ tutorial_urlpatterns = [
 ]
 
 blog_urlpatterns = [
-    url(r'^image/(?P<user_name>[^/]+)/(?P<post_id>[^/]+)/(?P<image_name>[^/]+)$', app_blog_views.image,name='app_blog_image_url'),
-    url(r'^image/(?P<user_name>[^/]+)/(?P<post_id>[^/]+)$', app_blog_views.image,{'image_name':None},name='app_blog_image_upload'),
-    url(r'^post/(?P<user_name>[^/]+)/(?P<post_id>[^/]+)/(?P<post_name>[^/]+)$', app_blog_views.filed,name='app_blog_file_url'),
-    url(r'^post/(?P<user_name>[^/]+)/(?P<post_id>[^/]+)$', app_blog_views.post,name='app_blog_post'),
-    url(r'^post/(?P<user_name>[^/]+)$', app_blog_views.user,name='app_blog_user'),
+    url(r'^image/(?P<post_id>[^/]+)/(?P<image_name>[^/]+)$', app_blog_views.image,name='app_blog_image_url'),
+    url(r'^image/(?P<post_id>[^/]+)$', app_blog_views.image,{'image_name':None},name='app_blog_image_upload'),
+    url(r'^post//(?P<post_id>[^/]+)/(?P<post_name>[^/]+)$', app_blog_views.filed,name='app_blog_file_url'),
+    url(r'^post/(?P<post_id>[^/]+)$', app_blog_views.post,name='app_blog_post'),
     url(r'^editmd/$', app_blog_views.editmd,name='app_blog_editmd'),
     url(r'^$', app_blog_views.blog,name='app_blog'),
 ]
@@ -67,7 +66,6 @@ metaphysics_urlpatterns = [
 
 urlpatterns = [
     url(r'^$', app_tutorial_views.index,name='index'),#首页交给tutorial应用处理
-    url(r'^search/$', app_tutorial_views.search,name='search'),#站内搜索页交给tutorial应用处理
     url(r'^settings/$', app_user_views.settings,name='settings'),#网站管理页交给user应用处理
     url(r'^admin/', admin.site.urls),#所有内容仅对超级管理员开放，不可对外
     url(r'^tutorial/', include(tutorial_urlpatterns)),#最重要的应用，构造网站主体

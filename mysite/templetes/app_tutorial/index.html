@@ -40,7 +40,6 @@
         <legend><a id="content-title" href="{% url 'app_tutorial' %}doc/{{ active }}" title="进入栏目" style="color:darkcyan;">{{ active_column.name }}</a> - 所有文档</legend>
     </fieldset>
     {% for item in content_list %}
-    {% if item.slug != 'index' %}
     <div class="layui-card">
         <div class="layui-card-header">
             <a href="{% url 'app_tutorial' %}doc/{{ active_column.slug }}/{{ item.slug }}">
@@ -53,7 +52,6 @@
             <p>{{ item.description }}</p>
         </div>
     </div>
-    {% endif %}
     {% endfor %}
 </div>
 {% endblock %}
@@ -66,7 +64,7 @@
                 栏目信息
             </div>
             <div class="layui-colla-content layui-show">
-                <a class="list-group-item glyphicon glyphicon-tags" title="关键词">&nbsp;{{ active_column.info }}</a>
+                <a class="list-group-item layui-icon layui-icon-note">{{ active_column.info }}</a>
             </div>
         </div>
     </div>
@@ -77,7 +75,7 @@
                 栏目操作
             </div>
             <div class="layui-colla-content layui-show">
-                <a class="list-group-item glyphicon glyphicon-plus">请到后台管理</a>
+                <a class="list-group-item layui-icon layui-icon-face-smile"> 请到后台管理</a>
             </div>
         </div>
     </div>

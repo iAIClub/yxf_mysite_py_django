@@ -5,7 +5,6 @@ from django.utils import timezone
 from django.db import models
 from django.db.models.signals import pre_delete,pre_save
 from django.dispatch.dispatcher import receiver
-from django.core.files.storage import FileSystemStorage
 import os
 
 APP_FILE_ROOT = 'media/app_blog/'
@@ -14,9 +13,10 @@ if not os.path.isdir(APP_FILE_ROOT):
     os.mkdir(APP_FILE_ROOT.rstrip('/'))
 
 
-#上传文件之前动态生成路径
+# 上传文件之前动态生成路径
 def get_postFilePath(instance, filename):
     return 'app_blog/'+str(instance.user.username)+'/'+str(filename)
+
 
 # 分类表
 @python_2_unicode_compatible
@@ -31,11 +31,12 @@ class PostClass(models.Model):
     def __str__(self):
         return self.name
 
+
 # 文章表
 @python_2_unicode_compatible
 class Post(models.Model):
-    user = models.ForeignKey('auth.User',blank=False,null=False,editable=False,verbose_name='所属用户')
-    post_class = models.ForeignKey(PostClass,null=True,blank=True,verbose_name='所属分类')
+    user = models.ForeignKey('auth.User',on_delete=models.CASCADE,blank=False,null=False,editable=False,verbose_name='所属用户')
+    post_class = models.ForeignKey(PostClass,on_delete=models.CASCADE,null=True,blank=True,verbose_name='所属分类')
 
     title = models.CharField('标题',max_length=256)
     keywords = models.CharField('关键词',max_length=256,null=True,blank=True)
@@ -54,7 +55,8 @@ class Post(models.Model):
     def __str__(self):
         return self.title
 
-#对模型进行删除时，文件系统同步删除所有文件字段对应的文件，不然会越积越多（文件夹仍保留）
+
+# 对模型进行删除时，文件系统同步删除所有文件字段对应的文件，不然会越积越多（文件夹仍保留）
 @receiver(pre_delete, sender=Post)
 def file_delete(sender, instance, **kwargs):
     # Pass false so FileField doesn't save the model.

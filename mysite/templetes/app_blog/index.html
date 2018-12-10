@@ -27,17 +27,31 @@
 
 {% block content %}
 <div id="content" class="layui-col-xs9 layui-col-sm9 layui-col-md9">
+    <style>
+        h3{
+            color:#333;
+            display:inline-block;
+        }
+        h3:hover{
+            color:#5FB878;
+        }
+        .layui-badge-rim{
+            color:#5FB878;border: 1px solid #5FB878;
+        }
+        .layui-badge{
+            margin-right:10px;
+        }
+    </style>
     <fieldset class="layui-elem-field layui-field-title">
         <legend>{% if active %}{{ active_post_class.name }}{% else%}{{ user }}{% endif %} - 所有文章</legend>
     </fieldset>
     {% for item in content_list %}
-    {% if item.slug != 'index' %}
     <div class="layui-card">
         <div class="layui-card-header">
-            <a href="{% url 'app_blog' %}post/{{ item.user }}/{{ item.slug }}">
-                <span class="layui-badge-rim">{{ item.user }}</span>
-                <h3 style="display: inline;color:darkorange;" class="list-group-item-heading">{{ item.title }}</h3>
-                <p><span class="layui-badge layui-bg-blue" style="margin: 5px;">{{ item.post_class.name }}</span></p>
+            <a href="{% url 'app_blog' %}post/{{ item.user.username }}/{{ item.id }}">
+                <span class="layui-badge-rim">{{ item.user.username }}</span>
+                <span class="layui-badge layui-bg-green" style="margin: 5px;">{{ item.post_class.name }}</span>
+                <h3>{{ item.title }}</h3>
                 <p style="display:inline-block;float:right;">{% for keyword in item.keywords %}<span class="layui-badge layui-bg-blue">{{ keyword }}</span>{% endfor %}</p>
             </a>
         </div>
@@ -45,7 +59,6 @@
             <p>{{ item.description }}</p>
         </div>
     </div>
-    {% endif %}
     {% endfor %}
 </div>
 {% endblock %}
@@ -59,18 +72,18 @@
                 分类信息
             </div>
             <div class="layui-colla-content layui-show">
-                <a class="layui-icon layui-icon-note" title="关键词">&nbsp;{{ active_post_class.info }}</a>
+                <a class="list-group-item layui-icon layui-icon-note">&nbsp;{{ active_post_class.info }}</a>
             </div>
         </div>
     </div>
-    {% else %}
+    {% elif user %}
     <div class="layui-collapse">
         <div class="layui-colla-item">
             <div class="layui-colla-title">
                 用户信息
             </div>
             <div class="layui-colla-content layui-show">
-                <a class="list-group-item glyphicon glyphicon-tags">&nbsp;文章总数{{ count }}篇</a>
+                <a class="list-group-item layui-icon layui-icon-face-smile">&nbsp;文章总数{{ count }}篇</a>
             </div>
         </div>
     </div>
@@ -108,46 +121,39 @@
 {% if request.user.is_authenticated %}
 <div id="layer-new" style="display:none;padding:10px;">
     <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
-        <p>[slug] prefix:{% url 'app_blog' %}post/{{ request.user }}/</p>
-        <div class="layui-form-item pane">
-            <label class="layui-form-label">文章域</label>
-            <div class="layui-input-block">
-                <input type="text" class="layui-input" placeholder="必填项" name="slug" autocomplete="off" required maxlength="256">
-            </div>
-        </div>
-        <p>[title]</p>
+        <span class="layui-badge-rim">title</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">文章标题</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="必填项" name="title" autocomplete="off" required maxlength="256">
             </div>
         </div>
-        <p>[post_class]</p>
+        <span class="layui-badge-rim">post_class</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">所属分类</label>
             <div class="layui-input-block">
-                <select class="layui-input" name="post_class" required >
+                <select class="layui-input" name="postclass" required >
                   {% for item in left_list %}
-                  <option value="{{ item.slug }}">{{ item.name }}</option>
+                  <option value="{{ item.id }}">{{ item.name }}</option>
                   {% endfor %}
                 </select>
             </div>
         </div>
-        <p>[keywords]</p>
+        <span class="layui-badge-rim">keywords</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">关键词</label>
             <div class="layui-input-block">
                 <input type="text" class="layui-input" placeholder="以半角分号区分多个关键字" name="keywords" autocomplete="off" maxlength="256">
             </div>
         </div>
-        <p>[description]</p>
+        <span class="layui-badge-rim">description</span>
         <div class="layui-form-item pane">
             <label class="layui-form-label">描述</label>
             <div class="layui-input-block">
-                <input type="text" class="layui-input" name="description" >
+                <input type="text" class="layui-input" name="description" autocomplete="off">
             </div>
         </div>
-        <p>[content] 注：若不选择，则默认生成一个空白文件；上传后自动重命名；仅限.md格式</p>
+        <span class="layui-badge-rim">content</span>注：若不选择，则默认生成一个空白文件；上传后自动重命名；仅限.md格式
         <div class="layui-form-item pane">
             <label class="layui-form-label">实体文件</label>
             <div class="layui-input-block">
