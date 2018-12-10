@@ -1,7 +1,7 @@
 {% extends "common/base.html" %}
 
 {% block left %}
-<div id="left" class="layui-side layui-bg-black">
+<div id="left" class="layui-side layui-bg-black layui-hide-xs">
     <div class="layui-side-scroll">
         <ul class="layui-nav layui-nav-tree">
             <li class="layui-nav-item layui-nav-itemed">
@@ -21,9 +21,6 @@
                     </dd>
                     <dd>
                         <a href="{% url 'app_metaphysics' %}?op=xiaochengtu">小成图</a>
-                    </dd>
-                    <dd>
-                        <a href="http://{{ host }}:8002/bazi?date=2018-10-1&time=12:20" target="_blank">API测试</a>
                     </dd>
                 </dl>
             </li>

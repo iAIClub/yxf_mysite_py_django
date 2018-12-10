@@ -1,24 +1,19 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-from __future__ import print_function
 import os
 import socket
 import threading
 import re
 import time
 import logging
-import SocketServer  # py2
-
-logging.basicConfig(level=logging.NOTSET)  # 设置日志级别
-
 
 '''
 部署于服务器但独立于网站的TcpServer，各个用户客户端之间可直接建立点对点TCP通信
 为各个用户初次登录和与其他人通信时提供地址解析服务（与客户端建立连接，返回通信目标的IP端口）
-服务器的TcpServer只监控状态（登录状态心跳，在线用户列表），不记录通信内容，不参与双方通信
+服务器的TcpServer只监控状态以及提供通信桥梁（登录状态心跳，在线用户列表），不记录通信内容
 '''
 
-#!!!!!!!!!!!!!使用这个封装过的类模拟http不行，浏览器访问一直pendding...。要换成原始的socket类
+
 # class MyTcpServer(SocketServer.BaseRequestHandler):
 #     def handle(self):
 #         print(self.request,self.client_address,self.server)  # client_address like:('127.0.0.1', 38612)
@@ -69,10 +64,12 @@ def handle_request(conn,addr):
         conn.sendall(http_header+'<!DOCTYPE html><html><head></head><body></body></html>')
 
 
-def mytcp_server():
+def mytcp_server(addr):
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # 关闭服务程序后立刻重置端口
-    s.bind(('0.0.0.0', 8007))
+    ip = addr.split(':')[0]
+    port = int(addr.split(':')[1])
+    s.bind((ip,port))
     s.listen(5)
     while True:
         conn, addr = s.accept()
@@ -81,4 +78,4 @@ def mytcp_server():
 
 
 if __name__ == '__main__':
-    mytcp_server()
+    mytcp_server('0.0.0.0:8008')

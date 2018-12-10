@@ -6,4 +6,3 @@ APP_FILE_ROOT = 'media/app_webtrans/'
 APP_TEMPLETE_ROOT = 'app_webtrans/'
 if not os.path.isdir(APP_FILE_ROOT):
     os.mkdir(APP_FILE_ROOT.rstrip('/'))
-

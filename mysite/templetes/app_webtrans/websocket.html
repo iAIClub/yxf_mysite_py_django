@@ -78,7 +78,7 @@
             console.log("websocket connect");
             socket.send('你好！');
             $("#tcpserver").text("tuling123_server(已连接)");
-            $("#tcpserver span").toggleClass("layui-bg-green");
+            $("#server span").toggleClass("layui-bg-green");
         };
         socket.onclose = function () {
             console.log("websocket close");
@@ -125,7 +125,7 @@
                 TCP服务器
             </div>
             <div class="layui-colla-content layui-show" id="server" style="font-size:0.8rem;">
-                <a id="tcpserver" href="javascript:;"><span class="layui-badge-dot"></span>tuling123_server(未连接)</a>
+                <span class="layui-badge-dot"></span><a id="tcpserver" href="javascript:;">tuling123_server(未连接)</a>
             </div>
         </div>
     </div>

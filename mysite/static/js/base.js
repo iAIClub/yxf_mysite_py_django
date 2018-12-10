@@ -29,11 +29,23 @@ $(document).ready(function(){
 	);
 
 	//切换侧边栏
-	$(".navbar-header a").first().click(
+	$("#changeleft").click(
 		function(){
-			$("#left").toggleClass("hidden-xs");
+			$("#left").toggleClass("layui-hide-xs");
 		}
 	);
+	function side(){
+        if($(window).width()<=750){
+            $("#page").css("left","0");
+        }
+        else{
+            $("#page").css("left","200px");
+        }
+	}
+	side();
+    $(window).resize(function() {
+        side();
+    });
 
 	//回到顶部
 	$("#page").scroll(function(){

@@ -6,6 +6,11 @@ from django.http import HttpResponse,HttpResponseRedirect
 from app_spider.models import APP_API,APP_TEMPLETE_ROOT
 
 
+'''
+app_spider将使用rest子框架
+'''
+
+
 def index(request):
     opt = request.GET.get('op', None)
     if opt is None:

@@ -3,6 +3,7 @@ from __future__ import unicode_literals,print_function
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse,HttpResponseBadRequest,StreamingHttpResponse
+from wsgiref.util import FileWrapper
 from django.contrib.auth import authenticate, login as authlogin, logout as authlogout
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
@@ -13,13 +14,16 @@ import shutil
 import os
 import re
 import glob
+import datetime
 import psutil
+import subprocess
 import logging
 reload(sys)
 sys.setdefaultencoding('utf8')
 from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT,APP_TUTORIAL_ROOT
 from app_tutorial.models import Column,Tutorial
 from modules.docProcess import docProcess
+from mysite.settings import BASE_DIR
 
 
 # 网站设置区，仅限管理员操作，使用另一套模板
@@ -35,12 +39,44 @@ def settings(request):
             arg_set = request.GET.get('set',None)
             doc_list = []
             status_list = []
+            log_list = []
             if arg_status:
-                pass
+                status_list.append({'CPU核心':psutil.cpu_count(logical=False)})
+                status_list.append({'CPU占用':str(psutil.cpu_percent())+'%'})
+                status_list.append({'内存占用':str(round(psutil.virtual_memory().used/(1024.0*1024.0*1024.0),2))+'G/'+str(round(psutil.virtual_memory().total/(1024.0*1024.0*1024.0),2))+'G='+str(psutil.virtual_memory().percent)+'%'})
+                status_list.append({'硬盘占用':str(round(psutil.disk_usage('/').used/(1024.0*1024.0*1024.0),2))+'G/'+str(round(psutil.disk_usage('/').total/(1024.0*1024.0*1024.0),2))+'G='+str(psutil.disk_usage('/').percent)+'%'})
+                status_list.append({'网络地址':psutil.net_if_addrs()})
+                status_list.append({'网络状态':psutil.net_if_stats()})
+                status_list.append({'登录信息':psutil.users()})
+                status_list.append({'启动时间':datetime.datetime.fromtimestamp(psutil.boot_time()).strftime("%Y-%m-%d %H:%M:%S")})
+                pid_list = []
+                for pid in psutil.pids():
+                    p = psutil.Process(pid)
+                    if p.name() in ['python','java','redis-server','nginx','postmaster','sshd','uwsgi','dnsmasq']:
+                        pid_list.append({'{0}:{1}'.format(str(pid),p.name()):{
+                            'pid':p.pid,
+                            'name':p.name(),
+                            'username':p.username(),
+                            'exe':p.exe(),
+                            'cwd':p.cwd(),
+                            'status':p.status(),
+                            'create_time':datetime.datetime.fromtimestamp(p.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
+                            'cpu_times':p.cpu_times(),
+                            'memory_percent': p.memory_percent(),
+                            'num_threads':p.num_threads(),
+                        }})
+                status_list.append({'进程信息':pid_list})
             if arg_doc:
                 model_file = Tutorial.objects.filter().all()
                 for item in model_file:
                     doc_list.append({'column': item.column.name, 'title': item.title,'update_time': item.update_time})
+            if arg_history:
+                with open(os.path.join(BASE_DIR,'log/nginx_error.log'),'r') as f:
+                    log_list.append({'nginx_error':f.read()})
+                with open(os.path.join(BASE_DIR, 'log/uwsgi.log'), 'r') as f:
+                    log_list.append({'uwsgi':f.read()})
+                with open(os.path.join(BASE_DIR, 'log/django.log'), 'r') as f:
+                    log_list.append({'django':f.read()})
             if arg_status is None and arg_history is None and arg_doc is None and arg_data is None and arg_set is None:
                 return HttpResponseRedirect(reverse('settings')+'?status=1')
             else:
@@ -53,6 +89,7 @@ def settings(request):
                     'arg_set':arg_set, \
                     'doc_list': doc_list, \
                     'status_list':status_list,\
+                    'log_list':log_list,\
                     }))
         else:
             return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')
@@ -127,28 +164,80 @@ def settings(request):
                 except:
                     messages.error(request, '上传失败！')
                 return HttpResponseRedirect(request.path + '?doc=1')
-            # 打包media文件数据
-            elif purpose == 'pack_media':
-                try:
-                    messages.success(request, '打包成功！')
-                except:
-                    messages.error(request, '打包失败！')
+            # 数据导出
+            elif purpose == 'dump_data':
+                dumptype = request.POST.get('dumptype',None)
+                # 打包media文件数据
+                if dumptype == 'dump_data_media':
+                    try:
+                        if os.path.exists('media/media.zip'):
+                            os.remove('media/media.zip')
+                        docProcess.zip('media')
+                        shutil.move('media.zip','media')
+                        messages.success(request, '打包成功！')
+                    except:
+                        messages.error(request, '打包失败！')
+                # 导出django的json数据文件
+                elif dumptype == 'dump_db_json':
+                    try:
+                        subprocess.call('{0}/scripts/dump_json.sh'.format(BASE_DIR))
+                        messages.success(request, '导出成功！')
+                    except:
+                        messages.error(request, '导出失败！')
+                # 导出postgresql数据库SQL脚本
+                elif dumptype == 'dump_db_sql':
+                    try:
+                        subprocess.call('{0}/scripts/dump_sql.sh'.format(BASE_DIR))
+                        messages.success(request, '导出成功！')
+                    except:
+                        messages.error(request, '导出失败！')
                 return HttpResponseRedirect(request.path + '?data=1')
-            # 导出数据库SQL脚本
-            elif purpose == 'dump_database':
-                try:
-                    messages.success(request, '导出成功！')
-                except:
-                    messages.error(request, '导出失败！')
-                return HttpResponseRedirect(request.path + '?data=1')
-            # 清空无用历史数据(app_user的空文件夹/app_webtrans的通信历史/网站日志)
-            elif purpose == 'clean_history':
+            # 清空历史数据(app_webtrans的通信历史/网站日志)
+            elif purpose == 'clean_log':
+                logtype = request.POST.get('logtype',None)
+                if logtype == 'nginx_error':
+                    with open(os.path.join(BASE_DIR, 'log/nginx_error.log'), 'w') as f:
+                        f.write('')
+                elif logtype == 'uwsgi':
+                    with open(os.path.join(BASE_DIR, 'log/uwsgi.log'), 'w') as f:
+                        f.write('')
+                elif logtype == 'django':
+                    with open(os.path.join(BASE_DIR, 'log/django.log'), 'w') as f:
+                        f.write('')
+                messages.success(request, '清除成功！')
                 return HttpResponseRedirect(request.path + '?history=1')
-            # 重启网站服务器
-            elif purpose == 'restart_web':
-                return HttpResponseRedirect(request.path + '?set=1')
-            # 重启VPS服务器
-            elif purpose == 'restart_vps':
+            # 核心操作
+            elif purpose == 'server_set':
+                settype = request.POST.get('settype',None)
+                # git更新网站项目
+                if settype == 'update_project':
+                    try:
+                        subprocess.call('~/deploy_mysite.sh')
+                    except:
+                        subprocess.call('/opt/yxf_utils/scripts/deploy_mysite.sh')
+                    else:
+                        messages.success(request, '执行成功！')
+                # 重启主服务（只能关闭，无法重启，放弃）
+                # elif settype == 'restart_mainserver':
+                #     try:
+                #         p1 = subprocess.Popen('/opt/yxf_mysite_py_django/stop_server.sh', shell=True,close_fds=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+                #         p1.stdin.write('\n')
+                #         p1.wait()
+                #         subprocess.call('systemctl restart uwsgi',shell=True)
+                #     except:
+                #         messages.error(request, '执行失败！')
+                # 重启辅服务
+                elif settype == 'restart_subserver':
+                    try:
+                        p1 = subprocess.Popen('/opt/yxf_mysite_py_django/stop_server.sh',shell=True,close_fds=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+                        p1.stdin.write('\n')
+                        p1.wait()
+                        p2 = subprocess.Popen('/opt/yxf_mysite_py_django/start_server.sh',shell=True,close_fds=True,stdin=subprocess.PIPE,stdout=subprocess.PIPE)
+                        p2.stdin.write('\n')
+                        p2.wait()
+                        messages.success(request, '执行成功！')
+                    except:
+                        messages.error(request, '执行失败！')
                 return HttpResponseRedirect(request.path + '?set=1')
 
 
@@ -319,8 +408,23 @@ def profile(request):
 @login_required(login_url='/user/login')
 def download(request, suburl):
     filename = suburl.split('/')[-1]
-    model_file = PanFile.objects.filter(file=APP_FILE_ROOT+suburl)[0] #FileField其实就是个存储了文件路径的char字符串
-    response = HttpResponse(model_file.file)
-    response['Content-Type'] = 'application/octet-stream' #设置为二进制流
+    if suburl == 'mysite.json' or suburl == 'mysite.sql' or suburl == 'media.zip':
+        if suburl == 'mysite.json':
+            model_file = open(os.path.join(BASE_DIR,'media/mysite.json'),'r')
+            response = HttpResponse(model_file.read())
+            model_file.close()
+        elif suburl == 'mysite.sql':
+            model_file = open(os.path.join(BASE_DIR,'media/mysite.sql'), 'r')
+            response = HttpResponse(model_file.read())
+            model_file.close()
+        elif suburl == 'media.zip':
+            wrapper = FileWrapper(open(os.path.join(BASE_DIR,'media/media.zip'), 'rb'))  # django提供文件流的装饰器，不必自己实现
+            response = StreamingHttpResponse(wrapper)
+        else:
+            response = HttpResponse('None')
+    else:
+        model_file = PanFile.objects.filter(file=APP_FILE_ROOT + suburl)[0]  # FileField其实就是个存储了文件路径的char字符串
+        response = HttpResponse(model_file.file)
+    response['Content-Type'] = 'application/octet-stream'  # 设置为二进制流
     response['Content-Disposition'] = 'attachment;filename=' + filename #强制浏览器下载而不是查看流
     return response

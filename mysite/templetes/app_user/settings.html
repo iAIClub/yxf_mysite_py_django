@@ -1,7 +1,7 @@
 {% extends "common/base.html" %}
 
 {% block left %}
-<div id="left" class="layui-side layui-bg-black">
+<div id="left" class="layui-side layui-bg-black layui-hide-xs">
     <div class="layui-side-scroll">
         <ul class="layui-nav layui-nav-tree">
             <li class="layui-nav-item layui-nav-itemed">
@@ -38,17 +38,89 @@
     </style>
 {% if arg_status %}
     <fieldset class="layui-elem-field layui-field-title">
-        <legend>实时网站状态</legend>
+        <legend>服务器实时状态</legend>
     </fieldset>
-    <div class="layui-card">
-
+    {% for item in status_list %}
+    {% for key,value in item.items %}
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                {{ key }}
+            </div>
+            {% if key == '网络地址' or key == '网络状态' %}
+                {% for key2,value2 in value.items %}
+                <div class="layui-colla-content layui-show">
+                    <a class="layui-icon layui-icon-tips">{{ key2 }}:{{ value2 }}</a>
+                </div>
+                {% endfor %}
+            {% elif key == '登录信息' %}
+                {% for item2 in value %}
+                <div class="layui-colla-content layui-show">
+                    <a class="layui-icon layui-icon-tips">{{ item2 }}</a>
+                </div>
+                {% endfor %}
+            {% elif key == '进程信息' %}
+                {% for item3 in value %}
+                {% for key3,value3 in item3.items %}
+                <div class="layui-collapse">
+                    <div class="layui-colla-item">
+                        <div class="layui-colla-title">
+                            {{ key3 }}
+                        </div>
+                        {% for key4,value4 in value3.items %}
+                        <div class="layui-colla-content">
+                            <a class="layui-icon layui-icon-tips">{{ key4 }}:{{ value4 }}</a>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+                {% endfor %}
+            {% else %}
+                <div class="layui-colla-content layui-show">
+                    <a class="layui-icon layui-icon-tips">{{ value }}</a>
+                </div>
+            {% endif %}
+        </div>
     </div>
+    {% endfor %}
+    {% endfor %}
 {% elif arg_history %}
     <fieldset class="layui-elem-field layui-field-title">
         <legend>清空历史记录</legend>
     </fieldset>
-    <div class="layui-card">
-
+    <div>
+        {% for item in log_list %}
+        {% for key,value in item.items %}
+        <div class="layui-collapse">
+            <div class="layui-colla-item">
+                <div class="layui-colla-title">
+                    {{ key }}日志
+                </div>
+                <div class="layui-colla-content">
+                    <textarea style="width:100%;height:350px;">
+                        {{ value }}
+                    </textarea>
+                    <form method="post" enctype="multipart/form-data" action="">
+                        {% csrf_token %}
+                        <input class="layui-input" type="text" name="purpose" value="clean_log" style="display: none;">
+                        <input class="layui-input" type="text" name="logtype" value="{{ key }}" style="display: none;">
+                        <button class="layui-btn layui-btn-primary" type="submit">清空日志</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% endfor %}
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+        });
+        </script>
     </div>
 {% elif arg_doc %}
     <fieldset class="layui-elem-field layui-field-title">
@@ -140,15 +212,96 @@
     <fieldset class="layui-elem-field layui-field-title">
         <legend>操作网站数据</legend>
     </fieldset>
-    <div class="layui-card">
-
+    <div>
+        <div class="layui-card">
+            <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+                {% csrf_token %}
+                <div class="layui-form-item pane">
+                    <label class="layui-form-label" >导出db-json</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" type="text" name="purpose" value="dump_data" style="display: none;">
+                        <input class="layui-input" type="text" name="dumptype" value="dump_db_json" style="display: none;">
+                        <button class="layui-btn" type="submit">导出</button>
+                    </div>
+                </div>
+            </form>
+            <a href="{% url 'app_user' %}download/mysite.json"><button class="layui-btn layui-btn-normal">下载</button></a>
+        </div>
+        <div class="layui-card">
+            <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+                {% csrf_token %}
+                <div class="layui-form-item pane">
+                    <label class="layui-form-label" >导出db-sql</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" type="text" name="purpose" value="dump_data" style="display: none;">
+                        <input class="layui-input" type="text" name="dumptype" value="dump_db_sql" style="display: none;">
+                        <button class="layui-btn" type="submit">导出</button>
+                    </div>
+                </div>
+            </form>
+            <a href="{% url 'app_user' %}download/mysite.sql"><button class="layui-btn layui-btn-normal">下载</button></a>
+        </div>
+        <div class="layui-card">
+            <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+                {% csrf_token %}
+                <div class="layui-form-item pane">
+                    <label class="layui-form-label" >导出media</label>
+                    <div class="layui-input-block">
+                        <input class="layui-input" type="text" name="purpose" value="dump_data" style="display: none;">
+                        <input class="layui-input" type="text" name="dumptype" value="dump_data_media" style="display: none;">
+                        <button class="layui-btn" type="submit">打包</button>
+                    </div>
+                </div>
+            </form>
+            <a href="{% url 'app_user' %}download/media.zip"><button class="layui-btn layui-btn-normal">下载</button></a>
+        </div>
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+        });
+        </script>
     </div>
 {% elif arg_set %}
     <fieldset class="layui-elem-field layui-field-title">
         <legend>网站配置选项</legend>
     </fieldset>
-    <div class="layui-card">
-
+    <div>
+        <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="">
+            {% csrf_token %}
+            <div class="layui-form-item pane">
+                <label class="layui-form-label" >重启辅服务</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" type="text" name="purpose" value="server_set" style="display: none;">
+                    <input class="layui-input" type="text" name="settype" value="restart_subserver" style="display: none;">
+                    <button class="layui-btn layui-btn-danger" type="submit">执行</button>
+                </div>
+            </div>
+        </form>
+        <hr>
+        <form class="layui-form layui-form-pane" method="post" enctype="multipart/form-data" action="" style="float:right;">
+            {% csrf_token %}
+            <div class="layui-form-item pane">
+                <label class="layui-form-label" >更新网站</label>
+                <div class="layui-input-block">
+                    <input class="layui-input" type="text" name="purpose" value="server_set" style="display: none;">
+                    <input class="layui-input" type="text" name="settype" value="update_project" style="display: none;">
+                    <button class="layui-btn layui-btn-danger" type="submit">执行</button>
+                </div>
+            </div>
+        </form>
+        <script type="text/javascript">
+        $(function(){
+            //message
+            layui.use(['layer'], function(){
+                var layer = layui.layer;
+                {% for m in messages %}layer.msg("{{ m }}");{% endfor %}
+            });
+        });
+        </script>
     </div>
 {% endif %}
 </div>

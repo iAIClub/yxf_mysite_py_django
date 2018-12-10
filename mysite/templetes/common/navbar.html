@@ -1,6 +1,20 @@
 <div id="navbar" class="layui-header header header-demo">
     <div class="layui-main">
         <div class="logo" style="width:50px;"><a href="/"><img src="/static/favicon/favicon.png"></a></div>
+        <ul class="layui-nav layui-layout-left layui-show-xs layui-hide-sm layui-hide-md layui-hide-lg" style="left:50px;">
+            <li class="layui-nav-item"><a id="changeleft" href="javascript:;" title="侧边栏"><i class="layui-icon layui-icon-spread-left"></i></a></li>
+            <li class="layui-nav-item">
+                <a href="javascript:;"><i class="layui-icon layui-icon-menu-fill"></i></a>
+                <dl class="layui-nav-child">
+                    <dd><a href="{% url 'app_tutorial' %}">文档</a></dd>
+                    <dd><a href="{% url 'app_blog' %}">博客</a></dd>
+                    <dd><a href="{% url 'app_webtrans' %}">网络</a></dd>
+                    <dd><a href="{% url 'app_visual' %}">视觉</a></dd>
+                    <dd><a href="{% url 'app_metaphysics' %}">数术</a></dd>
+                    <dd><a href="{% url 'app_spider' %}">爬虫</a></dd>
+                </dl>
+            </li>
+        </ul>
         <ul class="layui-nav layui-layout-left layui-hide-xs" style="left:50px;">
             <li class="layui-nav-item"><a href="{% url 'app_tutorial' %}">文档</a></li>
             <li class="layui-nav-item"><a href="{% url 'app_blog' %}">博客</a></li>
@@ -11,8 +25,8 @@
             <li class="layui-nav-item">
                 <a href="javascript:;">其他</a>
                 <dl class="layui-nav-child">
-                    <dd><a href="{% url 'app_spider' %}">spider API</a></dd>
-                    <dd><a href="{% url 'app_webtrans' %}">tcp API</a></dd>
+                    <dd><a href="http://{{ host }}:8002/bazi?date=2018-10-1&time=12:20" target="_blank">yixue API</a></dd>
+                    <dd><a href="http://iotec.cc/api/" target="_blank">spider API</a></dd>
                 </dl>
             </li>
         </ul>

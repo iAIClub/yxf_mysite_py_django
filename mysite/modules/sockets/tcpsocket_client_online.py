@@ -1,14 +1,13 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 from __future__ import print_function
 import os
 import socket
 import requests
-import SocketServer  # py2
 
 
 def p2p_client_server():
-    local_ip_port = ('127.0.0.1', 8007)
+    local_ip_port = ('127.0.0.1', 8008)
     s = socket.socket()
     s.bind(local_ip_port)
     s.listen(5)
@@ -19,13 +18,13 @@ def p2p_client_server():
 
 
 def p2p_client():
-    remote_ip_port = ('127.0.0.1', 8007)
+    remote_ip_port = ('127.0.0.1', 8008)
     c = socket.socket()
     c.connect(remote_ip_port)
     c.settimeout(5)
     c.setsockopt(socket.SOL_SOCKET, socket.SO_KEEPALIVE, 1)  # 在客户端开启心跳维护
     while True:
-        inp = raw_input('please input:')
+        inp = input('please input:')
         c.sendall(inp)
         if inp == 'GET /exit':
             break
@@ -36,5 +35,5 @@ def p2p_client():
 
 if __name__ == '__main__':
     # p2p_client()
-    res = requests.post('http://127.0.0.1:8007')
+    res = requests.post('http://127.0.0.1:8008')
     print(res.text)
