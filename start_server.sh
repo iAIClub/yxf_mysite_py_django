@@ -10,9 +10,9 @@ nohup python3 websocket_server.py > websocket_server.log 2>&1 &
 cd $curpath
 
 #tcpsocket
-#cd ./mysite/modules/sockets
-#nohup python3 tcpsocket_server.py > tcpsocket_server.log 2>&1 &
-#cd $curpath
+cd ./mysite/modules/sockets
+nohup python3 tcpsocket_server.py > tcpsocket_server.log 2>&1 &
+cd $curpath
 
 #yixue
 cd ..
@@ -22,6 +22,6 @@ cd $curpath
 
 echo "server is running in background"
 echo "websocket:port=8007(public)"
-echo "tcpsocket:port=8008(public)"
+echo "tcpsocket:port=50008(public)"
 echo "yixue:port=8002(public)"
 exit 0

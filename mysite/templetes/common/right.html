@@ -20,7 +20,7 @@
             </div>
             {% for item in list2 %}
             <div class="layui-colla-content layui-show">
-                <a href="{% url 'app_tutorial' %}doc/{{ item.id }}" title="{{ item.info }}"><i class="layui-icon layui-icon-right"></i>{{ item.name }}</a>
+                <a href="{% url 'app_blog' %}?active={{ item.name }}" title="{{ item.info }}"><i class="layui-icon layui-icon-right"></i>{{ item.name }}</a>
             </div>
             {% endfor %}
         </div>

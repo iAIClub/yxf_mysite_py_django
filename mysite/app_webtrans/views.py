@@ -8,11 +8,11 @@ from app_webtrans.models import APP_FILE_ROOT,APP_TEMPLETE_ROOT
 from mysite.settings import BAIDUMAP
 
 def index(request):
-    return HttpResponseRedirect(reverse('app_webtrans_websocket'))
+    return HttpResponseRedirect(reverse('app_webtrans_tcptrans'))
 
 def websocket(request):
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
-        'title':'图灵机器人',\
+        'title':'对话机器',\
         'display':'websocket',\
         }))
 
@@ -69,12 +69,3 @@ def proxy(request):
             'title':'代理访问',\
             'display':'proxy',\
             }))
-
-#@accept_websocket
-# def socket(request, type):
-#     if type == 'websocket' and request.is_websocket():
-#         request.websocket.send('[server]Welcome!'.encode('utf-8'))
-#         for message in request.websocket:  # websocket是一个持续接收客户端输入的生成器，不会阻塞
-#             request.websocket.send('[server]received'.encode('utf-8'))
-#     else:
-#         pass

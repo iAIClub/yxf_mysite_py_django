@@ -6,28 +6,24 @@ from django.shortcuts import render
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.files import File
-from django.contrib.auth.models import User
 from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth.models import User
 import os
 import shutil
 from app_blog.models import PostClass,Post,APP_FILE_ROOT,APP_TEMPLETE_ROOT
 
 
-# 博客首页，对所有人开放。左侧博文分类，中间所有用户的博文列表，右侧最新、最热、评论
+# 博客首页
 # /blog
 def blog(request):
     if request.method == 'GET':
         post_classes = PostClass.objects.all()
         active = request.GET.get('active',None)
-        user = request.GET.get('user',None)
         if active is None:  # 按分类展示
             active = post_classes[0].name
             return HttpResponseRedirect(reverse('app_blog')+'?active='+active)
         active_post_class = PostClass.objects.filter(name=active)[0]
-        if user is None:
-            posts = Post.objects.filter(post_class__name=active).order_by("publish_time")
-        else:
-            posts = Post.objects.filter(post_class__name=active,user__username=user).order_by("publish_time")
+        posts = Post.objects.filter(post_class__name=active).order_by("publish_time")
         for post in posts:
             tmp_keywords = []
             if str(post.keywords):
@@ -72,7 +68,7 @@ def blog(request):
                     new_postfile.name = str(new_post_id)+'.md'
                     new_post.content = new_postfile
                     new_post.save()
-                return HttpResponseRedirect(reverse('app_blog_editmd')+'?path=blog/post/'+user.username+'/'+str(new_post_id)+'&name='+str(new_post_id)+'.md'+'&title='+new_title)
+                return HttpResponseRedirect(reverse('app_blog_editmd')+'?path=blog/post/'+str(new_post_id)+'&name='+str(new_post_id)+'.md'+'&title='+new_title)
             except:
                 messages.error(request,'操作失败！')
                 return HttpResponseRedirect(request.path)
@@ -80,53 +76,23 @@ def blog(request):
 
 # 编辑器页。可直接访问，也可通过iframe嵌入。新建文档、编辑文档的实际执行者
 # /blog/editmd
-@csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
 def editmd(request):
     if request.method == 'GET':
-        arg_getfile = request.GET.get('getfile',None)
         #返回编辑器页面
-        if arg_getfile is None:
-            arg_id = request.GET.get('id',None)
-            arg_title = request.GET.get('title',None)
-            try:
-                return HttpResponse(render(request,'common/editmd.html',{\
-                    'id':arg_id,\
-                    'title':arg_title,\
-                    }))
-            except:
-                messages.error(request,'无效文档信息！')
-                return HttpResponseRedirect(reverse('app_blog')+'post/'+str(arg_id))
-        #返回文档实体文件.md内容。此处的GET参数由前端生成，需要编解码
-        elif arg_getfile == 'md':
-            arg_id = request.GET.get('arg_id',None)
-            post = Post.objects.get(id=str(arg_id))
-            response = HttpResponse(post.content)
-            response['Content-Type'] = 'application/octet-stream'
-            response['Content-Disposition'] = 'attachment;filename=' + str(arg_id)+'.md'
-            return response
-
-
-# # 用户文章列表页
-# # /blog
-# def user(request,user_name):
-#     post_classes = PostClass.objects.all()
-#     count = Post.objects.filter(user__username=user_name).count()
-#     posts = Post.objects.filter(user__username=user_name).order_by("publish_time")
-#     for post in posts:
-#         tmp_keywords = []
-#         if str(post.keywords):
-#             for keyword in str(post.keywords).split(';'):
-#                 tmp_keywords.append(keyword)
-#             post.keywords = tmp_keywords
-#         else:
-#             post.keywords = []
-#     return HttpResponse(render(request, 'app_blog/index.html',{\
-#         'title':user+' - 所有文章',\
-#         'user':user,\
-#         'left_list':post_classes,\
-#         'count':count,\
-#         'content_list':posts,\
-#         }))
+        arg_path = request.GET.get('path', None)
+        arg_name = request.GET.get('name', None)
+        html_name = arg_name.split('.')[0]+'.html'
+        arg_title = request.GET.get('title',None)
+        try:
+            return HttpResponse(render(request,'common/editmd.html',{\
+                'path': arg_path,\
+                'name': arg_name,\
+                'html_name': html_name,\
+                'title':arg_title,\
+                }))
+        except:
+            messages.error(request,'无效文档信息！')
+            return HttpResponseRedirect(reverse('app_blog')+'post/')
 
 
 # 文章页
@@ -143,14 +109,7 @@ def post(request, post_id):
         except:
             html_404 = '<h1>Not Found</h1><p>The requested URL %s was not found on this server.</p>' %request.path
             return HttpResponseNotFound(html_404)
-        #2.使用独立的新变量尝试读取关键词，若没有则设置为空列表
-        content_post_keywords = []
-        try:
-            for keyword in content_post.keywords.split(';'):
-                content_post_keywords.append(keyword)
-        except:
-            pass
-        #3.尝试读取文档对应的文件，若没有则默认为空
+        #2.尝试读取文档对应的文件，若没有则默认为空
         content_post_file = ''
         try:
             content_post_file = content_post.content.read()
@@ -160,67 +119,97 @@ def post(request, post_id):
             'title':content_post.title,\
             'left_list':post_classes,\
             'content_post':content_post,\
-            'content_post_keywords':content_post_keywords,\
             'content_post_file':content_post_file,\
             }))
     #POST操作文档域
     elif request.method == 'POST':
         purpose = request.POST.get('purpose',None)
-        if purpose is not None and request.user.is_authenticated and request.user.username == author:
+        content_post = Post.objects.filter(id=post_id)[0]
+        if purpose is not None and request.user.is_authenticated and request.user.username == content_post.user.username:
             try:
                #表单提交处理：修改当前文档，对文件主体的操作转到编辑器页面进行
                 if purpose == 'edit':
                     new_title = request.POST.get('title',None)
                     new_keywords = request.POST.get('keywords',None)
                     new_description = request.POST.get('description',None)
-                    content_post = Post.objects.filter(user=request.user,slug=post)[0]
                     content_post.title=new_title #更新数据直接赋值即可
                     content_post.keywords=new_keywords
                     content_post.description=new_description
                     content_post.save()
-                    return HttpResponseRedirect(reverse('app_blog_editmd')+'?user='+str(author)+'&slug='+post+'&title='+new_title)
+                    return HttpResponseRedirect(reverse('app_blog_editmd')+'?path=blog/post/'+str(post_id)+'&name='+str(post_id)+'.md'+'&title='+new_title)
                 #表单提交处理：删除当前文档及其文件目录，成功后返回到栏目页
                 elif purpose == 'delete':
-                    content_post = Post.objects.get(user=request.user, slug=post)#文档
                     content_post.delete()
-                    shutil.rmtree('media/app_blog_post/'+str(author)+'/'+str(post))
+                    shutil.rmtree(APP_FILE_ROOT+str(post_id))
                     return HttpResponseRedirect(reverse('app_blog'))
-            except Exception as e:
-                raise e
+                # 表单提交处理：由editmd提交，保存修改，保存完成后仍然留在editmd页面
+                elif purpose == 'save':
+                    arg_path = request.POST.get('path', None)
+                    arg_id = arg_path.split('/')[-1]
+                    text_md = request.POST.get('editormd-markdown-textarea', None)
+                    text_html = request.POST.get('editormd-html-textarea', None)
+
+                    # md file
+                    f1 = open(APP_FILE_ROOT + str(arg_id) + '.md', 'w+')  # 在文件系统中打开临时文件暂存
+                    new_docfile = File(f1)
+                    new_docfile.write(text_md)
+                    new_docfile.name = str(arg_id) + '.md'
+                    content_post.content.delete()  # 必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
+                    content_post.content = new_docfile
+
+                    # html file
+                    f2 = open(APP_FILE_ROOT + str(arg_id) + '.html', 'w+')  # 在文件系统中打开临时文件暂存
+                    new_docfile_html = File(f2)
+                    new_docfile_html.write(text_html)
+                    new_docfile_html.name = str(arg_id) + '.html'
+                    if content_post.content_html is not None:
+                        content_post.content_html.delete()  # 必须先删除旧文件再保存，否则django会自动另存为新文件并添加随机后缀
+                    content_post.content_html = new_docfile_html
+
+                    content_post.save()
+                    f1.close()
+                    f2.close()
+                    os.remove(APP_FILE_ROOT + str(arg_id) + '.md')  # 删除临时文件
+                    os.remove(APP_FILE_ROOT + str(arg_id) + '.html')  # 删除临时文件
+                    return HttpResponse(str(arg_id) + ".md：保存成功！")
+            except:
                 messages.error(request,'操作失败！')
         return HttpResponseRedirect(request.path)
 
 
 # 在editmd页面里的导出文件操作，无对应模板
-def filed(request,user_name,post_id,post_name):
-    if user_name is not None and post_id is not None and post_name is not None:
+# /blog/post/postid/postname
+def filed(request,post_id,post_name):
+    if post_id is not None and post_name is not None:
         #返回文档实体文件.html内容。此处的GET参数由前端生成，需要编解码
         if post_name.split('.')[1] == 'md':
-            post = Post.objects.get(user=request.user, post__id=post_id)
+            post = Post.objects.get(id=post_id)
             response = HttpResponse(post.content)
-            response['Content-Type'] = 'application/octet-stream' #设置为二进制流
-            response['Content-Disposition'] = 'attachment;filename=' + post_name #强制浏览器下载而不是查看流
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename=' + post_name
             return response
         #返回文档实体文件.md内容。此处的GET参数由前端生成，需要编解码
         elif post_name.split('.')[1] == 'html':
-            post = Post.objects.get(user=request.user, post__id=post_id)
+            post = Post.objects.get(id=post_id)
             response = HttpResponse(post.content_html)
-            response['Content-Type'] = 'application/octet-stream' #设置为二进制流
-            response['Content-Disposition'] = 'attachment;filename=' + post_name #强制浏览器下载而不是查看流
+            response['Content-Type'] = 'application/octet-stream'
+            response['Content-Disposition'] = 'attachment;filename=' + post_name
             return response
     else:
         return HttpResponse('None')
 
 
 # 图片操作，无对应模板
+# /blog/post/postid/image
+# /blog/post/postid/image/imagename
 @csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
-def image(request,user_name,post_id,image_name):
-    if user_name is not None and post_id is not None:
+def image(request,post_id,image_name):
+    if post_id is not None:
         #在editmd页面里的图片上传处理
-        if request.user.is_authenticated and request.method == 'POST':
+        if request.method == 'POST' and request.user.is_authenticated:
             try:
                 upload_image = request.FILES.get('editormd-image-file',None)
-                with open('media/app_blog_post/'+str(request.user)+'/'+str(post)+'/'+str(upload_image.name),'wb+') as f:
+                with open(APP_FILE_ROOT+str(post_id)+'/'+str(upload_image.name),'wb+') as f:
                     f.write(upload_image.read())
                 return JsonResponse({\
                     "success":1,\
@@ -236,10 +225,10 @@ def image(request,user_name,post_id,image_name):
         #图片链接
         elif request.method == 'GET':
             if image_name is not None:
-                with open(APP_FILE_ROOT+str(user)+'/'+str(post)+'/'+str(image_name) , 'rb') as f:
+                with open(APP_FILE_ROOT+str(post_id)+'/'+str(image_name), 'rb') as f:
                     image = f.read()
                     response = HttpResponse(image)
-                    response['Content-Type'] = 'image/' + image_name.split('.')[-1]  # 要设置具体格式才能在浏览器自动打开
+                    response['Content-Type'] = 'image/' + image_name.split('.')[-1]
                     return response
             else:
                 return HttpResponse('')

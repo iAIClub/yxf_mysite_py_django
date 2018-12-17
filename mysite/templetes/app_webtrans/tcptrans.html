@@ -1,77 +1,12 @@
 <div id="content" class="layui-col-xs9 layui-col-sm9 layui-col-md9">
-    {% if request.user.is_superuser %}
     <div id="tcptrans" class="layui-card">
         <div class="layui-card-header">
-            <h3>通过IRC服务建立聊天室和点对点即时通信（请选择右侧的频道和在线用户进行通信）</h3>
+            <h3>请下载客户端进行试验</h3>
         </div>
         <div class="layui-card-body">
-            <textarea style="width:100%;height:400px;background-color:honeydew;" readonly="readonly"></textarea>
             <div>
-                <input type="text" id="message" class="layui-input" style="width:75%;display:inline-block;">
-                <button class="layui-btn" id="send">发送</button>
-                <button class="layui-btn layui-btn-primary" id="toggle">正在连接...</button>
-                <br>
+                <a href="https://github.com/yanyaming/yxf_myclient_py_qt" target="_blank"><p>https://github.com/yanyaming/yxf_myclient_py_qt</p></a>
             </div>
         </div>
     </div>
-    {% else %}
-    <div class="layui-card">
-        <div class="layui-card-header">
-            <h3>请先登录！</h3>
-        </div>
-        <div class="layui-card-body">
-        </div>
-    </div>
-    {% endif %}
-</div>
-<div id="content-right" class="layui-col-xs3 layui-col-sm3 layui-col-md3">
-    <div class="layui-collapse">
-        <div class="layui-colla-item">
-            <div class="layui-colla-title">
-                TCP服务器
-            </div>
-            <div class="layui-colla-content layui-show" id="server" style="font-size:0.8rem;">
-                <a id="tcpserver" href="javascript:;"><span class="layui-badge-dot"></span>TcpSrver(未连接)</a>
-            </div>
-        </div>
-    </div>
-    <div class="layui-collapse">
-        <div class="layui-colla-item">
-            <div class="layui-colla-title">
-                TCP通信在线用户
-            </div>
-            <div class="layui-colla-content layui-show" id="client" style="font-size:0.8rem;">
-                <a id="tcpclient" href="javascript:;">1</a>
-            </div>
-        </div>
-    </div>
-    <script type="text/javascript">
-    $(function(){
-        /*$.ajax({
-            url: "http://"+window.location.host+":8007",
-            type:"GET",
-            success:function (data) {
-                $("#toggle").removeClass("btn-info");
-                $("#toggle").toggleClass("btn-danger");
-            }
-        });
-        $("#toggle").click(function(){
-            $.ajax({
-                url: "http://"+window.location.host+":8007/exit",
-                type:"GET",
-                success:function (data) {
-                    $("#toggle").toggleClass("btn-success");
-                    $("#toggle").toggleClass("btn-danger");
-                }
-            });
-        });*/
-    });
-
-    //keypress
-    $(document).keydown(function(e){
-        if(e.which == 13){
-            $("#send").click();
-        }
-    });
-    </script>
 </div>

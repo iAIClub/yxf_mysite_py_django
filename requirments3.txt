@@ -3,3 +3,4 @@ click
 moviepy
 twisted
 autobahn[twisted]
+psycopg2

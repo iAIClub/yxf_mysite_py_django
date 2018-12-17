@@ -41,8 +41,7 @@ def settings(request):
             status_list = []
             log_list = []
             if arg_status:
-                status_list.append({'CPU核心':psutil.cpu_count(logical=False)})
-                status_list.append({'CPU占用':str(psutil.cpu_percent())+'%'})
+                status_list.append({'CPU占用':str(psutil.cpu_count(logical=False))+'核/'+str(psutil.cpu_percent())+'%'})
                 status_list.append({'内存占用':str(round(psutil.virtual_memory().used/(1024.0*1024.0*1024.0),2))+'G/'+str(round(psutil.virtual_memory().total/(1024.0*1024.0*1024.0),2))+'G='+str(psutil.virtual_memory().percent)+'%'})
                 status_list.append({'硬盘占用':str(round(psutil.disk_usage('/').used/(1024.0*1024.0*1024.0),2))+'G/'+str(round(psutil.disk_usage('/').total/(1024.0*1024.0*1024.0),2))+'G='+str(psutil.disk_usage('/').percent)+'%'})
                 status_list.append({'网络地址':psutil.net_if_addrs()})
@@ -52,7 +51,7 @@ def settings(request):
                 pid_list = []
                 for pid in psutil.pids():
                     p = psutil.Process(pid)
-                    if p.name() in ['python','java','redis-server','nginx','postmaster','sshd','uwsgi','dnsmasq']:
+                    if p.name() in ['python','python3','java','redis-server','nginx','postmaster','sshd','uwsgi']:
                         pid_list.append({'{0}:{1}'.format(str(pid),p.name()):{
                             'pid':p.pid,
                             'name':p.name(),

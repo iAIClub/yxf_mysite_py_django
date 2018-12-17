@@ -11,7 +11,6 @@ import os
 import shutil
 from app_tutorial.models import Column,Tutorial,APP_FILE_ROOT,APP_TEMPLETE_ROOT
 from app_blog.models import PostClass
-from mysite.settings import HOST
 
 
 # 网站首页
@@ -23,7 +22,6 @@ def index(request):
         'title':'知道驿站',\
         'list':columns,\
         'list2':post_classes,\
-        'host':HOST,\
         }))
 
 
@@ -191,12 +189,7 @@ def doc(request, column_slug, doc_slug):
             else:
                 html_404 = '<h1>Not Found</h1><p>The requested URL %s was not found on this server.</p>' %request.path
                 return HttpResponseNotFound(html_404)
-        #2.使用独立的新变量尝试读取关键词，若没有则设置为空列表
-        content_doc_keywords = []
-        if content_doc.keywords:
-            for keyword in content_doc.keywords.split(';'):
-                content_doc_keywords.append(keyword)
-        #3.尝试读取文档对应的文件，若没有则默认为空
+        #2.尝试读取文档对应的文件，若没有则默认为空
         content_doc_file = ''
         if content_doc.content:
             content_doc_file = content_doc.content.read()
@@ -205,7 +198,6 @@ def doc(request, column_slug, doc_slug):
             'column':column,\
             'left_list':docs,\
             'content_doc':content_doc,\
-            'content_doc_keywords':content_doc_keywords,\
             'content_doc_file':content_doc_file,\
             }))
 
@@ -233,8 +225,8 @@ def filed(request,column_slug,doc_slug,doc_name):
 
 
 # 图片操作，无对应模板
-# tutorial/doc/colslug/docslug/image
-# tutorial/doc/colslug/docslug/image/imagename
+# /tutorial/doc/colslug/docslug/image
+# /tutorial/doc/colslug/docslug/image/imagename
 @csrf_exempt  #插件的模板无法添加POST{% csrf_token %}，需要对此视图函数使用此装饰器
 def image(request,column_slug,doc_slug,image_name):
     if column_slug is not None and doc_slug is not None:

@@ -20,9 +20,9 @@ tutorial_urlpatterns = [
 ]
 
 blog_urlpatterns = [
-    url(r'^image/(?P<post_id>[^/]+)/(?P<image_name>[^/]+)$', app_blog_views.image,name='app_blog_image_url'),
-    url(r'^image/(?P<post_id>[^/]+)$', app_blog_views.image,{'image_name':None},name='app_blog_image_upload'),
-    url(r'^post//(?P<post_id>[^/]+)/(?P<post_name>[^/]+)$', app_blog_views.filed,name='app_blog_file_url'),
+    url(r'^post/(?P<post_id>[^/]+)/image/(?P<image_name>[^/]+)$', app_blog_views.image,name='app_blog_image_url'),
+    url(r'^post/(?P<post_id>[^/]+)/image$', app_blog_views.image,{'image_name':None},name='app_blog_image_upload'),
+    url(r'^post/(?P<post_id>[^/]+)/(?P<post_name>[^/]+)$', app_blog_views.filed,name='app_blog_file_url'),
     url(r'^post/(?P<post_id>[^/]+)$', app_blog_views.post,name='app_blog_post'),
     url(r'^editmd/$', app_blog_views.editmd,name='app_blog_editmd'),
     url(r'^$', app_blog_views.blog,name='app_blog'),

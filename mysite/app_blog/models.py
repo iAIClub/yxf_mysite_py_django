@@ -15,7 +15,7 @@ if not os.path.isdir(APP_FILE_ROOT):
 
 # 上传文件之前动态生成路径
 def get_postFilePath(instance, filename):
-    return 'app_blog/'+str(instance.user.username)+'/'+str(filename)
+    return 'app_blog/'+str(instance.id)+'/'+str(filename)
 
 
 # 分类表
