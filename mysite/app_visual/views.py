@@ -31,19 +31,19 @@ def picture(request):
         op = request.POST.get('op',None)
         if op == 'image':
             if request.FILES.get('image1',None) is not None:
-                image_path1 = 'media/'+APP_FILE_ROOT+'image/1_'+request.FILES['image1'].name
+                image_path1 = APP_FILE_ROOT+'image/1_'+request.FILES['image1'].name
                 with open(image_path1,'wb') as f:
                     for line in request.FILES['image1']:
                         f.write(line)
                 if request.FILES.get('image2',None):
-                    image_path2 = 'media/' + APP_FILE_ROOT + 'image/2_'+request.FILES['image2'].name
+                    image_path2 = APP_FILE_ROOT + 'image/2_'+request.FILES['image2'].name
                     with open(image_path2, 'wb') as f:
                         for line in request.FILES['image2']:
                             f.write(line)
                 else:
                     image_path2 = ''
                 if request.FILES.get('mask', None):
-                    composite_path = 'media/' + APP_FILE_ROOT + 'image/3_'+request.FILES['mask'].name
+                    composite_path = APP_FILE_ROOT + 'image/3_'+request.FILES['mask'].name
                     with open(composite_path, 'wb') as f:
                         for line in request.FILES['mask']:
                             f.write(line)
@@ -122,7 +122,7 @@ def tetris(request):
 def charvideo(request):
     if request.method == 'GET' and request.GET.get('av',None):
         av = request.GET['av']
-        file = 'media/'+APP_FILE_ROOT+'av/'+av+'.mp4'
+        file = APP_FILE_ROOT+'av/'+av+'.mp4'
         #内部函数：分批流式读取大文件
         def file_iterator(file_name, chunk_size=8192, offset=0, length=None):
             #chunk_size=8192:片段长度8M
