@@ -23,7 +23,7 @@ sys.setdefaultencoding('utf8')
 from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT,APP_TUTORIAL_ROOT
 from app_tutorial.models import Column,Tutorial
 from modules.docProcess import docProcess
-from mysite.settings import BASE_DIR
+from mysite.settings import BASE_DIR,REMOTE
 
 
 # 网站设置区，仅限管理员操作，使用另一套模板
@@ -115,8 +115,12 @@ def settings(request):
                         # 3.unzip
                         docProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
                         # 4.deploy new doc:convert
-                        for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
-                            docProcess.execute_docx(file1)
+                        if REMOTE:  # VPS服务器性能有限无法执行转换程序，只能打包本地测试已部署的文件（只能包含顶层docx/html/md三种文件，文件夹全部手动删除）
+                            for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
+                                docProcess.execute_docx(file1)
+                        else:
+                            for dir in os.listdir(APP_TUTORIAL_ROOT + column_slug):
+                                shutil.rmtree(APP_TUTORIAL_ROOT + column_slug + '/' + dir)
                         # 5.deploy new doc:columns
                         new_column = Column.objects.create(slug=column_slug,name=column_slug)
                         new_column.save()

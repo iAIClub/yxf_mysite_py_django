@@ -25,6 +25,7 @@ cf = ConfigParser.ConfigParser()
 cf.read("settings.cfg")
 
 DEBUG = cf.getboolean("meta", "debug")
+REMOTE = cf.getboolean("meta", "remote")
 HOST = cf.get("meta","host")
 BAIDUMAP = {
     'url':cf.get('baidumap','url'),

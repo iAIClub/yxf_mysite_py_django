@@ -9,6 +9,7 @@ import shutil
 import chardet
 import subprocess
 import logging
+logging.basicConfig(level=logging.DEBUG)
 
 '''
 在windows下压缩到linux解压存在文件名编码问题（gb2312->utf-8）
@@ -61,9 +62,10 @@ def execute_docx(file_from):
                          , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
     info = file_from
-    logging.error(info)
-    err = p.stderr.readlines()
-    logging.error(err)
+    logging.info(info)
+    if p.returncode != 0:
+        err = p.stderr.readlines()
+        logging.error(err)
     # execute pandoc->md
     __execute_pandoc(file_middle,file_to)
 
