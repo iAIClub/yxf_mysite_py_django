@@ -126,15 +126,18 @@ def settings(request):
                             f = open(file2, 'r')
                             new_docfile = File(f)
                             new_docfile_slug = file2.split('.')[0].split('/')[-1]
-                            new_docfile_keywords = ';'.join(re.split('[-,\+]',new_docfile_slug))
+                            try:
+                                new_docfile_keywords = ';'.join(re.split('[-,\+]',new_docfile_slug))
+                            except:
+                                new_docfile_keywords = new_docfile_slug
                             new_docfile_description = ''
                             while not new_docfile_description:  # utf-8中文字符不确定在哪个字节结束，需要尝试
                                 try_num = 0
                                 try:
                                     try_num += 1
                                     new_docfile_description += str(f.read(100+try_num))
-                                except UnicodeDecodeError:
-                                    pass
+                                except:
+                                    try_num += 1
                                 if try_num >= 5:
                                     break
                             new_docfile.name = new_docfile_slug + '.md'
