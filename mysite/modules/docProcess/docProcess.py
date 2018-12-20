@@ -9,13 +9,13 @@ import shutil
 import chardet
 import subprocess
 import logging
-logging.basicConfig(level=logging.DEBUG)
 
 '''
 在windows下压缩到linux解压存在文件名编码问题（gb2312->utf-8）
 pandoc不支持直接转换docx文档，先用mammoth把docx转换为html（保留表格），再用pandoc转换为md(markdown_strict保留html原文)
 mammoth可选择图片内嵌或存到外部（为了保证文档的完整性，建议内嵌，如此也降低了可编辑性和访问速度）
 shell执行mammoth，文件名不能带有&字符（shell本身的问题，特殊符号）
+mammoth会改文件名，甚至逗号等一般符号也给改掉（任何英文标点符号都会被删，只能用-或者中文标点）
 '''
 
 
@@ -62,7 +62,7 @@ def execute_docx(file_from):
                          , shell=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE)
     p.wait()
     info = file_from
-    logging.info(info)
+    logging.error(info)
     if p.returncode != 0:
         err = p.stderr.readlines()
         logging.error(err)

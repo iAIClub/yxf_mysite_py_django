@@ -115,12 +115,17 @@ def settings(request):
                         # 3.unzip
                         docProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
                         # 4.deploy new doc:convert
-                        if REMOTE:  # VPS服务器性能有限无法执行转换程序，只能打包本地测试已部署的文件（只能包含顶层docx/html/md三种文件，文件夹全部手动删除）
+                        if REMOTE:  # VPS服务器性能有限无法执行转换程序，只能打包本地测试已部署的文件（只能包含顶层docx/html/md三种文件）
+                            for dir in os.listdir(APP_TUTORIAL_ROOT + column_slug):
+                                if os.path.isdir(APP_TUTORIAL_ROOT + column_slug + '/' + dir):
+                                    shutil.move(APP_TUTORIAL_ROOT + column_slug + '/' + dir + '/' + dir + '.html', APP_TUTORIAL_ROOT + column_slug)
+                                    shutil.move(APP_TUTORIAL_ROOT + column_slug + '/' + dir + '/' + dir + '.md', APP_TUTORIAL_ROOT + column_slug)
+                            for dir2 in os.listdir(APP_TUTORIAL_ROOT + column_slug):
+                                if os.path.isdir(APP_TUTORIAL_ROOT + column_slug + '/' + dir2):
+                                    shutil.rmtree(APP_TUTORIAL_ROOT + column_slug + '/' + dir2)
+                        else:
                             for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
                                 docProcess.execute_docx(file1)
-                        else:
-                            for dir in os.listdir(APP_TUTORIAL_ROOT + column_slug):
-                                shutil.rmtree(APP_TUTORIAL_ROOT + column_slug + '/' + dir)
                         # 5.deploy new doc:columns
                         new_column = Column.objects.create(slug=column_slug,name=column_slug)
                         new_column.save()
@@ -131,7 +136,7 @@ def settings(request):
                             new_docfile = File(f)
                             new_docfile_slug = file2.split('.')[0].split('/')[-1]
                             try:
-                                new_docfile_keywords = ';'.join(re.split('[-,\+]',new_docfile_slug))
+                                new_docfile_keywords = ';'.join(re.split('\*|\+|&|\*|or|-',new_docfile_slug))
                             except:
                                 new_docfile_keywords = new_docfile_slug
                             new_docfile_description = ''
@@ -166,6 +171,7 @@ def settings(request):
                             os.remove(file3.split('.')[0] + '.html')
                         # 7.remove zipfile
                         os.remove(APP_TUTORIAL_ROOT + str(upload_file.name))
+                        docProcess.zip(APP_TUTORIAL_ROOT + str(upload_file.name))
                     messages.success(request, '上传成功！')
                 except:
                     messages.error(request, '上传失败！')
