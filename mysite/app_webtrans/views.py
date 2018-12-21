@@ -2,11 +2,14 @@
 from __future__ import unicode_literals
 import hashlib
 import requests
+import logging
+import xml.etree.ElementTree as et
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from app_webtrans.models import APP_FILE_ROOT,APP_TEMPLETE_ROOT
 from mysite.settings import BAIDUMAP,WECHAT
+import modules.robots.wechatApi as wechatApi
 
 def index(request):
     return HttpResponseRedirect(reverse('app_webtrans_tcptrans'))
@@ -48,11 +51,29 @@ def wechat(request):
             map(sha1.update, li)
             hashcode = sha1.hexdigest()
             if hashcode == signature:
-                return echostr
+                return HttpResponse(echostr)
             else:
-                return ""
+                return HttpResponse("")
     elif request.method == 'POST':  # 微信API,微信消息为XML格式，回复也是XML
-        xml_message = request.raw_data
+        if len(request.raw_data) == 0:
+            return HttpResponse("")
+        xmlData = et.fromstring(request.raw_data)
+        msg_type = xmlData.find('MsgType').text
+        if msg_type == 'text':
+            recMsg = wechatApi.R_TextMsg(xmlData)
+        elif msg_type == 'image':
+            recMsg = wechatApi.R_ImageMsg(xmlData)
+        else:
+            recMsg = None
+        if isinstance(recMsg, wechatApi.R_Msg) and recMsg.MsgType == 'text':
+            toUser = recMsg.FromUserName
+            fromUser = recMsg.ToUserName
+            content = "test"
+            replyMsg = wechatApi.S_TextMsg(toUser, fromUser, content)
+            return HttpResponse(replyMsg.send())
+        else:
+            return HttpResponse("success")
+
 
 def mapa(request):  # 与内置函数名有冲突，要改名
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
