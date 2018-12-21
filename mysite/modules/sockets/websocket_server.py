@@ -3,6 +3,7 @@
 import time
 import sys
 import os
+import logging
 from twisted.internet import reactor, protocol
 from twisted.python import log
 from autobahn.twisted.websocket import WebSocketServerProtocol,WebSocketServerFactory
@@ -20,22 +21,22 @@ from modules.robots.tulingApi import tuling_request
 class MyWebSocketProtocol(WebSocketServerProtocol):
 
     def onConnect(self, request):
-        print("Client connecting: {}".format(request.peer))
+        logging.error("Client connecting: {}".format(request.peer))
 
     def onOpen(self):
-        print("WebSocket connection open.")
+        logging.error("WebSocket connection open.")
 
     def onMessage(self, payload, isBinary):
         if isBinary:
-            print("Binary message received: {} bytes".format(len(payload)))
+            logging.error("Binary message received: {} bytes".format(len(payload)))
             text = None
         else:
-            print("Text message received: {}".format(payload.decode('utf8')))
+            logging.error("Text message received: {}".format(payload.decode('utf8')))
         for i in tuling_request(payload.decode('utf8')):
             self.sendMessage(i.encode('utf-8'), isBinary)
 
     def onClose(self, wasClean, code, reason):
-        print("WebSocket connection closed: {}".format(reason))
+        logging.error("WebSocket connection closed: {}".format(reason))
 
 
 if __name__ == '__main__':
@@ -44,3 +45,4 @@ if __name__ == '__main__':
     factory.protocol = MyWebSocketProtocol
     reactor.listenTCP(8007, factory)
     reactor.run()
+

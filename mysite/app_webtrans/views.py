@@ -1,11 +1,12 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
+import hashlib
 import requests
 from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from app_webtrans.models import APP_FILE_ROOT,APP_TEMPLETE_ROOT
-from mysite.settings import BAIDUMAP
+from mysite.settings import BAIDUMAP,WECHAT
 
 def index(request):
     return HttpResponseRedirect(reverse('app_webtrans_tcptrans'))
@@ -29,12 +30,31 @@ def nat(request):
         }))
 
 def wechat(request):
-    return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
-        'title':'微信应用',\
-        'display':'wechat',\
-        }))
+    if request.method == 'GET':
+        signature = request.GET.get('signature',None)  # 数字指纹
+        timestamp = request.GET.get('timestamp',None)  # 时间戳
+        nonce = request.GET.get('nonce',None)  # 随机数
+        echostr = request.GET.get('echostr',None)  # 随机字符串
+        token = WECHAT['token']  # 请按照公众平台官网\基本配置中信息填写
+        if not signature:  # 访问网页
+            return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
+                'title':'微信应用',\
+                'display':'wechat',\
+                }))
+        else:  # 微信验证
+            li = [token, timestamp, nonce]  # 字典序排序后再加密，与消息中的指纹对照，相同则证明是正确的消息
+            li.sort()
+            sha1 = hashlib.sha1()
+            map(sha1.update, li)
+            hashcode = sha1.hexdigest()
+            if hashcode == signature:
+                return echostr
+            else:
+                return ""
+    elif request.method == 'POST':  # 微信API,微信消息为XML格式，回复也是XML
+        xml_message = request.raw_data
 
-def map(request):
+def mapa(request):  # 与内置函数名有冲突，要改名
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
         'title':'地图应用',\
         'display':'map',\
@@ -63,7 +83,6 @@ def proxy(request):
             return HttpResponse(res)
         except Exception as e:
             return HttpResponse(e)
-        # return JsonResponse({'status':200})
     else:
         return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
             'title':'代理访问',\

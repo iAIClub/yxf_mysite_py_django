@@ -1,6 +1,7 @@
 numpy
 click
-moviepy
+requests
 twisted
 autobahn[twisted]
 psycopg2
+moviepy

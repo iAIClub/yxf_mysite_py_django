@@ -102,10 +102,14 @@ def settings(request):
                         zipfile_name = str(upload_file.name)
                         column_slug = zipfile_name.split('.')[0]
                         # 1.save zipfile
-                        file = open(APP_TUTORIAL_ROOT+zipfile_name, 'wb+')
-                        for chunk in upload_file.chunks():
-                            file.write(chunk)
-                        file.close()
+                        if os.path.exists(APP_TUTORIAL_ROOT+zipfile_name):  # VPS上传大文件也是问题，非常缓慢，很难成功，用ftp直接传送
+                            for chunk in upload_file.chunks():
+                                pass
+                        else:
+                            file = open(APP_TUTORIAL_ROOT+zipfile_name, 'wb+')
+                            for chunk in upload_file.chunks():
+                                file.write(chunk)
+                            file.close()
                         # 2.remove old doc
                         if Column.objects.filter(slug=column_slug):
                             old_column = Column.objects.filter(slug=column_slug)[0]
@@ -171,9 +175,11 @@ def settings(request):
                             os.remove(file3.split('.')[0] + '.html')
                         # 7.remove zipfile
                         os.remove(APP_TUTORIAL_ROOT + str(upload_file.name))
-                        docProcess.zip(APP_TUTORIAL_ROOT + str(upload_file.name))
+                        if not REMOTE:
+                            docProcess.zip(APP_TUTORIAL_ROOT + column_slug)
                     messages.success(request, '上传成功！')
-                except:
+                except Exception as e:
+                    raise e
                     messages.error(request, '上传失败！')
                 return HttpResponseRedirect(request.path + '?doc=1')
             # 数据导出

@@ -31,6 +31,9 @@ BAIDUMAP = {
     'url':cf.get('baidumap','url'),
     'ak':cf.get('baidumap','ak'),
 }
+WECHAT = {
+    'token':cf.get('wechat','token'),
+}
 DATABASES = {
     'default': {
         'ENGINE': cf.get("db", "engine"),

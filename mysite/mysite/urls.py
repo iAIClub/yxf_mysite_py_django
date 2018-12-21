@@ -51,7 +51,7 @@ webtrans_urlpatterns = [
     url(r'^nat/$', app_webtrans_views.nat,name='app_webtrans_nat'),
     url(r'^wechat/$', app_webtrans_views.wechat,name='app_webtrans_wechat'),
     url(r'^map/content$', app_webtrans_views.map_content,name='app_webtrans_map_content'),
-    url(r'^map/$', app_webtrans_views.map,name='app_webtrans_map'),
+    url(r'^map/$', app_webtrans_views.mapa,name='app_webtrans_map'),
     url(r'^proxy/$', app_webtrans_views.proxy,name='app_webtrans_proxy'),
     url(r'^$', app_webtrans_views.index,name='app_webtrans'),
 ]
