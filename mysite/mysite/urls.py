@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import include, url
 from django.contrib import admin
+from django.views.generic.base import TemplateView
 from app_tutorial import views as app_tutorial_views
 from app_user import views as app_user_views
 from app_blog import views as app_blog_views
@@ -66,6 +67,7 @@ metaphysics_urlpatterns = [
 
 urlpatterns = [
     url(r'^$', app_tutorial_views.index,name='index'),#首页交给tutorial应用处理
+    url(r'^robots\.txt$', TemplateView.as_view(template_name='robots.txt', content_type='text/plain'), name='robots'),#robots搜索引擎协议
     url(r'^settings/$', app_user_views.settings,name='settings'),#网站管理页交给user应用处理
     url(r'^admin/', admin.site.urls),#所有内容仅对超级管理员开放，不可对外
     url(r'^tutorial/', include(tutorial_urlpatterns)),#最重要的应用，构造网站主体

@@ -74,7 +74,6 @@ def wechat(request):
         else:
             return HttpResponse("success")
 
-
 def mapa(request):  # 与内置函数名有冲突，要改名
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
         'title':'地图应用',\
