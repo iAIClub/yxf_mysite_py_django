@@ -1,8 +1,6 @@
 yxf_mysite_py_django : 网站服务项目
 =========================================================
 
-------------
-
 ## 项目开发
 
 项目主题：一整套网站  
@@ -11,9 +9,7 @@ yxf_mysite_py_django : 网站服务项目
 
 编程语言：python  
 
-git根目录：yxf_mysite_py_django  
-
-git分支：master稳定版；develop开发版  
+git根目录：yxf_mysite_py_django    
 
 网站根目录：yxf_mysite_py_django/mysite（后面以./mysite表示）  
 
@@ -31,9 +27,9 @@ ngnix==1.12.x
 
 postgresql==10.x  
 
-yxf_mysite_py_django/requirments2.txt  
+requirments2.txt  
 
-yxf_mysite_py_django/requirments3.txt  
+requirments3.txt  
 
 ### 项目架构
 
@@ -72,6 +68,7 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 #### Django项目开发   
 
 0.项目维护:
+
 	使用git版本控制，开发环境为linux虚拟机（centos7，与服务器环境相似，安装中文输入法用于更新文档），所有开发以及git的更新完全在此系统进行，git项目根目录/opt/yxf_mysite_py_django，网站根目录/opt/yxf_mysite_py_django/mysite。  
 	VPS服务商提供的centos系统默认关闭selinux，如此才能实现通过ssh远程登录，以及sftp远程文件。（注意服务器的22端口是否被墙）  
 	上传到同一位置/opt。  
@@ -121,20 +118,18 @@ MVC子应用的模型（数据对象模型，定义的对象与数据库表一�
 		/models——模型定义代码  
 		/views——视图代码，request url->url route->views logic(get model & render templete)->response(data & html & redirect url)
 
-------------
-
 ## 部署
 
 服务器主机：VPS（ip，ssh（22），sftp（22），root管理员），提供HTTP网站服务  
 
 上传：脚本上传master（屏蔽了数据、临时文件）  
 
-已部署网站：[http://avata.cc]  
-
-------------
+已部署网站：[http://avata.cc]; [http://iotstack.cn]  
 
 ## TODO
 
 海外服务器被墙应急处理  
 
 升级到python3.x版本  
+
+提高内存使用效率，解决可能存在的内存泄漏问题  

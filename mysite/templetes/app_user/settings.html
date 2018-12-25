@@ -133,11 +133,16 @@
                 <label class="layui-form-label" >选择压缩包</label>
                 <div class="layui-input-block">
                     <input class="layui-input" type="text" name="purpose" value="update_doc" style="display: none;">
-                    <input class="layui-input" type="file" multiple name="upload-file" id="file-upload" accept="application/zip,.zip" required>
+                    <input class="layui-input" type="file" name="upload-file" id="file-upload" accept="application/zip,.zip" required>
                 </div>
             </div>
+            {% if remote %}
+            <h3>请确认已经提前通过FTP传输了正确的zip压缩包，然后随便上传一个小文件。</h3>
+            <h3>网站会完整部署之前通过FTP传输的zip压缩包。</h3>
+            {% else %}
             <h3>请把线下整理好的docx文档以文件夹为单位打包成zip格式。</h3>
             <h3>上传后网站会自动部署，文件夹名映射为栏目slug，文档名映射为文档slug。</h3>
+            {% endif %}
             <hr>
             <div class="layui-form-item pane">
                 <div class="layui-input-block">

@@ -22,7 +22,7 @@ reload(sys)
 sys.setdefaultencoding('utf8')
 from app_user.models import PanFile,APP_FILE_ROOT,APP_TEMPLETE_ROOT,APP_TUTORIAL_ROOT
 from app_tutorial.models import Column,Tutorial
-from modules.docProcess import docProcess
+from modules.docProcess import docProcess,zipProcess
 from mysite.settings import BASE_DIR,REMOTE
 
 
@@ -89,6 +89,7 @@ def settings(request):
                     'doc_list': doc_list, \
                     'status_list':status_list,\
                     'log_list':log_list,\
+                    'remote':REMOTE,\
                     }))
         else:
             return HttpResponse('<script type="text/javascript">alert("您没有权限访问此页面！");window.history.back(-1);</script>')
@@ -97,62 +98,51 @@ def settings(request):
             purpose = request.POST.get('purpose', None)
             # 更新文档内容
             if purpose == 'update_doc':
-                try:
-                    for upload_file in request.FILES.getlist('upload-file'):
-                        zipfile_name = str(upload_file.name)
+                if REMOTE:  # VPS服务器性能有限无法执行转换程序，提前通过ftp把压缩包传送过去，后台自动部署
+                    for fullname in glob.glob(APP_TUTORIAL_ROOT+'*.zip'):
+                        # 1.搜索所有的zip压缩包，一次性全部部署
+                        zipfile_name = fullname.split('/')[-1]
                         column_slug = zipfile_name.split('.')[0]
-                        # 1.save zipfile
-                        if os.path.exists(APP_TUTORIAL_ROOT+zipfile_name):  # VPS上传大文件也是问题，非常缓慢，很难成功，用ftp直接传送
-                            for chunk in upload_file.chunks():
-                                pass
-                        else:
-                            file = open(APP_TUTORIAL_ROOT+zipfile_name, 'wb+')
-                            for chunk in upload_file.chunks():
-                                file.write(chunk)
-                            file.close()
-                        # 2.remove old doc
+                        # 2.清除已有的栏目（包括数据库记录和整个文件夹）
                         if Column.objects.filter(slug=column_slug):
                             old_column = Column.objects.filter(slug=column_slug)[0]
                             old_column.delete()  # tutorial已关联此外键，会一并删除
-                        if os.path.exists(APP_TUTORIAL_ROOT+column_slug):
-                            shutil.rmtree(APP_TUTORIAL_ROOT+column_slug)
-                        # 3.unzip
-                        docProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
-                        # 4.deploy new doc:convert
-                        if REMOTE:  # VPS服务器性能有限无法执行转换程序，只能打包本地测试已部署的文件（只能包含顶层docx/html/md三种文件）
-                            for dir in os.listdir(APP_TUTORIAL_ROOT + column_slug):
-                                if os.path.isdir(APP_TUTORIAL_ROOT + column_slug + '/' + dir):
-                                    shutil.move(APP_TUTORIAL_ROOT + column_slug + '/' + dir + '/' + dir + '.html', APP_TUTORIAL_ROOT + column_slug)
-                                    shutil.move(APP_TUTORIAL_ROOT + column_slug + '/' + dir + '/' + dir + '.md', APP_TUTORIAL_ROOT + column_slug)
-                            for dir2 in os.listdir(APP_TUTORIAL_ROOT + column_slug):
-                                if os.path.isdir(APP_TUTORIAL_ROOT + column_slug + '/' + dir2):
-                                    shutil.rmtree(APP_TUTORIAL_ROOT + column_slug + '/' + dir2)
-                        else:
-                            for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
-                                docProcess.execute_docx(file1)
-                        # 5.deploy new doc:columns
-                        new_column = Column.objects.create(slug=column_slug,name=column_slug)
+                        if os.path.exists(APP_TUTORIAL_ROOT + column_slug):
+                            shutil.rmtree(APP_TUTORIAL_ROOT + column_slug)
+                        # 3.解压此前通过ftp上传的压缩包
+                        zipProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
+                        # 4.把目录的组织形式恢复到部署前
+                        for dir in os.listdir(APP_TUTORIAL_ROOT + column_slug):
+                            if os.path.isdir(APP_TUTORIAL_ROOT + column_slug + '/' + dir):
+                                shutil.move(APP_TUTORIAL_ROOT + column_slug + '/' + dir + '/' + dir + '.html', APP_TUTORIAL_ROOT + column_slug)
+                                shutil.move(APP_TUTORIAL_ROOT + column_slug + '/' + dir + '/' + dir + '.md', APP_TUTORIAL_ROOT + column_slug)
+                        # 5.部署：生成数据库的栏目
+                        new_column = Column.objects.create(slug=column_slug, name=column_slug)
                         new_column.save()
-                        # 6.deploy new doc:tutorials
+                        # 6.部署：生成数据库的文档
                         column = Column.objects.filter(slug=column_slug)[0]
-                        for file2 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.md'):
+                        for file2 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.md'):
                             f = open(file2, 'r')
                             new_docfile = File(f)
+                            # 6.1.文档slug
                             new_docfile_slug = file2.split('.')[0].split('/')[-1]
+                            # 6.2.文档keywords
                             try:
-                                new_docfile_keywords = ';'.join(re.split('\*|\+|&|\*|or|-',new_docfile_slug))
+                                new_docfile_keywords = ';'.join(re.split('\*|\+|&|\*|or|-', new_docfile_slug))
                             except:
                                 new_docfile_keywords = new_docfile_slug
+                            # 6.3.文档description
                             new_docfile_description = ''
                             while not new_docfile_description:  # utf-8中文字符不确定在哪个字节结束，需要尝试
                                 try_num = 0
                                 try:
                                     try_num += 1
-                                    new_docfile_description += str(f.read(100+try_num))
+                                    new_docfile_description += str(f.read(100 + try_num))
                                 except:
                                     try_num += 1
                                 if try_num >= 5:
                                     break
+                            # 6.4.文档content(md)
                             new_docfile.name = new_docfile_slug + '.md'
                             new_doc = Tutorial.objects.create(column=column,
                                                               slug=new_docfile_slug,
@@ -163,24 +153,93 @@ def settings(request):
                             new_doc.save()
                             f.close()
                             os.remove(file2)
-                        for file3 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.html'):
+                        for file3 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.html'):
                             f = open(file3, 'r')
                             new_htmlfile = File(f)
                             new_htmlfile_slug = file3.split('.')[0].split('/')[-1]
+                            # 6.5.文档content_html
                             new_htmlfile.name = new_htmlfile_slug + '.html'
                             doc = Tutorial.objects.filter(column=column, slug=new_htmlfile_slug)[0]
                             doc.content_html = new_htmlfile
                             doc.save()
                             f.close()
                             os.remove(file3.split('.')[0] + '.html')
-                        # 7.remove zipfile
-                        os.remove(APP_TUTORIAL_ROOT + str(upload_file.name))
-                        if not REMOTE:
-                            docProcess.zip(APP_TUTORIAL_ROOT + column_slug)
-                    messages.success(request, '上传成功！')
-                except Exception as e:
-                    raise e
-                    messages.error(request, '上传失败！')
+                        # 7.删除旧压缩包
+                        os.remove(APP_TUTORIAL_ROOT + zipfile_name)
+                else:
+                    # 1.接收上传的文件并保存（必须为zip压缩文档，内含一个包含docx文档的文件夹）
+                    upload_file = request.FILES.getlist('upload-file')[0]  # 每次只接受单个文件
+                    zipfile_name = str(upload_file.name)
+                    column_slug = zipfile_name.split('.')[0]
+                    if os.path.exists(APP_TUTORIAL_ROOT+zipfile_name):
+                        os.remove(APP_TUTORIAL_ROOT+zipfile_name)
+                    file = open(APP_TUTORIAL_ROOT+zipfile_name, 'wb+')
+                    for chunk in upload_file.chunks():
+                        file.write(chunk)
+                    file.close()
+                    # 2.清除已有的栏目（包括数据库记录和整个文件夹）
+                    if Column.objects.filter(slug=column_slug):
+                        old_column = Column.objects.filter(slug=column_slug)[0]
+                        old_column.delete()  # tutorial已关联此外键，会一并删除
+                    if os.path.exists(APP_TUTORIAL_ROOT+column_slug):
+                        shutil.rmtree(APP_TUTORIAL_ROOT+column_slug)
+                    # 3.解压上传的压缩包
+                    zipProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
+                    # 4.部署：调用转换程序进行转换
+                    for file1 in glob.glob(APP_TUTORIAL_ROOT + column_slug + '/*.docx'):
+                        docProcess.execute_docx(fullpath=file1)  # 此程序每次只能转换单个文档，需要遍历调用
+                    # 5.部署：生成数据库的栏目
+                    new_column = Column.objects.create(slug=column_slug,name=column_slug)
+                    new_column.save()
+                    # 6.部署：生成数据库的文档
+                    column = Column.objects.filter(slug=column_slug)[0]
+                    for file2 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.md'):
+                        f = open(file2, 'r')
+                        new_docfile = File(f)
+                        # 6.1.文档slug
+                        new_docfile_slug = file2.split('.')[0].split('/')[-1]
+                        # 6.2.文档keywords
+                        try:
+                            new_docfile_keywords = ';'.join(re.split('\*|\+|&|\*|or|-',new_docfile_slug))
+                        except:
+                            new_docfile_keywords = new_docfile_slug
+                        # 6.3.文档description
+                        new_docfile_description = ''
+                        while not new_docfile_description:  # utf-8中文字符不确定在哪个字节结束，需要尝试
+                            try_num = 0
+                            try:
+                                try_num += 1
+                                new_docfile_description += str(f.read(100+try_num))
+                            except:
+                                try_num += 1
+                            if try_num >= 5:
+                                break
+                        # 6.4.文档content(md)
+                        new_docfile.name = new_docfile_slug + '.md'
+                        new_doc = Tutorial.objects.create(column=column,
+                                                          slug=new_docfile_slug,
+                                                          title=new_docfile_slug,
+                                                          keywords=new_docfile_keywords,
+                                                          description=new_docfile_description,
+                                                          content=new_docfile)
+                        new_doc.save()
+                        f.close()
+                        os.remove(file2)
+                    for file3 in glob.glob(APP_TUTORIAL_ROOT+column_slug+'/*.html'):
+                        f = open(file3, 'r')
+                        new_htmlfile = File(f)
+                        new_htmlfile_slug = file3.split('.')[0].split('/')[-1]
+                        # 6.5.文档content_html
+                        new_htmlfile.name = new_htmlfile_slug + '.html'
+                        doc = Tutorial.objects.filter(column=column, slug=new_htmlfile_slug)[0]
+                        doc.content_html = new_htmlfile
+                        doc.save()
+                        f.close()
+                        os.remove(file3.split('.')[0] + '.html')
+                    # 7.删除旧压缩包，生成新压缩包（用于VPS的部署）
+                    os.remove(APP_TUTORIAL_ROOT + zipfile_name)
+                    zipProcess.zip(APP_TUTORIAL_ROOT + column_slug)
+                messages.success(request, '部署成功！')
                 return HttpResponseRedirect(request.path + '?doc=1')
             # 数据导出
             elif purpose == 'dump_data':
@@ -190,7 +249,7 @@ def settings(request):
                     try:
                         if os.path.exists('media/media.zip'):
                             os.remove('media/media.zip')
-                        docProcess.zip('media')
+                        zipProcess.zip('media')
                         shutil.move('media.zip','media')
                         messages.success(request, '打包成功！')
                     except:
@@ -233,17 +292,8 @@ def settings(request):
                         subprocess.call('~/deploy_mysite.sh')
                     except:
                         subprocess.call('/opt/yxf_utils/scripts/deploy_mysite.sh')
-                    else:
+                    finally:
                         messages.success(request, '执行成功！')
-                # 重启主服务（只能关闭，无法重启，放弃）
-                # elif settype == 'restart_mainserver':
-                #     try:
-                #         p1 = subprocess.Popen('/opt/yxf_mysite_py_django/stop_server.sh', shell=True,close_fds=True, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
-                #         p1.stdin.write('\n')
-                #         p1.wait()
-                #         subprocess.call('systemctl restart uwsgi',shell=True)
-                #     except:
-                #         messages.error(request, '执行失败！')
                 # 重启辅服务
                 elif settype == 'restart_subserver':
                     try:
