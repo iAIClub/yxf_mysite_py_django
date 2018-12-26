@@ -110,7 +110,9 @@ def settings(request):
                         if os.path.exists(APP_TUTORIAL_ROOT + column_slug):
                             shutil.rmtree(APP_TUTORIAL_ROOT + column_slug)
                         # 3.解压此前通过ftp上传的压缩包
-                        zipProcess.unzip(APP_TUTORIAL_ROOT, zipfile_name)
+                        os.mkdir(APP_TUTORIAL_ROOT + column_slug)
+                        shutil.move(APP_TUTORIAL_ROOT+zipfile_name,APP_TUTORIAL_ROOT + column_slug)
+                        zipProcess.unzip(APP_TUTORIAL_ROOT + column_slug, zipfile_name)
                         # 4.把目录的组织形式恢复到部署前
                         for dir in os.listdir(APP_TUTORIAL_ROOT + column_slug):
                             if os.path.isdir(APP_TUTORIAL_ROOT + column_slug + '/' + dir):
@@ -165,7 +167,7 @@ def settings(request):
                             f.close()
                             os.remove(file3.split('.')[0] + '.html')
                         # 7.删除旧压缩包
-                        os.remove(APP_TUTORIAL_ROOT + zipfile_name)
+                        os.remove(APP_TUTORIAL_ROOT + column_slug + '/' + zipfile_name)
                 else:
                     # 1.接收上传的文件并保存（必须为zip压缩文档，内含一个包含docx文档的文件夹）
                     upload_file = request.FILES.getlist('upload-file')[0]  # 每次只接受单个文件
