@@ -70,14 +70,28 @@ def wechat(request):
             recMsg = wechatApi.R_ImageMsg(xmlData)
         else:
             recMsg = None
-        if isinstance(recMsg, wechatApi.R_Msg) and recMsg.MsgType == 'text':
+        if isinstance(recMsg, wechatApi.R_TextMsg):
             toUser = recMsg.FromUserName
             fromUser = recMsg.ToUserName
-            content = "test"
+            if recMsg.Content == '菜单':
+                content = '[后台]您可以回复以下命令：\n'
+                content+= '1.查看网站\n'
+                content+= '（注意：可以与机器人对话，但必须在开头加@符）\n'
+            elif recMsg.Content == '查看网站':
+                content = '[后台]http://avata.cc/'
+            elif recMsg.Content[0] == '@':
+                content = '[机器人]'
+                content+= wechatApi.tuling_request(recMsg.Content[1:])[0]
+            else:
+                content = '[后台]我听不懂你在说什么，试着说一下：菜单'
             replyMsg = wechatApi.S_TextMsg(toUser, fromUser, content)
             return HttpResponse(replyMsg.send())
         else:
-            return HttpResponse("success")
+            toUser = recMsg.FromUserName
+            fromUser = recMsg.ToUserName
+            content = '[后台]我听不懂你在说什么，试着说一下：菜单'
+            replyMsg = wechatApi.S_TextMsg(toUser, fromUser, content)
+            return HttpResponse(replyMsg.send())
 
 def mapa(request):  # 与内置函数名有冲突，要改名
     return HttpResponse(render(request, APP_TEMPLETE_ROOT+'index.html',{\
