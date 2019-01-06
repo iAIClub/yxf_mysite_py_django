@@ -34,6 +34,11 @@ BAIDUMAP = {
 WECHAT = {
     'token':cf.get('wechat','token'),
 }
+TULING = {
+    'url': cf.get("tuling","url"),
+    'ak': cf.get("tuling","ak"),
+    'id': str(cf.get("tuling","id"))
+}
 DATABASES = {
     'default': {
         'ENGINE': cf.get("db", "engine"),

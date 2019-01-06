@@ -8,6 +8,7 @@ from django.shortcuts import render
 from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect,JsonResponse
 from app_webtrans.models import APP_FILE_ROOT,APP_TEMPLETE_ROOT
+from django.views.decorators.csrf import csrf_exempt
 from mysite.settings import BAIDUMAP,WECHAT
 import modules.robots.wechatApi as wechatApi
 
@@ -32,6 +33,7 @@ def nat(request):
         'display':'nat',\
         }))
 
+@csrf_exempt
 def wechat(request):
     if request.method == 'GET':
         signature = request.GET.get('signature',None)  # 数字指纹
@@ -54,10 +56,13 @@ def wechat(request):
                 return HttpResponse(echostr)
             else:
                 return HttpResponse("")
-    elif request.method == 'POST':  # 微信API,微信消息为XML格式，回复也是XML
-        if len(request.raw_data) == 0:
+    elif request.method == 'POST':  # 微信服务器（与微信APP通信），调用wechatApi（有固定编解码规则）
+        recvstr = ''
+        for i in request:
+            recvstr += i
+        if len(recvstr) == 0:  # 接收微信APP发送过来的POST消息
             return HttpResponse("")
-        xmlData = et.fromstring(request.raw_data)
+        xmlData = et.fromstring(recvstr)
         msg_type = xmlData.find('MsgType').text
         if msg_type == 'text':
             recMsg = wechatApi.R_TextMsg(xmlData)
