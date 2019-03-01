@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from django.conf.urls import include, url
 from django.contrib import admin
-from django.views.generic.base import TemplateView
+from django.views.generic import TemplateView
 from app_tutorial import views as app_tutorial_views
 from app_user import views as app_user_views
 from app_blog import views as app_blog_views
@@ -58,6 +58,9 @@ webtrans_urlpatterns = [
 ]
 
 spider_urlpatterns = [
+    url(r'^index/$', app_spider_views.IndexView.as_view(), name="app_spider_index"),
+    url(r'^suggest/$', app_spider_views.SearchSuggest.as_view(), name="app_spider_suggest"),
+    url(r'^search/$', app_spider_views.SearchView.as_view(), name="app_spider_search"),
     url(r'^$', app_spider_views.index,name='app_spider'),
 ]
 
@@ -73,8 +76,8 @@ urlpatterns = [
     url(r'^tutorial/', include(tutorial_urlpatterns)),#最重要的应用，构造网站主体
     url(r'^user/', include(user_urlpatterns)),#对外开放的用户管理体系，其中settings页面只对管理员开放
     url(r'^blog/', include(blog_urlpatterns)),#模仿tutorial应用的副本应用
-    url(r'^spider/', include(spider_urlpatterns)),
-    url(r'^visual/', include(visual_urlpatterns)),
-    url(r'^webtrans/', include(webtrans_urlpatterns)),
-    url(r'^metaphysics/', include(metaphysics_urlpatterns)),
+    url(r'^spider/', include(spider_urlpatterns)),#爬虫服务器监控，数据展示，以及搜索页
+    url(r'^visual/', include(visual_urlpatterns)),#图形相关的小技术
+    url(r'^webtrans/', include(webtrans_urlpatterns)),#网络相关的小技术
+    url(r'^metaphysics/', include(metaphysics_urlpatterns)),#易学数术排盘及分析的展示
 ]

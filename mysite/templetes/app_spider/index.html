@@ -8,10 +8,7 @@
                 <a href="javascript:;">功能列表</a>
                 <dl class="layui-nav-child">
                     <dd>
-                        <a href="{% url 'app_spider' %}?op=all">数据总览</a>
-                    </dd>
-                    <dd>
-                        <a href="{% url 'app_spider' %}?op=myspider">爬虫服务器监控</a>
+                        <a href="{% url 'app_spider' %}?op=all">监控</a>
                     </dd>
                     <dd>
                         <a href="{% url 'app_spider' %}?op=zufang">租房买房数据分析</a>
@@ -21,6 +18,9 @@
                     </dd>
                     <dd>
                         <a href="{% url 'app_spider' %}?op=hunlian">婚恋数据分析</a>
+                    </dd>
+                    <dd>
+                        <a href="{% url 'app_spider_index' %}" target="_blank">搜索</a>
                     </dd>
                 </dl>
             </li>
