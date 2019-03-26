@@ -5,38 +5,64 @@ from django.urls import reverse
 from django.http import HttpResponse,HttpResponseRedirect
 from django.views.generic.base import View
 from app_spider.models import APP_API,APP_TEMPLETE_ROOT
+from mysite.settings import REDIS,SPIDER
 import redis
 import json
+import requests
 from datetime import datetime
 
-
-'''
-app_spider将使用rest子框架
-'''
+search_client = None#Elasticsearch(hosts=["127.0.0.1"])
+redis_cli = redis.StrictRedis(host=REDIS['HOST'], port=REDIS['PORT'], db=REDIS['DB'], password=REDIS['PASSWORD'])
 
 
-client = None#Elasticsearch(hosts=["127.0.0.1"])
-# redis_cli = redis.StrictRedis(host='173.82.95.81', port=6379, db=1,password='Yanyaming250114sv1')
-
-
+# 网站爬虫内容展示页，对应index.html
 def index(request):
     opt = request.GET.get('op', None)
     if opt is None:
         return HttpResponseRedirect(reverse('app_spider') + '?op=all')
     else:
-        return HttpResponse(render(request, 'app_spider/index.html',{ \
-            'title': '爬虫', \
-            'op': opt, \
-        }))
+        if opt == 'all':
+            stats = json.loads(requests.get(url='http://'+SPIDER['HOST']+':8080/stats').text, encoding='utf-8')
+            mongodb = []
+            crawler = []
+            for i in stats['mongodb']:
+                mongodb.append({'name':i.keys()[0], 'count': i[i.keys()[0]]['count']})
+            for i in stats['crawler']:
+                crawler.append({'name':i.keys()[0], 'count': i[i.keys()[0]]})
+            return HttpResponse(render(request, 'app_spider/index.html',{ \
+                'title': '爬虫', \
+                'op': opt, \
+                'mongodb': mongodb, \
+                'crawler': crawler, \
+                }))
+        elif opt == 'zhaopin':
+            # res = json.loads(requests.get(url='http://' + SPIDER['HOST'] + ':8080/query').text, encoding='utf-8')
+            return HttpResponse(render(request, 'app_spider/index.html', { \
+                'title': '爬虫', \
+                'op': opt, \
+                }))
+        elif opt == 'fangchan':
+            # res = json.loads(requests.get(url='http://' + SPIDER['HOST'] + ':8080/query').text, encoding='utf-8')
+            return HttpResponse(render(request, 'app_spider/index.html', { \
+                'title': '爬虫', \
+                'op': opt, \
+                }))
+        elif opt == 'hunlian':
+            # res = json.loads(requests.get(url='http://' + SPIDER['HOST'] + ':8080/query').text, encoding='utf-8')
+            return HttpResponse(render(request, 'app_spider/index.html', { \
+                'title': '爬虫', \
+                'op': opt, \
+                }))
 
 
+# 搜索功能首页，对应search.html
 class IndexView(View):
-    #首页
     def get(self, request):
         topn_search = None#redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
         return render(request, "app_spider/search.html", {"topn_search":topn_search})
 
 
+# 搜索建议，返回json数据
 class SearchSuggest(View):
     def get(self, request):
         key_words = request.GET.get('s','')
@@ -56,23 +82,24 @@ class SearchSuggest(View):
         return HttpResponse(json.dumps(re_datas), content_type="application/json")
 
 
+# 搜索结果展示页，对应result.html
 class SearchView(View):
     def get(self, request):
         key_words = request.GET.get("q","")
         s_type = request.GET.get("s_type", "article")
 
-        #redis_cli.zincrby("search_keywords_set", key_words)
+        redis_cli.zincrby("search_keywords_set", key_words)
 
-        topn_search = ''#redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
+        topn_search = redis_cli.zrevrangebyscore("search_keywords_set", "+inf", "-inf", start=0, num=5)
         page = request.GET.get("p", "1")
         try:
             page = int(page)
         except:
             page = 1
 
-        jobbole_count = 0#redis_cli.get("jobbole_count")
+        jobbole_count = redis_cli.get("jobbole_count")
         start_time = datetime.now()
-        response = client.search(
+        response = search_client.search(
             index= "jobbole",
             body={
                 "query":{

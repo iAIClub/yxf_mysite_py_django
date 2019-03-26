@@ -52,18 +52,21 @@ def settings(request):
                 for pid in psutil.pids():
                     p = psutil.Process(pid)
                     if p.name() in ['python','python3','java','redis-server','nginx','postmaster','sshd','uwsgi']:
-                        pid_list.append({'{0}:{1}'.format(str(pid),p.name()):{
-                            'pid':p.pid,
-                            'name':p.name(),
-                            'username':p.username(),
-                            'exe':p.exe(),
-                            'cwd':p.cwd(),
-                            'status':p.status(),
-                            'create_time':datetime.datetime.fromtimestamp(p.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
-                            'cpu_times':p.cpu_times(),
-                            'memory_percent': p.memory_percent(),
-                            'num_threads':p.num_threads(),
-                        }})
+                        try:
+                            pid_list.append({'{0}:{1}'.format(str(pid),p.name()):{
+                                'pid':p.pid,
+                                'name':p.name(),
+                                'username':p.username(),
+                                'exe':p.exe(),
+                                'cwd':p.cwd(),
+                                'status':p.status(),
+                                'create_time':datetime.datetime.fromtimestamp(p.create_time()).strftime("%Y-%m-%d %H:%M:%S"),
+                                'cpu_times':p.cpu_times(),
+                                'memory_percent': p.memory_percent(),
+                                'num_threads':p.num_threads(),
+                            }})
+                        except:
+                            continue
                 status_list.append({'进程信息':pid_list})
             if arg_doc:
                 model_file = Tutorial.objects.filter().all()

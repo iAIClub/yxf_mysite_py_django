@@ -1,0 +1,75 @@
+{% if op == 'all' %}
+<div id="container1" style="height:400px"></div>
+<div id="container2" style="height:400px"></div>
+<script>
+var chart1 = Highcharts.chart('container1',{
+    //图表类型
+	chart: {
+		type: 'column'
+	},
+	//图表标题
+	title: {
+		text: '已爬库存数据'
+	},
+	//图表副标题
+	subtitle: {
+		text: '数据来源：iotec.cc:mongodb'
+	},
+	//横坐标
+	xAxis: {
+	    //坐标轴分类
+		categories: [
+            {% for i in mongodb %}
+            '{{ i.name }}',
+            {% endfor %}
+        ]
+	},
+	//纵坐标
+	yAxis: {
+	    //坐标轴标题
+		title: {
+			text: null
+		}
+	},
+	//数据系列
+	series: [{
+		name: 'Number',
+		data: [
+            {% for i in mongodb %}
+            {{ i.count }},
+            {% endfor %}
+        ]
+	}]
+});
+var chart2 = Highcharts.chart('container2', {
+	chart: {
+		type: 'pie'
+	},
+	title: {
+		text: '爬虫运行状态'
+	},
+	subtitle: {
+		text: '数据来源：iotec.cc:mongodb'
+	},
+	series: [{
+		name: 'Spiders',
+		colorByPoint: true,
+		data: [
+		    {% for i in crawler %}
+            {
+                name: '{{ i.name }}',
+                y: {{ i.count }},
+            },
+            {% endfor %}
+        ]
+	}]
+});
+</script>
+{% elif op == 'fangchan' %}
+{% elif op == 'zhaopin' %}
+<div id="container1" style="height:400px"></div>
+<div id="container2" style="height:400px"></div>
+<script>
+</script>
+{% elif op == 'hunlian' %}
+{% endif %}

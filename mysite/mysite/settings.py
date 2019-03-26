@@ -49,6 +49,15 @@ DATABASES = {
         'PORT': cf.get("db", "port"),
     }
 }
+REDIS = {
+    'HOST': cf.get("redis", "host"),
+    'PORT': cf.getint("redis", "port"),
+    'PASSWORD': cf.get("redis", "password"),
+    'DB': cf.getint("redis", "db"),
+}
+SPIDER = {
+    'HOST': cf.get("spider", "host"),
+}
 if cf.getboolean("meta","logger") is True:
     LOGGING = {
         'version': 1,

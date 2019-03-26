@@ -1,5 +1,10 @@
 {% extends "common/base.html" %}
 
+{% block extrajs %}
+<script src="/static/plugins/highcharts/highcharts.js" charset="utf-8"></script>
+<script src="/static/plugins/highcharts/highcharts-3d.js" charset="utf-8"></script>
+{% endblock %}
+
 {% block left %}
 <div id="left" class="layui-side layui-bg-black layui-hide-xs">
     <div class="layui-side-scroll">
@@ -11,7 +16,7 @@
                         <a href="{% url 'app_spider' %}?op=all">监控</a>
                     </dd>
                     <dd>
-                        <a href="{% url 'app_spider' %}?op=zufang">租房买房数据分析</a>
+                        <a href="{% url 'app_spider' %}?op=fangchan">房产数据分析</a>
                     </dd>
                     <dd>
                         <a href="{% url 'app_spider' %}?op=zhaopin">招聘数据分析</a>
@@ -30,7 +35,6 @@
 {% endblock %}
 
 {% block content %}
-{% if op == 'all' %}
 <div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
     <div class="layui-card">
         <div class="layui-card-header">
@@ -38,16 +42,11 @@
         </div>
         <div class="layui-card-body">
             <div>
-                content charts
+                {% include "app_spider/highcharts.html" %}
             </div>
         </div>
     </div>
 </div>
-{% elif op == 'myspider' %}
-{% elif op == 'zufang' %}
-{% elif op == 'zhaopin' %}
-{% elif op == 'hunlian' %}
-{% endif %}
 {% endblock %}
 
 {% block right %}
@@ -57,18 +56,29 @@
             <div class="layui-colla-title">
                 状态信息
             </div>
+            {% if op == 'all' %}
+            {% for i in mongodb %}
             <div class="layui-colla-content layui-show">
-                {% if op == 'all' %}
-                <div>
-
-                </div>
-                {% elif op == 'myspider' %}
-                {% elif op == 'zufang' %}
-                {% elif op == 'zhaopin' %}
-                {% elif op == 'hunlian' %}
-                {% endif %}
+                <a class="list-group-item layui-icon layui-icon-tips">爬虫：{{ i.name }}</a>
+                <a class="list-group-item layui-icon layui-icon-tips">已爬数量：{{ i.count }}</a>
             </div>
+            {% endfor %}
+            {% endif %}
         </div>
     </div>
+    {% if op == 'all' %}
+    <div class="layui-collapse">
+        <div class="layui-colla-item">
+            <div class="layui-colla-title">
+                正在运行的爬虫
+            </div>
+            {% for i in crawler %}
+            <div class="layui-colla-content layui-show">
+                <a class="list-group-item layui-icon layui-icon-tips">{{ i.name }}:{{ i.count }}</a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endif %}
 </div>
 {% endblock %}
