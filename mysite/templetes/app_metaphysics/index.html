@@ -22,6 +22,9 @@
                     <dd>
                         <a href="{% url 'app_metaphysics' %}?op=xiaochengtu">小成图</a>
                     </dd>
+                    <dd>
+                        <a href="{% url 'app_metaphysics' %}?op=qimen">奇门遁甲</a>
+                    </dd>
                     <dd><a href="http://{{ host }}:8002/bazi?date=2018-10-1&time=12:20" target="_blank">yixueAPI测试</a></dd>
                 </dl>
             </li>
@@ -142,13 +145,13 @@ $(function(){
     $(function(){
         $("#content button").click(function(){
             $.ajax({
-                url: "//{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str",
+                url: "//{{ host }}:8002/bazi?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&xingbie="+$("#xingbie").val()+"&op=str&subop=量化分析",
                 type:"GET",
                 timeouut:10000,
                 success:function (data) {
                     if(data){
                         $("#pan").html("");
-                        $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:550px;overflow-x:scroll;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                        $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:700px;overflow-x:scroll;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
                     }
                 }
             });
@@ -305,6 +308,42 @@ $(function(){
                 if(data){
                     $("#pan").html("");
                     $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:200px;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
+                }
+            }
+        });
+    });
+});
+</script>
+{% elif op == 'qimen' %}
+<div class="layui-col-xs9 layui-col-sm9 layui-col-md9" id="content">
+    <div class="layui-card">
+        <div class="layui-card-header">
+            <h3>奇门排盘</h3>
+        </div>
+        <div class="layui-card-body">
+            <span>日期时间：</span><input type="text" class="layui-input" style="width:130px;display:inline;" id="datetimepicker">
+            <span>布局方法：</span>
+            <select id="bujufangfa" class="layui-input" style="width:130px;display:inline;">
+                <option>飞盘</option>
+                <option>转盘</option>
+            </select>
+            <button class="layui-btn">排盘</button>
+            <div id="pan">
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+$(function(){
+    $("#content button").click(function(){
+        $.ajax({
+            url: "//{{ host }}:8002/qimen?date="+$("#datetimepicker").val().split(" ")[0]+"&time="+$("#datetimepicker").val().split(" ")[1]+"&bujufangfa="+$("#bujufangfa").val()+"&op=str",
+            type:"GET",
+            timeouut:10000,
+            success:function (data) {
+                if(data){
+                    $("#pan").html("");
+                    $("#pan").append('<pre><textarea style="font-size:0.8rem;width:100%;height:300px;" readonly="readonly" wrap="off">'+data+'</textarea></pre>');
                 }
             }
         });
